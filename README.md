@@ -6,6 +6,7 @@ Next.js environment with Docker. To be used at the hackathon.
 
 ## SetUp
 ### Environment
+前提環境のセットアップは省略します。わからなければ遠慮なく聞いてください。
 - Node.js
 - Docker Desktop
   
