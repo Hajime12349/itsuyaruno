@@ -9,3 +9,14 @@ services:
     environment:
       - WATCHPACK_POLLING=true
     command: npm run dev
+  postgres:
+    container_name: app-db
+    build: ./image/postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgres/init:/docker-entrypoint-initdb.d
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
