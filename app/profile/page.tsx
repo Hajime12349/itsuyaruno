@@ -6,6 +6,10 @@ import SigninButton from "@/components/signin_button";
 export default async function Profile() {
   const session = await getServerSession(authOptions);
   const user = session?.user;
+  let identifier = "";
+  if (user && "id" in user) {
+    identifier = user.id as string;
+  }
 
   return (
     <>
@@ -24,7 +28,7 @@ export default async function Profile() {
           <div className="mt-8">
             <p className="mb-3">Name: {user.name}</p>
             <p className="mb-3">Email: {user.email}</p>
-            <p className="mb-3">id: {user.id}</p>
+            <p className="mb-3">id: {identifier}</p>
           </div>
           <SignoutButton />
         </>
