@@ -1,7 +1,6 @@
 "use client";  
 import React, { useRef, useEffect, useState } from 'react';
 
-//const INITIAL_PROGRESS = 0;
 let timer: NodeJS.Timeout | null = null;
 
 //形を定義するのがここ
@@ -22,6 +21,15 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ isTask, progress, taskName })
   const [count, setCount] = useState(progress);
   //停止か再開かを判別
   const [startFlg, setStartFlg] = useState(true);
+
+  //const decideTaskOrBreak = () => {
+  //  if (isTask) {
+  //    INITIAL_PROGRESS = 1500;
+  //  } else {
+  //    INITIAL_PROGRESS = 30;
+  //  }
+  //}
+
 
   //タイマーのカウントを増やす関数。インクリメント関数というらしい。
   const countIncrement = () => {
