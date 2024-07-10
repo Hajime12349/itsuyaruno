@@ -34,7 +34,6 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ isTask, progress, taskName })
       }
       return prevCount - 1;
     });
-    console.log("カウントダウン -1");
   };
 
   //最初に実行される関数。カウント開始。クリーンアップ関数も定義している。
