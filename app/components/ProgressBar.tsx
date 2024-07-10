@@ -25,7 +25,15 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ isTask, progress, taskName })
 
   //タイマーのカウントを増やす関数。インクリメント関数というらしい。
   const countIncrement = () => {
-    setCount((prevCount) => prevCount - 1);
+    setCount((prevCount) => {
+      if (prevCount <= 1) {
+        if (timer !== null) {
+          clearInterval(timer);
+        }
+        return 0;
+      }
+      return prevCount - 1;
+    });
     console.log("カウントダウン -1");
   };
 
