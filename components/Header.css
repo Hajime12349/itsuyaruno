@@ -1,0 +1,23 @@
+.header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #f0f0f0;
+    margin: 0px;
+}
+
+.title-frame {
+    display: flex;
+    align-items: left;
+}
+
+.settings-button-frame {
+    display: flex;
+    align-items: right;
+}
+
+.title-text {
+    font-size: 36px;
+}
