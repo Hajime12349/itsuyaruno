@@ -1,4 +1,5 @@
-import type { NextAuthOptions } from "next-auth";
+import type { NextAuthOptions, Session, DefaultSession } from "next-auth";
+import { getServerSession } from "next-auth/next";
 import GoogleProvider from "next-auth/providers/google";
 
 export const authOptions: NextAuthOptions = {
@@ -38,3 +39,19 @@ export const authOptions: NextAuthOptions = {
         },
     },
 };
+
+export async function getUserID(session?: Session | DefaultSession | null): Promise<string | undefined> {
+    if (!session) {
+        return undefined;
+    }
+    if (!session.user) {
+        return undefined;
+    }
+    if (!("id" in session.user)) {
+        return undefined;
+    }
+    if (typeof session.user.id !== "string") {
+        return undefined;
+    }
+    return session.user.id;
+}
