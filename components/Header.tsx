@@ -1,18 +1,18 @@
 import SettingsButton from "@/components/SettingsButton";
-import './Header.css';
+import styles from './Header.module.css';
 
 interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = () => {
     return (
-        <div className="header">
-            <div className="title-frame">
-                <div className="title-text">
+        <div className={styles.header}>
+            <div className={styles.title_frame}>
+                <div className={styles.titleText}>
                     いつやるの?
                 </div>
             </div>
-            <div className="settings-button-frame">
+            <div className={styles.settingsButtonFrame}>
                 <SettingsButton />
             </div>
         </div>
