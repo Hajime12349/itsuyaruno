@@ -1,12 +1,7 @@
 import { query } from '../../../lib/db';
 
 export async function GET(req: Request) {
-    try {
-        const { rows } = await query('SELECT * FROM users ORDER BY id ASC');
-        return new Response(JSON.stringify(rows), { status: 200 });
-    } catch (error) {
-        return new Response(JSON.stringify({ error: 'Failed to fetch users' }), { status: 500 });
-    }
+    return new Response(JSON.stringify({ error: 'Forbidden' }), { status: 403 });
 }
 
 export async function POST(req: Request) {
