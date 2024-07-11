@@ -1,0 +1,91 @@
+/* TimerStartScreen.module.css */
+@keyframes backgroundAnimation {
+  0% { background-color: #e0ffe0; }
+  50% { background-color: #ffebcd; }
+  100% { background-color: #e0ffe0; }
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #e0ffe0; /*背景色の指定 */
+  animation: backgroundAnimation 10s infinite; /* アニメーションの適用 */
+}
+
+.Header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.HeaderTitle{
+  font-size: 40px;
+  margin-left: 20px;
+}
+
+.HeaderButton{
+  height: 60px;
+  width: 90px;
+  margin-right: 20px;
+  margin-top: 20px;
+}
+
+.TaskTextComponents {
+  display: flex;
+  /* justify-content: space-between; */
+}
+
+.TaskText{
+  font-size: 60px;
+  text-align: center;
+  margin-top: 140px;
+}
+
+.TaskLogo{
+  font-size: 20px;
+  position: absolute;
+  left: 320px;
+  top: 280px;
+  border: 2px solid black;
+}
+
+.TimeGage {
+  text-align: center;
+  font-size: 40px;
+  border: 2px solid black;
+  width: 800px; /* 幅を200pxに設定 */
+  margin: 0 auto; /* 要素を水平中央揃えに設定 */
+  display: block; /* displayをblockに設定 */
+}
+
+.ButtonPlayBack{
+  height: 60px;
+  width: 150px;
+  font-size: 30px;
+  position: absolute;
+  left: 530px;
+  top: 500px;
+}
+
+.ButtonPause{
+  height: 60px;
+  width: 150px;
+  font-size: 18px;
+  position: absolute;
+  left: 750px;
+  top: 500px;
+}
+
+.ButtonTaskManegement{
+  background-color: aquamarine;
+  height: 80px;
+  width: 200px;
+  font-size: 20px;
+  position: absolute;
+  left: 600px;
+  top: 600px;
+}
+
+
+
+

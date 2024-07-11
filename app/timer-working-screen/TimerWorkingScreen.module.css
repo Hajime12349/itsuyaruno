@@ -1,0 +1,74 @@
+/* TimerStartScreen.module.css */
+@keyframes backgroundAnimation {
+    0% { background-color: #2899e5; } /* 青色 */
+    50% { background-color: #af76c7; } /* 紫色 */
+    100% { background-color: #a8b0b1; } /* 灰色 */
+  }
+  
+  .main {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #3498db;
+    animation: backgroundAnimation 10s infinite;
+  }
+  
+  .Header {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .HeaderTitle{
+    font-size: 40px;
+    margin-left: 20px;
+  }
+  
+  .HeaderButton{
+    height: 60px;
+    width: 90px;
+    margin-right: 20px;
+    margin-top: 20px;
+  }
+  
+  .TaskTextComponents {
+    display: flex;
+    /* justify-content: space-between; */
+  }
+  
+  .TaskText{
+    font-size: 60px;
+    text-align: center;
+    margin-top: 140px;
+  }
+  
+  .TaskLogo{
+    font-size: 20px;
+    position: absolute;
+    left: 320px;
+    top: 280px;
+    border: 2px solid black;
+  }
+  
+  .TimeGage {
+    text-align: center;
+    font-size: 40px;
+    border: 2px solid black;
+    width: 800px; /* 幅を200pxに設定 */
+    margin: 0 auto; /* 要素を水平中央揃えに設定 */
+    display: block; /* displayをblockに設定 */
+  }
+  
+  .ButtonPause{
+    height: 70px;
+    width: 170px;
+    font-size: 20px;
+    position: absolute;
+    left: 630px;
+    top: 500px;
+  }
+  
+  
+  
+  
+  
+  
