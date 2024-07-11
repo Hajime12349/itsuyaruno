@@ -1,6 +1,12 @@
 import { query } from '../../../lib/db';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
 
 export async function GET(req: Request) {
+    const session = await getServerSession(authOptions);
+    if (!session) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
+    }
     try {
         const { rows } = await query('SELECT * FROM tasks ORDER BY id ASC');
         return new Response(JSON.stringify(rows), { status: 200 });
