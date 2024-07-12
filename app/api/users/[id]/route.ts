@@ -23,6 +23,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
         );
         return new Response(JSON.stringify(rows[0]), { status: 200 });
     } catch (error) {
+        console.error('Database query failed:', error);
         return new Response(JSON.stringify({ error: 'Failed to update user' }), { status: 500 });
     }
 }
@@ -44,6 +45,7 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
         await query('DELETE FROM users WHERE id = $1', [id]);
         return new Response(null, { status: 204 });
     } catch (error) {
+        console.error('Database query failed:', error);
         return new Response(JSON.stringify({ error: 'Failed to delete user' }), { status: 500 });
     }
 }

@@ -13,6 +13,7 @@ export async function GET(req: Request) {
         const { rows } = await query('SELECT * FROM tasks WHERE user_id = $1 ORDER BY id ASC', [session_user_id]);
         return new Response(JSON.stringify(rows), { status: 200 });
     } catch (error) {
+        console.error('Database query failed:', error);
         return new Response(JSON.stringify({ error: 'Failed to fetch tasks' }), { status: 500 });
     }
 }
@@ -33,6 +34,7 @@ export async function POST(req: Request) {
         const { rows } = await query('INSERT INTO tasks (user_id, task_name, deadline, total_set, current_set, is_complete) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *', [user_id, task_name, deadline, total_set, current_set, is_complete]);
         return new Response(JSON.stringify(rows[0]), { status: 201 });
     } catch (error) {
+        console.error('Database query failed:', error);
         return new Response(JSON.stringify({ error: 'Failed to add task' }), { status: 500 });
     }
 }
