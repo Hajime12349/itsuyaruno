@@ -6,10 +6,10 @@ import './SettingsButton.css';
 import settingsIcon from '@/public/settings-icon.png';
 
 interface SettingsButtonProps {
-    onClick: () => void;
+    onClick?: () => void;
 }
 
-const SettingsButton: React.FC<SettingsButtonProps> = ({ onClick }) => {
+const SettingsButton: React.FC<SettingsButtonProps> = ({ onClick = () => { } }) => {
     return (
         <button className="settings-button" onClick={onClick}>
             <Image src={settingsIcon} alt="Settings" width={64} height={64} />
