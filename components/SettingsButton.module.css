@@ -1,11 +1,11 @@
-.settings-button {
+.settingsButton {
     background: none;
     border: none;
     padding: 0;
     cursor: pointer;
 }
 
-.settings-icon {
+.settingsIcon {
     width: 24px;
     height: 24px;
 }

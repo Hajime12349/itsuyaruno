@@ -94,7 +94,11 @@
     top: 650px;
   }
   
-  
+  .NavigateTaskButton{
+    position: absolute;
+    left: 100px;
+    top: 800px;
+  }
   
   
   

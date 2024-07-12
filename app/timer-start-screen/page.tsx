@@ -1,13 +1,12 @@
 import Image from "next/image";
 import styles from "./TimerStartScreen.module.css";
+import NavigateTaskButton from "@/components/NavigateTaskButton";
+import Header from '@/components/Header';
 
 export default function TimerStartScreen() {
   return (
     <main className={styles.main}>
-      <div className={styles.Header}>
-        <h1 className={styles.HeaderTitle}>いつやるの？</h1>
-        <button className={styles.HeaderButton}>設定ボタン</button>
-      </div>
+      <Header />
       <div className={styles.TaskTextComponets}>
         <h2 className={styles.TaskText}>レポート課題 25分</h2>
         <h2 className={styles.TaskLogo}>ロゴマーク</h2>
@@ -20,7 +19,7 @@ export default function TimerStartScreen() {
         <button className={styles.ButtonPause}>一時停止ボタン</button>
       </div>
       <div className={styles.NavigateTaskButton}>
-        <button className={styles.ButtonTaskManegement}>タスク画面</button>
+            <NavigateTaskButton />
       </div>
     </main>
   );
