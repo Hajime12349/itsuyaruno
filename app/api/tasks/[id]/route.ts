@@ -37,11 +37,13 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
 
     const { id } = params;
 
-    if (id !== session_user_id) {
-        return new Response(JSON.stringify({ error: 'Forbidden: user id does not match session user id' }), { status: 403 });
-    }
-
     try {
+        const { rows } = await query('SELECT user_id FROM tasks WHERE id = $1', [id]);
+        const user_id = rows[0].user_id;
+        if (user_id !== session_user_id) {
+            return new Response(JSON.stringify({ error: 'Forbidden: user id does not match session user id' }), { status: 403 });
+        }
+
         await query('DELETE FROM tasks WHERE id = $1', [id]);
         return new Response(null, { status: 204 });
     } catch (error) {
