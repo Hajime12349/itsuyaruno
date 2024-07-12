@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import React from 'react';
-import './SettingsButton.css';
+//import './SettingsButton.css';
 import settingsIcon from '@/public/settings-icon.png';
 
 interface SettingsButtonProps {
