@@ -7,7 +7,7 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = () => {
     return (
         <div className={styles.header}>
-            <div className={styles.title_frame}>
+            <div className={styles.titleFrame}>
                 <div className={styles.titleText}>
                     いつやるの?
                 </div>
