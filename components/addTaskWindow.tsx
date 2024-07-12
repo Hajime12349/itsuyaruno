@@ -2,6 +2,7 @@
 import { postAction } from "@/components/taskWindowAction";
 import { useState } from 'react';
 import { useForm } from 'react-hook-form'
+import styles from './taskWindow.module.css'
 
 const page = () => {
     const { register, handleSubmit, setValue, getValues } = useForm()
@@ -27,7 +28,10 @@ const page = () => {
 
     return (
     <div>
-        <h1>ここにヘッダー？</h1>
+        <div className="header">
+            <h1>タスク追加</h1>
+            <button className="close-button">×</button>
+        </div>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>
           <p>タイトル</p>
@@ -49,8 +53,8 @@ const page = () => {
           )}
         </div>
 
-        <button type="submit">追加</button>
-      </form>
+            <button type="submit">追加</button>
+        </form>
     </div>
     );
 
