@@ -2,6 +2,28 @@ import { query } from '../../../../lib/db';
 import { getServerSession } from 'next-auth';
 import { authOptions, getUserID } from '@/lib/auth';
 
+export async function GET(req: Request, { params }: { params: { id: string } }) {
+    const session = await getServerSession(authOptions);
+    const sessionUserId = await getUserID(session);
+    if (!sessionUserId) {
+        return new Response(JSON.stringify({ error: 'Unauthorized: session user does not have a valid id' }), { status: 401 });
+    }
+
+    const { id } = params;
+
+    try {
+        const { rows } = await query('SELECT * FROM tasks WHERE id = $1', [id]);
+        const task = rows[0];
+        if (task.userId !== sessionUserId) {
+            return new Response(JSON.stringify({ error: 'Forbidden: user id does not match session user id' }), { status: 403 });
+        }
+        return new Response(JSON.stringify(task), { status: 200 });
+    } catch (error) {
+        console.error('Database query failed:', error);
+        return new Response(JSON.stringify({ error: 'Failed to get task' }), { status: 500 });
+    }
+}
+
 export async function PUT(req: Request, { params }: { params: { id: string } }) {
     const session = await getServerSession(authOptions);
     const session_user_id = await getUserID(session);
