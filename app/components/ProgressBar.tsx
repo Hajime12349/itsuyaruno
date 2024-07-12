@@ -138,5 +138,6 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ isTask, progress, taskName })
     </div>
   );
 };
+//
 
 export default ProgressBar;
