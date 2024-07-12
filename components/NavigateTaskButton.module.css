@@ -1,0 +1,15 @@
+.navigateTaskButton {
+    font-family:  '游ゴシック', sans-serif; 
+    font-size: 10px;
+    background-color: aquamarine;
+    height: 80px;
+    width: 250px;
+    font-size: 20px;
+    position: absolute;
+}
+
+.text {
+    font-family:  '游ゴシック', sans-serif; 
+    font-size: 22px;
+    font-weight: 600;
+}

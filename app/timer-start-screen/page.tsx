@@ -1,5 +1,6 @@
 import Image from "next/image";
 import styles from "./TimerStartScreen.module.css";
+import NavigateTaskButton from "@/components/NavigateTaskButton";
 
 export default function TimerStartScreen() {
   return (
@@ -20,7 +21,7 @@ export default function TimerStartScreen() {
         <button className={styles.ButtonPause}>一時停止ボタン</button>
       </div>
       <div className={styles.NavigateTaskButton}>
-        <button className={styles.ButtonTaskManegement}>タスク画面</button>
+            <NavigateTaskButton />
       </div>
     </main>
   );

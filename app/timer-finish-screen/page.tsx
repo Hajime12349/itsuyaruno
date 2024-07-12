@@ -1,5 +1,6 @@
 import Image from "next/image";
 import styles from "./TimerFinishScreen.module.css";
+import NavigateTaskButton from "@/components/NavigateTaskButton";
 
 export default function TimerFinishScreen() {
   return (
@@ -19,9 +20,10 @@ export default function TimerFinishScreen() {
         <rect width="300" height="1000" style={{ fill: 'gray', strokeWidth: 3, stroke: 'black' }} />
         </svg>
       </div>
-      <div className={styles.Footer}>
-        <button className={styles.ButtonTaskManegement}>タスク画面</button>
+      <div className={styles.NavigateTaskButton}>
+        <NavigateTaskButton />
       </div>
     </main>
   );
 }
+
