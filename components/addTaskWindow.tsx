@@ -2,6 +2,8 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form'
 import styles from './taskWindow.module.css'
+import { Task, User } from '@/lib/entity'
+import { createTask } from '@/lib/db_api_wrapper'
 
 const page = () => {
     const { register, handleSubmit, setValue, getValues } = useForm()
@@ -9,9 +11,14 @@ const page = () => {
     // 新しい関数を定義
     const handleTaskData = (taskData: { task_name: string, total_set: number, deadline: string, current_set: number, is_complete: boolean }) => {
         // ここでtaskDataを使って何かを行う
-        console.log("handleTaskData:", taskData);
+        createTask(taskData).then(() => {
+            console.log("タスクを追加しました");
+        }).catch((error) => {
+            console.error("タスクの追加に失敗しました", error);
+        });
     }
 
+    //クリック時のアクション
     const onSubmit = (data: any) => {
         let { task_name, total_set, deadline } = data;
         let current_set = total_set; // current_setをtotal_setと同じに設定
@@ -24,8 +31,6 @@ const page = () => {
         
         const taskData = { task_name, total_set, deadline, current_set, is_complete };
         handleTaskData(taskData); // 新しい関数にデータを渡す
-        
-        console.log(taskData);
     }
     const today = new Date().toISOString().split('T')[0];
 
@@ -59,6 +64,7 @@ const page = () => {
 
         <div>
           <button type="button" onClick={() => setShowDetails(!showDetails)}>詳細設定</button>
+          //詳細設定の表示状態を管理するためのステート
           {showDetails && (
             <div>
               <p>期限</p>
