@@ -24,14 +24,10 @@ export async function POST(req: Request) {
     if (!session_user_id) {
         return new Response(JSON.stringify({ error: 'Unauthorized: session user does not have a valid id' }), { status: 401 });
     }
-    const { user_id, task_name, deadline, total_set, current_set, is_complete } = await req.json();
-
-    if (user_id !== session_user_id) {
-        return new Response(JSON.stringify({ error: 'Forbidden: the requested user does not match the session user' }), { status: 401 });
-    }
+    var { task_name, deadline, total_set, current_set, is_complete } = await req.json();
 
     try {
-        const { rows } = await query('INSERT INTO tasks (user_id, task_name, deadline, total_set, current_set, is_complete) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *', [user_id, task_name, deadline, total_set, current_set, is_complete]);
+        const { rows } = await query('INSERT INTO tasks (user_id, task_name, deadline, total_set, current_set, is_complete) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *', [session_user_id, task_name, deadline, total_set, current_set, is_complete]);
         return new Response(JSON.stringify(rows[0]), { status: 201 });
     } catch (error) {
         console.error('Database query failed:', error);
