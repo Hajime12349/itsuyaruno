@@ -1,5 +1,4 @@
 'use client'
-import { postAction } from "@/components/taskWindowAction";
 import { useState } from 'react';
 import { useForm } from 'react-hook-form'
 import styles from './taskWindow.module.css'
@@ -14,9 +13,9 @@ const page = () => {
     }
 
     const onSubmit = (data: any) => {
-        const { task_name, total_set, deadline } = data;
-        const current_set = total_set; // current_setをtotal_setと同じに設定
-        const is_complete = false; // is_completeをfalseに設定
+        let { task_name, total_set, deadline } = data;
+        let current_set = total_set; // current_setをtotal_setと同じに設定
+        let is_complete = false; // is_completeをfalseに設定
         
         if (!task_name || !total_set || !deadline) {
             alert("タイトルとセット数と期限を入力してください");
