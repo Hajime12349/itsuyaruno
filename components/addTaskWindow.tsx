@@ -28,9 +28,9 @@ const page = () => {
 
     return (
     <div>
-        <div className="header">
+        <div className={styles.header}>
             <h1>タスク追加</h1>
-            <button className="close-button">×</button>
+            <button className={styles.closeButton}>×</button>
         </div>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>
