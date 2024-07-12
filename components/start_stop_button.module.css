@@ -1,0 +1,34 @@
+.startStopButton {
+    background-color: black;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    color: white;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    outline: none;
+}
+
+.startStopIcon {
+    display: flex;
+}
+
+.stopIconInner {
+    width: 6px;
+    height: 22px;
+    background-color: white;
+    margin: 2px 5px;
+}
+
+.startIconInner {
+    width: 100%;
+    height: 100%;
+    border-left: 20px solid white;
+    border-top: 12px solid transparent;
+    border-bottom: 12px solid transparent;
+    margin-left: 3px;
+}

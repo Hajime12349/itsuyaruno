@@ -1,0 +1,23 @@
+.flexContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px 20px;
+  }
+
+  .title {
+    font-family:  '游ゴシック', sans-serif; 
+    margin: 0 0 0 0;
+    font-size: 25px;
+  }
+
+  .search {
+    width: 200px;
+    height: 30px;
+    font-size: 15px;
+    border-radius: 9px;
+    border: 1px solid #fbfafa;
+    background-color: #f2efef;
+    padding: 0 10px;
+    margin-left: 20px;
+  }
