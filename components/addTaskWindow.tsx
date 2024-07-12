@@ -36,7 +36,7 @@ const page = () => {
         <div>
           <p>セット数</p>
           <button type="button" onClick={setRandomTotalSet}>自動</button>
-          <input id="totalSet" {...register('totalSet')}/>
+          <input id="totalSet" type="number" min="1" step="1" defaultValue={1} {...register('totalSet')}/>
         </div>
 
         <div>
