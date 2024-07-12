@@ -9,7 +9,7 @@ const page = () => {
     const onSubmit = (data: any) => {
         const { taskName, totalSet } = data;
         if (!taskName || !totalSet) {
-            alert("taskNameとtotalSetを入力してください");
+            alert("タイトルとセット数を入力してください");
             return;
         }
         //onSubmitによってフォームが送信されたときにデータをコンソールにログ出力する。ほんとはここでバックエンドに送信したい。
