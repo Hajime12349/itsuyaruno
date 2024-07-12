@@ -40,18 +40,21 @@ export const authOptions: NextAuthOptions = {
     },
 };
 
-export async function getUserID(session?: Session | DefaultSession | null): Promise<string | undefined> {
+export function getUserID(session?: Session | DefaultSession | null): string {
+    // ユーザーIDをSessionから取得する
+    // セッションがない場合は空文字を返す
+
     if (!session) {
-        return undefined;
+        return "";
     }
     if (!session.user) {
-        return undefined;
+        return "";
     }
     if (!("id" in session.user)) {
-        return undefined;
+        return "";
     }
     if (typeof session.user.id !== "string") {
-        return undefined;
+        return "";
     }
     return session.user.id;
 }
