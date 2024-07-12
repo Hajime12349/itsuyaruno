@@ -1,4 +1,5 @@
-import type { NextAuthOptions } from "next-auth";
+import type { NextAuthOptions, Session, DefaultSession } from "next-auth";
+import { getServerSession } from "next-auth/next";
 import GoogleProvider from "next-auth/providers/google";
 
 export const authOptions: NextAuthOptions = {
@@ -38,3 +39,22 @@ export const authOptions: NextAuthOptions = {
         },
     },
 };
+
+export function getUserID(session?: Session | DefaultSession | null): string {
+    // ユーザーIDをSessionから取得する
+    // セッションがない場合は空文字を返す
+
+    if (!session) {
+        return "";
+    }
+    if (!session.user) {
+        return "";
+    }
+    if (!("id" in session.user)) {
+        return "";
+    }
+    if (typeof session.user.id !== "string") {
+        return "";
+    }
+    return session.user.id;
+}
