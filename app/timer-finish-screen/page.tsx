@@ -1,14 +1,12 @@
 import Image from "next/image";
 import styles from "./TimerFinishScreen.module.css";
 import NavigateTaskButton from "@/components/NavigateTaskButton";
+import Header from '@/components/Header';
 
 export default function TimerFinishScreen() {
   return (
     <main className={styles.main}>
-      <div className={styles.Header}>
-        <h1 className={styles.HeaderTitle}>いつやるの？</h1>
-        <button className={styles.HeaderButton}>設定ボタン</button>
-      </div>
+      <Header />  
       <div className={styles.FinishTexts}>
         <h2 className={styles.TaskFinishText}>休憩が終了しました！</h2>
         <h2 className={styles.TaskChangeText}>タスクを変更しますか？</h2>
