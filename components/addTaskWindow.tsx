@@ -6,24 +6,39 @@ import styles from './taskWindow.module.css'
 
 const page = () => {
     const { register, handleSubmit, setValue, getValues } = useForm()
+    
+    // 新しい関数を定義
+    const handleTaskData = (taskData: { task_name: string, total_set: number, deadline: string, current_set: number, is_complete: boolean }) => {
+        // ここでtaskDataを使って何かを行う
+        console.log("handleTaskData:", taskData);
+    }
+
     const onSubmit = (data: any) => {
-        const { taskName, totalSet } = data;
-        if (!taskName || !totalSet) {
-            alert("タイトルとセット数を入力してください");
+        const { task_name, total_set, deadline } = data;
+        const current_set = total_set; // current_setをtotal_setと同じに設定
+        const is_complete = false; // is_completeをfalseに設定
+        
+        if (!task_name || !total_set || !deadline) {
+            alert("タイトルとセット数と期限を入力してください");
             return;
         }
-        //onSubmitによってフォームが送信されたときにデータをコンソールにログ出力する。ほんとはここでバックエンドに送信したい。
-        console.log(data);
+        
+        const taskData = { task_name, total_set, deadline, current_set, is_complete };
+        handleTaskData(taskData); // 新しい関数にデータを渡す
+        
+        console.log(taskData);
     }
     const today = new Date().toISOString().split('T')[0];
 
     // 詳細設定の表示状態を管理するためのステート
     const [showDetails, setShowDetails] = useState(false);
 
+
+
     // totalSetをランダムに設定する関数
     const setRandomTotalSet = () => {
         const randomValue = Math.floor(Math.random() * 3) + 1;
-        setValue('totalSet', randomValue);
+        setValue('total_set', randomValue);
     };
 
     return (
@@ -35,12 +50,12 @@ const page = () => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>
           <p>タイトル</p>
-          <input id="taskName" {...register('taskName')}/>
+          <input id="task_name" {...register('task_name')}/>
         </div>
         <div>
           <p>セット数</p>
           <button type="button" onClick={setRandomTotalSet}>自動</button>
-          <input id="totalSet" type="number" min="1" step="1" defaultValue={1} {...register('totalSet')}/>
+          <input id="total_set" type="number" min="1" step="1" defaultValue={1} {...register('total_set')}/>
         </div>
 
         <div>
