@@ -50,7 +50,9 @@ const page = ({ task_name, total_set, deadline, current_set, is_complete }: { ta
   <div className="App">
       <div className={styles.header}>
           <h1>タスクを編集</h1>
+          <button className={styles.trashButton}>削除</button>
           <button className={styles.closeButton}>×</button>
+
       </div>
     <form onSubmit={handleSubmit(onSubmit)}>
       <div>

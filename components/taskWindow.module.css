@@ -13,3 +13,11 @@
     cursor: pointer;
     margin-left: auto; /* ボタンを右端に配置 */
 }
+
+.trashButton {
+    background: none;
+    border: black;
+    font-size: 24px;
+    cursor: pointer;
+    margin-left: auto; /* ボタンを右端に配置 */
+}
