@@ -1,15 +1,15 @@
 "use client";
-
+import ProgressBar from "./ProgressBar";
 import React from "react";
 import styles from "./start_stop_button.module.css";
 
-const StopButton: React.FC = () => {
-    
-    const click = () => {
-    };
+interface ButtonProps{
+    onClick: () => void;
+}
 
+const StartButton: React.FC<ButtonProps> = ({onClick}) => {
     return (
-        <button className={styles.startStopButton} onClick={click}>
+        <button className={styles.startStopButton} onClick={onClick}>
             <div className={styles.startStopIcon}>
                 <div className={styles.startIconInner}></div>
             </div>
@@ -17,4 +17,4 @@ const StopButton: React.FC = () => {
     );
 }
 
-export default StopButton;
+export default StartButton;
