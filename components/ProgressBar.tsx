@@ -1,7 +1,7 @@
 "use client";
 import React, { useRef, useEffect, useState } from 'react';
-import StartButton from './start_button';
-import StopButton from './stop_button';
+import StartButton from './StartButton';
+import StopButton from './StopButton';
 import styles from "./ProgressBar.module.css";
 import { getUser, getTask, updateTask } from "@/lib/db_api_wrapper";
 let timer: NodeJS.Timeout | null = null;
