@@ -11,6 +11,8 @@ const AddTaskWindow = ({setIsActive}:any) => {
   const { register, handleSubmit, setValue, getValues } = useForm()
   // 詳細設定の表示状態を管理するためのステート
   const [showDetails, setShowDetails] = useState(false);
+  // 追加ボタンをクリックしたかどうか
+  const [disableAddButton, setDIsableAddButton] = useState(false);
   // ルーターを取得
   const router = useRouter()
 
@@ -20,7 +22,7 @@ const AddTaskWindow = ({setIsActive}:any) => {
      let current_set = total_set; // current_setをtotal_setと同じに設定
     let is_complete = false; // is_completeをfalseに設定
         
-    if (!task_name || !total_set || !deadline) {
+    if (!task_name || !total_set ) {
       alert("タイトルとセット数と期限を入力してください");
       return;
     }
@@ -30,9 +32,11 @@ const AddTaskWindow = ({setIsActive}:any) => {
   }
   // 受け渡し用関数
   const handleTaskData = (taskData: { task_name: string, total_set: number, deadline: string, current_set: number, is_complete: boolean }) => {
+    setDIsableAddButton(true)
     createTask(taskData).then(() => {
       console.log("タスクを追加しました");
       setIsActive(false)
+      window.location.reload();
 
     }).catch((error) => {
       console.error("タスクの追加に失敗しました", error);
@@ -80,7 +84,7 @@ const AddTaskWindow = ({setIsActive}:any) => {
         )}
       </div>
 
-          <button type="submit">追加</button>
+          <button disabled={disableAddButton} type="submit">追加</button>
       </form>
   </div>
   );
