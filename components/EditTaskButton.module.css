@@ -1,0 +1,12 @@
+.editButton {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #dad6d6;
+    border: none;
+    cursor: pointer;
+}
+
+.editButton:hover {
+    background-color: #dad6d6;
+}

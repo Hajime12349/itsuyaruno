@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import TaskPanel from './TaskPanel';
 import { Task } from '@/lib/entity';
 import styles from './TaskColumn.module.css';
+import AddTaskButton from './AddTaskButton';
 import { useState } from 'react';
 
 interface TaskColumnProps {
@@ -23,12 +24,22 @@ const TaskColumn = ({ tasks }: TaskColumnProps) => {
         }
     };
 
+    const handleAddTaskClick = () => {
+        console.log("Add task button clicked");
+    }
+
     return (
-        <div className={styles.taskColumn}>
-            {tasks.map((task) => (
+        <main>
+            <div className={styles.taskColumn}>
+                <AddTaskButton onClick={handleAddTaskClick} />
+              {tasks.map((task) => (
+
                 <TaskPanel key={task.id} task={task} isSelected={selectedTaskId === task.id} onClick={() => handleClick(task.id)} />
             ))}
-        </div>
+            </div>
+            <div className={styles.taskWindow}>
+            </div>
+        </main>
     );
 };
 
