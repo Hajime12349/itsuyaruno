@@ -16,7 +16,7 @@ function LoginButton() {
     return (
         <button onClick={() => {
             if (session.status === "authenticated") {
-                router.push(callbackUrl);
+                router.push("/loggedin");
             } else {
                 signIn("google", { callbackUrl: "/loggedin" });
             }
