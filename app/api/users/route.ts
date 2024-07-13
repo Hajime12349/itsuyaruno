@@ -30,7 +30,12 @@ export async function POST(req: Request) {
         return new Response(JSON.stringify({ error: 'Unauthorized: session user does not have a valid id' }), { status: 401 });
     }
 
-    const { id, display_name, icon_path, current_task, current_task_time } = await req.json();
+    var { id, display_name, icon_path, current_task, current_task_time } = await req.json();
+
+    if (!id) {
+        id = session_user_id;
+    }
+
     if (id !== session_user_id) {
         return new Response(JSON.stringify({ error: 'Forbidden: user id does not match session user id' }), { status: 403 });
     }
