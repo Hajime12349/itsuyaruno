@@ -29,7 +29,6 @@ function TaskSuggestionButton() {
     <div>
       {randomTask ? (
         <>
-          <p>{randomTask.task_name}</p>
           <TaskColumn tasks={tasks} />
         </>
       ) : (
