@@ -9,7 +9,7 @@ let timer: NodeJS.Timeout | null = null;
 
 //形を定義するのがここ
 interface ProgressBarProps {
-  task_name: string;
+  taskName: string;
   isTask: boolean;
   progress: number;
 }
