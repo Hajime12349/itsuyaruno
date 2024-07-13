@@ -2,17 +2,14 @@ import Image from "next/image";
 import styles from "./TimerStartScreen.module.css";
 import NavigateTaskButton from "@/components/NavigateTaskButton";
 import Header from '@/components/Header';
+import ProgressBar from '@/components/ProgressBar';
 
 export default function TimerStartScreen() {
   return (
     <main className={styles.main}>
       <Header />
       <div className={styles.TaskTextComponets}>
-        <h2 className={styles.TaskText}>レポート課題 25分</h2>
-        <h2 className={styles.TaskLogo}>ロゴマーク</h2>
-      </div>
-      <div className={styles.ProgressBarframe}>
-        <h2 className={styles.TimeGage}>時間ゲージ</h2>
+      <ProgressBar taskName="レポート課題" isTask={true} progress={10} />
       </div>
       <div className={styles.TimeButtons}>
         <button className={styles.ButtonPlayBack}>再生</button>
