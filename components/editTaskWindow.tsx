@@ -11,7 +11,7 @@ const page = ({ task_name, total_set, deadline, current_set, is_complete }: { ta
   //フォームの値を管理するためのステート
   const { register, handleSubmit, setValue, getValues } = useForm()
   // 詳細設定の表示状態を管理するためのステート
-  const [showDetails, setShowDetails] = useState(false);
+  const [showDetails, setShowDetails] = useState(true);
 
   
   //クリック時のアクション
