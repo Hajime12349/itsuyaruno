@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import SignoutButton from "@/components/signout_button";
-import SigninButton from "@/components/signin_button";
+import SignoutButton from "@/components/SignOutButton";
+import SigninButton from "@/components/SignInButton";
 
 export default async function Profile() {
   const session = await getServerSession(authOptions);

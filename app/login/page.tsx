@@ -3,14 +3,20 @@
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { NextAuthProvider } from "../provider";
 
 function LoginButton() {
-    const searchParams = useSearchParams();
-    // ログイン後に遷移するページ
-    const callbackUrl = searchParams.get("callbackUrl") || "/profile";
+    const router = useRouter();
+    const session = useSession();
+
+    if (session.status === "authenticated") {
+        router.replace("/loggedin");
+    }
 
     return (
-        <button onClick={() => signIn("google", { callbackUrl })}>
+        <button onClick={() => signIn("google", { callbackUrl: "/loggedin" })}>
             Login With Google
         </button>
     );
@@ -18,8 +24,10 @@ function LoginButton() {
 
 export default function Login() {
     return (
-        <Suspense fallback={<div>Loading...</div>}>
-            <LoginButton />
-        </Suspense>
+        <NextAuthProvider>
+            <Suspense fallback={<div>Loading...</div>}>
+                <LoginButton />
+            </Suspense>
+        </NextAuthProvider>
     );
 }

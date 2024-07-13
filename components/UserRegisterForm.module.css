@@ -1,0 +1,81 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+    /* 背景色を変更 */
+    font-family: Arial, sans-serif;
+    /* フォントを変更 */
+}
+
+.form {
+    background-color: #ffffff;
+    /* フォームの背景色を白に設定 */
+    padding: 2rem;
+    /* パディングを追加 */
+    border-radius: 8px;
+    /* 角を丸くする */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    /* シャドウを追加 */
+    max-width: 400px;
+    /* 最大幅を設定 */
+    width: 100%;
+    /* 幅を100%に設定 */
+}
+
+.h1 {
+    text-align: center;
+    /* 見出しを中央揃え */
+    margin-bottom: 1rem;
+    /* 下マージンを追加 */
+}
+
+.label {
+    display: block;
+    /* ラベルをブロック表示 */
+    margin-bottom: 0.5rem;
+    /* 下マージンを追加 */
+}
+
+.input {
+    width: 100%;
+    /* 入力フィールドの幅を100%に設定 */
+    padding: 0.5rem;
+    /* パディングを追加 */
+    margin-bottom: 1rem;
+    /* 下マージンを追加 */
+    border: 1px solid #ccc;
+    /* 枠線を設定 */
+    border-radius: 4px;
+    /* 角を丸くする */
+    box-sizing: border-box;
+    /* ボックスサイズを調整 */
+}
+
+.button {
+    display: block;
+    /* ボタンをブロック表示 */
+    width: 100%;
+    /* 幅を100%に設定 */
+    padding: 0.75rem;
+    /* パディングを追加 */
+    background-color: #007bff;
+    /* 背景色を設定 */
+    color: #ffffff;
+    /* 文字色を白に設定 */
+    border: none;
+    /* 枠線をなしに設定 */
+    border-radius: 4px;
+    /* 角を丸くする */
+    cursor: pointer;
+    /* カーソルをポインターに変更 */
+    font-size: 1rem;
+    /* フォントサイズを設定 */
+}
+
+.button:hover {
+    background-color: #0056b3;
+    /* ホバー時の背景色を変更 */
+}
