@@ -1,10 +1,9 @@
 "use client";
 import React, { useRef, useEffect, useState } from 'react';
-import StartButton from './start_button';
-import StopButton from './stop_button';
+import StartButton from './StartButton';
+import StopButton from './StopButton';
 import styles from "./ProgressBar.module.css";
-import { getTasks } from "@/lib/db_api_wrapper";
-import { Task } from "@/lib/entity";
+import { getUser, getTask, updateTask } from "@/lib/db_api_wrapper";
 let timer: NodeJS.Timeout | null = null;
 
 //形を定義するのがここ
@@ -34,10 +33,19 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ isTask, progress, taskName })
       if (prevCount <= 1) {
         if (!redirected) {
           if (window.location.pathname === '/timer-working-screen') {
-            window.location.href = '/timer-break-screen'; // カウントが0になったらtimer-break-screenに移動する
+            getUser().then((user) => {
+              if (user.current_task) {
+                getTask(user.current_task).then((task) => {
+                  task.current_set += 1;
+                  updateTask(task).then(() => {
+                    window.location.href = '/timer-break-screen'; // カウントが0になったらtimer-break-screenに移動する
+                  });
+                });
+              }
+            });
           }
           else if (window.location.pathname === '/timer-break-screen') {
-            window.location.href = '/timer-finish-screen'; // カウントが0になったらtimer-break-screenに移動する
+            window.location.href = '/timer-finish-screen'; // カウントが0になったらtimer-finish-screenに移動する
           }
           setRedirected(true);
         }
