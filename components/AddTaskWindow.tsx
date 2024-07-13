@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react';
 import { useForm } from 'react-hook-form'
-import styles from './taskWindow.module.css'
+import styles from './TaskWindow.module.css'
 import { Task, User } from '@/lib/entity'
 import { createTask } from '@/lib/db_api_wrapper'
 import { useRouter } from 'next/navigation'
