@@ -2,7 +2,7 @@
 
 import { signIn } from "next-auth/react";
 
-export default function SignOutButton() {
+export default function SignInButton() {
     return (
         <button onClick={() => signIn("google")}>
             Login With Google
