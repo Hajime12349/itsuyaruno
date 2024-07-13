@@ -1,9 +1,10 @@
+"use client";
 import { NextAuthProvider } from "../provider";
 import { useSession } from "next-auth/react";
 import SignoutButton from "@/components/SignOutButton";
 import SigninButton from "@/components/SignInButton";
 
-export default async function Profile() {
+export default function Profile() {
   const { data: session } = useSession();
   const user = session?.user;
   let identifier = "";
