@@ -13,7 +13,7 @@ export default function Profile() {
   }
 
   return (
-    <>
+    <NextAuthProvider>
       <p>Profile Page</p>
       {!user ? (
         <SigninButton />
@@ -34,6 +34,6 @@ export default function Profile() {
           <SignoutButton />
         </>
       )}
-    </>
+    </NextAuthProvider>
   );
 }
