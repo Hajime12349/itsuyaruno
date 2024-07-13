@@ -1,20 +1,23 @@
 .taskColumn {
     width: 350px;
-    height: 500px;
+    height: 700px;
     background-color: rgb(248, 245, 245);
-    border-radius: 20px;
+    border-radius: 30px;
     display: flex;
     flex-direction: column;
     gap: 10px;
     box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.1);
     overflow-y: scroll;
     /* 縦方向にスクロールを許可 /
-    border: 1px solid #ccc; / ボックスの枠線を設定 /
-    padding: 10px; / ボックスの内側の余白を設定 */
-    margin: 6px 5px;
+    border: 1px solid #4d4a4a; / ボックスの枠線を設定 /
+    padding-left: 30px; / ボックスの内側の余白を設定 */
+    padding-top: 30px;
+    margin: 10px 5px;
 }
 
 .scrollContainer {
     display: flex;
     flex-direction: row;
+    margin-top: 30px;
+
 }

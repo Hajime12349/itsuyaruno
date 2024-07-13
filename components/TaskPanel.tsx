@@ -3,6 +3,7 @@ import React, { PureComponent } from 'react';
 import styles from './TaskPanel.module.css';
 import { Task } from '@/lib/entity';
 import TaskStartButton from './TaskStartButton';
+import EditTaskButton from './EditTaskButton';
 import { useState } from "react";
 
 
@@ -17,6 +18,10 @@ const TaskPanel: React.FC<TaskPanelProps> = ({ task, isSelected, onClick }) => {
   // 残り日数を計算
   const remainingDays = Math.ceil((Date.parse(task.deadline) - Date.now()) / (1000 * 60 * 60 * 24));
 
+  const EditTaskWindow = () => {
+    console.log("EditTaskWindow");
+  }
+
   return (
     <div className={styles.content} onClick={onClick}>
       <h2 className={styles.title}>{task.task_name}</h2>
@@ -26,6 +31,7 @@ const TaskPanel: React.FC<TaskPanelProps> = ({ task, isSelected, onClick }) => {
       </div>
       <div className={isSelected ? styles.buttonContainer : styles.buttonContainerHidden}>
         <TaskStartButton task={task} />
+        <EditTaskButton onClick={EditTaskWindow} />
       </div>
     </div>
   );

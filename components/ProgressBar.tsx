@@ -158,7 +158,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ isTask, progress, taskName })
   return (
     <div>
       <div className={styles.TaskTextComponets}>
-        <h2 className={styles.TaskText}>レポート課題 25分</h2>
+        <h2 className={styles.TaskText}> {taskName}</h2>
         <h2 className={styles.TaskLogo}>ロゴマーク</h2>
       </div>
       <canvas ref={canvasRef} id="canvas-in" width="100" height="150"></canvas>
