@@ -10,9 +10,11 @@ import { NextAuthProvider } from "../provider";
 function LoginButton() {
     const router = useRouter();
     const session = useSession();
+    const searchParams = useSearchParams();
+    const callbackUrl = searchParams.get("callbackUrl") || "/loggedin";
 
     if (session.status === "authenticated") {
-        router.replace("/loggedin");
+        router.push(callbackUrl);
     }
 
     return (
