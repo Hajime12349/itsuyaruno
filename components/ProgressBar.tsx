@@ -2,6 +2,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import StartButton from './start_button';
 import StopButton from './stop_button';
+import styles from "./ProgressBar.module.css";
 import { getTasks } from "@/lib/db_api_wrapper";
 import { Task } from "@/lib/entity";
 let timer: NodeJS.Timeout | null = null;
@@ -145,9 +146,13 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ isTask, progress, taskName })
     };
   }, []);
 
+  //<h1 style={{ fontFamily: "sans-serif", fontWeight: 300, fontSize: "80px", textAlign: "center", marginTop: "100px" }}>{taskName}</h1>
   return (
     <div>
-      <h1 style={{ fontFamily: "sans-serif", fontWeight: 300, fontSize: "80px", textAlign: "center", marginTop: "100px" }}>{taskName}</h1>
+      <div className={styles.TaskTextComponets}>
+        <h2 className={styles.TaskText}>レポート課題 25分</h2>
+        <h2 className={styles.TaskLogo}>ロゴマーク</h2>
+      </div>
       <canvas ref={canvasRef} id="canvas-in" width="100" height="150"></canvas>
       <div style={{ display: "flex", justifyContent: "center", marginTop: "40px" }}>
         {startFlg ? <StartButton onClick={handleStartButtonClick} /> : <StopButton onClick={countStop} />}
