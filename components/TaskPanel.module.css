@@ -1,4 +1,5 @@
 .content {
+<<<<<<< HEAD
     border-radius: 10px;
     background-color: skyblue;
     padding: 20px;
@@ -24,3 +25,40 @@
     align-items: center;
     margin-bottom: 2px;
   }
+=======
+  border-radius: 10px;
+  background-color: skyblue;
+  padding: 20px;
+  width: 300px;
+  height: auto;
+  box-sizing: border-box;
+}
+
+.title {
+  font-family: '游ゴシック', sans-serif;
+  margin: 0 0 10px 0;
+  font-size: 20px;
+}
+
+.text {
+  font-family: '游ゴシック', sans-serif;
+  margin: 0 0 10px 0;
+}
+
+.flexContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2px;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.buttonContainerHidden {
+  display: none;
+}
+>>>>>>> master

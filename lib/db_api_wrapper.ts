@@ -83,6 +83,14 @@ export async function registerUser(user: User): Promise<User> {
  * @returns 更新されたユーザーをPromiseとして返します。
  */
 export async function updateUser(user: User): Promise<User> {
+    if (!(user.id)) {
+        const response = await fetch('/api/users', {
+            method: 'PUT',
+            body: JSON.stringify(user),
+        });
+        return await response.json() as Promise<User>;
+    }
+
     const response = await fetch(`/api/users/${user.id}`, {
         method: 'PUT',
         body: JSON.stringify(user),
