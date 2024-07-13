@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation'
 
 
 
-const page = ({ task_name, total_set, deadline, current_set, is_complete }: { task_name: string, total_set: number, deadline: string, current_set: number, is_complete: boolean }) => {
+const EditTaskWindow = ({ task_name, total_set, deadline, current_set, is_complete }: { task_name: string, total_set: number, deadline: string, current_set: number, is_complete: boolean }) => {
   //フォームの値を管理するためのステート
   const { register, handleSubmit, setValue, getValues } = useForm()
   // 詳細設定の表示状態を管理するためのステート
@@ -90,4 +90,4 @@ const page = ({ task_name, total_set, deadline, current_set, is_complete }: { ta
   );
 };
 
-export default page;
+export default EditTaskWindow;
