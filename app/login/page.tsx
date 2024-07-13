@@ -13,12 +13,14 @@ function LoginButton() {
     const searchParams = useSearchParams();
     const callbackUrl = searchParams.get("callbackUrl") || "/loggedin";
 
-    if (session.status === "authenticated") {
-        router.push(callbackUrl);
-    }
-
     return (
-        <button onClick={() => signIn("google", { callbackUrl: "/loggedin" })}>
+        <button onClick={() => {
+            if (session.status === "authenticated") {
+                router.push(callbackUrl);
+            } else {
+                signIn("google", { callbackUrl: "/loggedin" });
+            }
+        }}>
             Login With Google
         </button>
     );
