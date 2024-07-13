@@ -3,10 +3,11 @@ import { User, Task } from '@/lib/entity';
 import { getTasks } from '@/lib/db_api_wrapper';
 import styles from './TaskSuggestionButton.module.css';
 import TaskColumn from './TaskColumn';
+import { randomInt } from 'crypto';
 
 function TaskSuggestionButton() {
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [randomTask, setRandomTask] = useState<Task | null>(null);
+  const [randomTasks, setRandomTasks] = useState<Task[]>([]);
 
   useEffect(() => {
     getTasks()
@@ -14,9 +15,10 @@ function TaskSuggestionButton() {
         setTasks(tasks);
         if (tasks.length > 0) {
           //タスクがある場合はランダムにタスクを３つまで選択
-          const firstThreeTasks = tasks.slice(0, 3);
-          const randomIndex = Math.floor(Math.random() * firstThreeTasks.length);
-          setRandomTask(firstThreeTasks[randomIndex]);
+          const shuffledTasks = tasks.sort(() => 0.5 - Math.random());
+          const selectedTasks = shuffledTasks.slice(0, 3);
+          //ランダムに選択したタスクをセット
+          setRandomTasks(selectedTasks);
         } else {
         }
       })
@@ -27,9 +29,9 @@ function TaskSuggestionButton() {
 
   return (
     <div>
-      {randomTask ? (
+      {randomTasks.length > 0 ? (
         <>
-          <TaskColumn tasks={tasks} />
+          <TaskColumn tasks={randomTasks} />
         </>
       ) : (
         <p className={styles.TaskNotFound}>タスクが見つかりませんでした</p>
