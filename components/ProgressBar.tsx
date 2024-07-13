@@ -1,6 +1,10 @@
-"use client";  
+"use client";
 import React, { useRef, useEffect, useState } from 'react';
-
+import StartButton from './start_button';
+import StopButton from './stop_button';
+import styles from "./ProgressBar.module.css";
+import { getTasks } from "@/lib/db_api_wrapper";
+import { Task } from "@/lib/entity";
 let timer: NodeJS.Timeout | null = null;
 
 //形を定義するのがここ
@@ -21,22 +25,21 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ isTask, progress, taskName })
   const [count, setCount] = useState(progress);
   //停止か再開かを判別
   const [startFlg, setStartFlg] = useState(true);
+  // リダイレクトを一度だけ行うためのフラグ
+  const [redirected, setRedirected] = useState(false);
 
-  //const decideTaskOrBreak = () => {
-  //  if (isTask) {
-  //    INITIAL_PROGRESS = 1500;
-  //  } else {
-  //    INITIAL_PROGRESS = 30;
-  //  }
-  //}
-
-
-  //タイマーのカウントを増やす関数。インクリメント関数というらしい。
+  //タイマーのカウントを減らす関数。インクリメント関数というらしい。
   const countIncrement = () => {
     setCount((prevCount) => {
       if (prevCount <= 1) {
-        if (timer !== null) {
-          clearInterval(timer);
+        if (!redirected) {
+          if (window.location.pathname === '/timer-working-screen') {
+            window.location.href = '/timer-break-screen'; // カウントが0になったらtimer-break-screenに移動する
+          }
+          else if (window.location.pathname === '/timer-break-screen') {
+            window.location.href = '/timer-finish-screen'; // カウントが0になったらtimer-break-screenに移動する
+          }
+          setRedirected(true);
         }
         return 0;
       }
@@ -77,10 +80,18 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ isTask, progress, taskName })
     setStartFlg(false);
   };
 
+  //もしtimer-start-screenにいたら、スタートボタンを押した時にtimer-working-screenに移動する。
+  const handleStartButtonClick = () => {
+    if (window.location.pathname === '/timer-start-screen') {
+      window.location.href = '/timer-working-screen'; // 特定のURLに移動する
+    } else {
+      countStart();
+    }
+  };
 
-//---------------------------------------------------------------------------------------
-//ここからキャンバスの描画
-//---------------------------------------------------------------------------------------
+  //---------------------------------------------------------------------------------------
+  //ここからキャンバスの描画
+  //---------------------------------------------------------------------------------------
 
   //canvasを定義する
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -93,7 +104,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ isTask, progress, taskName })
       canvas.height = 100;
       const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 
-      const rectWidth = window.innerWidth * 0.7;
+      const rectWidth = window.innerWidth * 0.4;
       const rectHeight = 100;
       const x = (canvas.width - rectWidth) / 2;
       const y = (canvas.height - rectHeight) / 2;
@@ -101,11 +112,11 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ isTask, progress, taskName })
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       ctx.strokeStyle = "black";
-      ctx.lineWidth = 2;
+      ctx.lineWidth = 3;
       ctx.strokeRect(x, y, rectWidth, rectHeight);
 
-      ctx.fillStyle = "green";
-      ctx.fillRect(x + 2, y + 2, (rectWidth - 4) * (count / 1500), rectHeight - 4);
+      ctx.fillStyle = "skyblue";
+      ctx.fillRect(x + 2, y + 2, (rectWidth - 4) * (count / progress), rectHeight - 4);
     }
   };
 
@@ -123,21 +134,31 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ isTask, progress, taskName })
     updateCanvasSize();
   }, [count]);
 
+  // 特定のURLにいるときにカウントを自動的にスタートする
+  useEffect(() => {
+    if (window.location.pathname === '/timer-working-screen' || window.location.pathname === '/timer-break-screen') {
+      countStart();
+    }
+    return () => {
+      if (timer !== null) {
+        clearInterval(timer);
+      }
+    };
+  }, []);
+
+  //<h1 style={{ fontFamily: "sans-serif", fontWeight: 300, fontSize: "80px", textAlign: "center", marginTop: "100px" }}>{taskName}</h1>
   return (
     <div>
-      <div>
-        <p style={{ fontSize: "24px" }}>いつやるの？</p>
+      <div className={styles.TaskTextComponets}>
+        <h2 className={styles.TaskText}>レポート課題 25分</h2>
+        <h2 className={styles.TaskLogo}>ロゴマーク</h2>
       </div>
-
-      <h1 style={{ fontSize: "80px" , textAlign: "center", marginTop: "100px" }}>{taskName}</h1>
       <canvas ref={canvasRef} id="canvas-in" width="100" height="150"></canvas>
-      <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
-        {startFlg ? <button onClick={countStart}>カウント開始</button> : <button onClick={countStop}>カウント停止</button>}
+      <div style={{ display: "flex", justifyContent: "center", marginTop: "40px" }}>
+        {startFlg ? <StartButton onClick={handleStartButtonClick} /> : <StopButton onClick={countStop} />}
       </div>
-      <h3>{count}</h3>
     </div>
   );
 };
-//
 
 export default ProgressBar;
