@@ -107,6 +107,23 @@ const CRUDApiWrapperTestComponent = () => {
             });
     }
 
+    function onStartTask(id?: number) {
+        if (!id) {
+            console.error('Failed to start task');
+            return;
+        }
+        updateUser({ current_task: id, current_task_time: new Date().toISOString() }).then(() => {
+            getUser()
+                .then(setUser)
+                .catch((error) => {
+                    console.error('Failed to get user:', error);
+                });
+        })
+            .catch((error) => {
+                console.error('Failed to start task:', error);
+            });
+    }
+
     // ユーザー情報を表示するTSX要素
     var user_info_tsx = (
         <div>
@@ -131,7 +148,7 @@ const CRUDApiWrapperTestComponent = () => {
     );
 
     // DBにユーザーが存在しない場合は、ユーザーを登録するボタンを表示する
-    if (!user) {
+    if (!(user?.id)) {
         user_info_in_db_tsx = (
             <div>
                 <h1>ユーザー情報 in DB</h1>
@@ -181,6 +198,9 @@ const CRUDApiWrapperTestComponent = () => {
                             <button onClick={() => {
                                 onUpdateTask({ ...task, task_name: '更新されたタスク' });
                             }}>タスクの名前を更新</button>
+                            <button onClick={() => {
+                                onStartTask(task.id);
+                            }}>このタスクを開始</button>
                         </div>
                     );
                 })}
