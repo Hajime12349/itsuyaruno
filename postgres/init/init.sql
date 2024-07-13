@@ -20,6 +20,6 @@ CREATE TABLE task_tags (
     tag_name TEXT NOT NULL,
     task_id INT NOT NULL,
     PRIMARY KEY (task_id, tag_name),
-    FOREIGN KEY (tag_name) REFERENCES tags(tag_name),
-    FOREIGN KEY (task_id) REFERENCES tasks(id)
+    FOREIGN KEY (tag_name) REFERENCES tags(tag_name) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE
 );
