@@ -1,10 +1,10 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { NextAuthProvider } from "../provider";
+import { useSession } from "next-auth/react";
 import SignoutButton from "@/components/SignOutButton";
 import SigninButton from "@/components/SignInButton";
 
 export default async function Profile() {
-  const session = await getServerSession(authOptions);
+  const { data: session } = useSession();
   const user = session?.user;
   let identifier = "";
   if (user && "id" in user) {
