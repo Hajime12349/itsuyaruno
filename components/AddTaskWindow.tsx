@@ -6,7 +6,7 @@ import { Task, User } from '@/lib/entity'
 import { createTask } from '@/lib/db_api_wrapper'
 import { useRouter } from 'next/navigation'
 
-const AddTaskWindow = () => {
+const AddTaskWindow = ({setIsActive}:any) => {
   // フォームの値を管理するためのステート
   const { register, handleSubmit, setValue, getValues } = useForm()
   // 詳細設定の表示状態を管理するためのステート
@@ -32,6 +32,8 @@ const AddTaskWindow = () => {
   const handleTaskData = (taskData: { task_name: string, total_set: number, deadline: string, current_set: number, is_complete: boolean }) => {
     createTask(taskData).then(() => {
       console.log("タスクを追加しました");
+      setIsActive(false)
+
     }).catch((error) => {
       console.error("タスクの追加に失敗しました", error);
     });

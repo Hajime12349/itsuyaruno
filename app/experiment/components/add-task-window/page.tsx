@@ -4,11 +4,11 @@ import React, { useState } from 'react';
 import TaskWindow from "@/components/AddTaskWindow";
 
 export default function TestComponets() {
-
+//<TaskWindow />
+      
   return (
     <main>
       <div>
-        <TaskWindow />
       </div>
     </main>
   );
