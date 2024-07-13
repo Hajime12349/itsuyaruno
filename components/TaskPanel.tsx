@@ -4,22 +4,25 @@ import styles from './TaskPanel.module.css';
 import { Task } from '@/lib/entity';
 import TaskStartButton from './TaskStartButton';
 import EditTaskButton from './EditTaskButton';
+import EditTaskWindow from "./EditTaskWindow";
 import { useState } from "react";
 
 
 interface TaskPanelProps {
   task: Task;
   isSelected: boolean;
+  setEditTask:React.Dispatch<React.SetStateAction<Task | undefined>>;
   onClick: () => void;
 }
 
 
-const TaskPanel: React.FC<TaskPanelProps> = ({ task, isSelected, onClick }) => {
+const TaskPanel: React.FC<TaskPanelProps> = ({ task, isSelected,setEditTask, onClick }) => {
   // 残り日数を計算
   const remainingDays = Math.ceil((Date.parse(task.deadline) - Date.now()) / (1000 * 60 * 60 * 24));
 
   const EditTaskWindow = () => {
-    console.log("EditTaskWindow");
+    console.log(task.id);
+    setEditTask(task)
   }
 
   return (
