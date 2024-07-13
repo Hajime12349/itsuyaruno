@@ -15,3 +15,7 @@ export type User = {
     current_task?: number;
     current_task_time?: string;
 }
+
+export type Tag = {
+    tag_name: string;
+}
