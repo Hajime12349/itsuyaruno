@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import styles from './taskWindow.module.css'
 import { Task, User } from '@/lib/entity'
 import { createTask } from '@/lib/db_api_wrapper'
+import { useRouter } from 'next/navigation'
 
 
 
@@ -12,6 +13,8 @@ const page = ({ task_name, total_set, deadline, current_set, is_complete }: { ta
   const { register, handleSubmit, setValue, getValues } = useForm()
   // 詳細設定の表示状態を管理するためのステート
   const [showDetails, setShowDetails] = useState(true);
+  // ルーターを取得
+  const router = useRouter()
 
   
   //クリック時のアクション
@@ -24,6 +27,7 @@ const page = ({ task_name, total_set, deadline, current_set, is_complete }: { ta
     }
     const taskData = { task_name, total_set, deadline, current_set, is_complete };
     handleTaskData(taskData); // 受け渡し用関数にデータを渡す
+    pageTransition(); // ページ遷移
   }
   // 受け渡し用関数
   const handleTaskData = (taskData: { task_name: string, total_set: number, deadline: string, current_set: number, is_complete: boolean }) => {
@@ -33,6 +37,11 @@ const page = ({ task_name, total_set, deadline, current_set, is_complete }: { ta
     }).catch((error) => {
       console.error("タスクの編集に失敗しました", error);
     });
+  }
+
+    //ページ遷移用関数
+  const pageTransition = () => {
+    router.push('/task-config-main-screen')
   }
 
   // 今日の日付を取得
@@ -51,7 +60,7 @@ const page = ({ task_name, total_set, deadline, current_set, is_complete }: { ta
       <div className={styles.header}>
           <h1>タスクを編集</h1>
           <button className={styles.trashButton}>削除</button>
-          <button className={styles.closeButton}>×</button>
+          <button className={styles.closeButton} onClick={pageTransition}>×</button>
 
       </div>
     <form onSubmit={handleSubmit(onSubmit)}>
