@@ -50,7 +50,7 @@ const page = () => {
   return (
   <div className="App">
       <div className={styles.header}>
-          <h1>タスク追加</h1>
+          <h1>タスクを追加</h1>
           <button className={styles.closeButton}>×</button>
       </div>
     <form onSubmit={handleSubmit(onSubmit)}>

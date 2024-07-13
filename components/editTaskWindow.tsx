@@ -29,6 +29,7 @@ const page = ({ task_name, total_set, deadline, current_set, is_complete }: { ta
   const handleTaskData = (taskData: { task_name: string, total_set: number, deadline: string, current_set: number, is_complete: boolean }) => {
     createTask(taskData).then(() => {
       console.log("タスクを編集しました");
+      console.log(taskData);
     }).catch((error) => {
       console.error("タスクの編集に失敗しました", error);
     });
@@ -48,7 +49,7 @@ const page = ({ task_name, total_set, deadline, current_set, is_complete }: { ta
   return (
   <div className="App">
       <div className={styles.header}>
-          <h1>タスク追加</h1>
+          <h1>タスクを編集</h1>
           <button className={styles.closeButton}>×</button>
       </div>
     <form onSubmit={handleSubmit(onSubmit)}>
