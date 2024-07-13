@@ -16,9 +16,9 @@ function LoginButton() {
     return (
         <button onClick={() => {
             if (session.status === "authenticated") {
-                router.push("/loggedin");
+                router.push("/task-config-main-screen");
             } else {
-                signIn("google", { callbackUrl: "/loggedin" });
+                signIn("google", { callbackUrl: "/task-config-main-screen" });
             }
         }}>
             Login With Google
