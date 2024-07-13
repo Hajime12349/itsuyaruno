@@ -4,9 +4,6 @@ import { useForm } from 'react-hook-form'
 import styles from './taskWindow.module.css'
 import { Task, User } from '@/lib/entity'
 import { createTask } from '@/lib/db_api_wrapper'
-import Modal from "react-modal";
-
-Modal.setAppElement(".App");
 
 
 
@@ -15,8 +12,6 @@ const page = () => {
   const { register, handleSubmit, setValue, getValues } = useForm()
   // 詳細設定の表示状態を管理するためのステート
   const [showDetails, setShowDetails] = useState(false);
-  //モーダルの表示状態を管理するためのステート
-  const [ modalIsOpen, setIsOpen ] = useState(false);
 
   
   //クリック時のアクション
@@ -54,10 +49,9 @@ const page = () => {
 
   return (
   <div className="App">
-    <Modal isOpen={modalIsOpen}>
       <div className={styles.header}>
           <h1>タスク追加</h1>
-          <button className={styles.closeButton} onClick={() => setIsOpen(false)}>×</button>
+          <button className={styles.closeButton}>×</button>
       </div>
     <form onSubmit={handleSubmit(onSubmit)}>
       <div>
@@ -82,7 +76,6 @@ const page = () => {
 
           <button type="submit">追加</button>
       </form>
-      </Modal>
   </div>
   );
 };
