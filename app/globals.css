@@ -1,0 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Sarpanch:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c&family=Noto+Sans+JP:wght@100..900&family=Zen+Kaku+Gothic+New&display=swap');
+
+body {
+    font-family: 'Sarpanch', 'M PLUS Rounded 1c', sans-serif;
+    /* background: radial-gradient(circle, gray 50%, transparent 50%); */
+}

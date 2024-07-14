@@ -115,7 +115,12 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ isTask, progress, taskName })
       ctx.lineWidth = 3;
       ctx.strokeRect(x, y, rectWidth, rectHeight);
 
-      ctx.fillStyle = "skyblue";
+      if (window.location.pathname === '/timer-break-screen'){
+        ctx.fillStyle = "rgb(251, 253, 161)";/*黄色*/
+      }
+      else{
+        ctx.fillStyle = "rgb(178, 223, 242)";/*水色*/
+      }
       ctx.fillRect(x + 2, y + 2, (rectWidth - 4) * (count / progress), rectHeight - 4);
     }
   };
@@ -150,7 +155,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ isTask, progress, taskName })
   return (
     <div>
       <div className={styles.TaskTextComponets}>
-        <h2 className={styles.TaskText}>レポート課題 25分</h2>
+        <h2 className={styles.TaskText}>レポート課題 25 min</h2>
         <h2 className={styles.TaskLogo}>ロゴマーク</h2>
       </div>
       <canvas ref={canvasRef} id="canvas-in" width="100" height="150"></canvas>

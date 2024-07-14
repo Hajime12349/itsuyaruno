@@ -12,7 +12,7 @@ export default function TimerFinishScreen() {
         <h2 className={styles.TaskChangeText}>タスクを変更しますか？</h2>
       </div>
       <div className={styles.ControlNextTaskFrame}>
-        <button className={styles.TaskContinue}>続ける</button>
+        <button className={styles.TaskContinue}>Continue</button>
         <p className={styles.TextOR}>or</p>
         <svg className={styles.NextTasks}>
         <rect width="300" height="1000" style={{ fill: 'gray', strokeWidth: 3, stroke: 'black' }} />
