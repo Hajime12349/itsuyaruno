@@ -1,18 +1,10 @@
-.TaskTextComponents {
+.TaskAll {
   display: flex;
-  /* justify-content: space-between; */
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
 }
 
 .TaskText{
   font-size: 60px;
-  text-align: center;
-  margin-top: 140px;
-}
-
-.TaskLogo{
-  font-size: 20px;
-  position: absolute;
-  left: 280px;
-  top: 260px;
-  border: 2px solid black;
 }

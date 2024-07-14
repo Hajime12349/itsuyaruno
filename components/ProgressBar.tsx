@@ -4,6 +4,8 @@ import StartButton from './StartButton';
 import StopButton from './StopButton';
 import styles from "./ProgressBar.module.css";
 import { getUser, getTask, updateTask } from "@/lib/db_api_wrapper";
+import Image from 'next/image';
+import TaskImage from '@/public/icon_3.png';
 let timer: NodeJS.Timeout | null = null;
 
 //形を定義するのがここ
@@ -162,9 +164,11 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ isTask, progress, taskName })
   //<h1 style={{ fontFamily: "sans-serif", fontWeight: 300, fontSize: "80px", textAlign: "center", marginTop: "100px" }}>{taskName}</h1>
   return (
     <div>
-      <div className={styles.TaskTextComponets}>
+      <div className={styles.TaskAll}>
         <h2 className={styles.TaskText}> {taskName}</h2>
-        <h2 className={styles.TaskLogo}>ロゴマーク</h2>
+        <div className={styles.TaskImage}>
+          <Image src={TaskImage} alt="Task Image" width={100} height={100} />
+        </div>
       </div>
       <canvas ref={canvasRef} id="canvas-in" width="100" height="150"></canvas>
       <div style={{ display: "flex", justifyContent: "center", marginTop: "40px" }}>

@@ -1,10 +1,9 @@
 /* TimerStartScreen.module.css */
-  
   .main {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    background-color: #868ab0; /*背景色の指定を灰色に変更 */
+    background: linear-gradient(to bottom, #c1c1ff, #ffffff); /* グラデーションの追加 */
   }
   
   .Header {

@@ -1,5 +1,4 @@
 
-
 .main {
   display: flex;
   flex-direction: column;
@@ -81,9 +80,10 @@
 }
 
 .NavigateTaskButton{
-  position: absolute;
-  left: 850px;
-  top: 600px;
+  display: flex;
+  justify-content: center;
+  margin-left: 33px;
+  margin-top: 80px;
 }
 
 

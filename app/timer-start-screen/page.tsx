@@ -27,7 +27,7 @@ export default function TimerStartScreen() {
     <main className={styles.main}>
       <Header />
       <div className={styles.TaskTextComponets}>
-      <ProgressBar taskName={currentTask?.task_name || "loading"} isTask={true} progress={10} />
+        <ProgressBar taskName={currentTask?.task_name || "loading"} isTask={true} progress={10} />
       </div>
       <div className={styles.NavigateTaskButton}>
             <NavigateTaskButton />
