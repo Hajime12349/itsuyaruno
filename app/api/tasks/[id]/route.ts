@@ -39,7 +39,11 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     }
 
     const { id } = params;
-    const { task_name, deadline, total_set, current_set, is_complete } = await req.json();
+    var { task_name, deadline, total_set, current_set, is_complete } = await req.json();
+
+    if (!deadline) {
+        deadline = undefined;
+    }
 
     try {
         var task;

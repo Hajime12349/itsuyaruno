@@ -39,6 +39,10 @@ export async function POST(req: Request) {
         return new Response(JSON.stringify({ error: 'Unauthorized: session user does not have a valid id' }), { status: 401 });
     }
     var { task_name, deadline, total_set, current_set, is_complete } = await req.json();
+    // when deadline is empty, set it to undefined
+    if (!deadline) {
+        deadline = undefined;
+    }
 
     try {
         if (process.env.NODE_ENV === 'production') {
