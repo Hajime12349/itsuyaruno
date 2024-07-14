@@ -17,12 +17,12 @@ export default function Home() {
 }, []);
 
 
-
+//<input type="text" placeholder="検索" className={styles.search} />
+          
   return (
     <main className={styles.main}>
       <div>
           <Header />
-          <input type="text" placeholder="検索" className={styles.search} />
           <div className={styles.scrollContainer}>
                 <TaskColumn tasks={tasks} />
             </div>
