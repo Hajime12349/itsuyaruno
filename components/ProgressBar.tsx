@@ -123,7 +123,12 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ isTask, progress, taskName })
       ctx.lineWidth = 3;
       ctx.strokeRect(x, y, rectWidth, rectHeight);
 
-      ctx.fillStyle = "skyblue";
+      if (window.location.pathname === '/timer-break-screen'){
+        ctx.fillStyle = "rgb(251, 253, 161)";/*黄色*/
+      }
+      else{
+        ctx.fillStyle = "rgb(178, 223, 242)";/*水色*/
+      }
       ctx.fillRect(x + 2, y + 2, (rectWidth - 4) * (count / progress), rectHeight - 4);
     }
   };

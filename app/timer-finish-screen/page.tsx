@@ -56,7 +56,7 @@ export default function TimerFinishScreen() {
         <h2 className={styles.TaskChangeText}>タスクを変更しますか？</h2>
       </div>
       <div className={styles.ControlNextTaskFrame}>
-        <button className={styles.TaskContinue} onClick={pageTransition}>続ける</button>
+        <button className={styles.TaskContinue} onClick={pageTransition}>Continue</button>
         <p className={styles.TextOR}>or</p>
         <div className={styles.NextTasks}>
           <TaskSuggestionButton />

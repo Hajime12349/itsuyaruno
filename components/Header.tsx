@@ -1,5 +1,6 @@
 import SettingsButton from "@/components/SettingsButton";
 import styles from './Header.module.css';
+import { useReducer } from "react";
 
 interface HeaderProps {
 }
@@ -9,7 +10,7 @@ const Header: React.FC<HeaderProps> = () => {
         <div className={styles.header}>
             <div className={styles.titleFrame}>
                 <div className={styles.titleText}>
-                    いつやるの?
+                    いつやるの？  |  When will you do it?
                 </div>
             </div>
             <div className={styles.settingsButtonFrame}>
