@@ -179,7 +179,7 @@ const CRUDApiWrapperTestComponent = () => {
                 {tasks?.map((task) => {
                     return (
                         <div key={task.id}>
-                            <TaskPanel task={task} isSelected={false} onClick={() => { }} />
+                            <TaskPanel task={task} isSelected={false} onClick={() => { }} setEditTask={() => { }} />
                             <button onClick={() => {
                                 onDeleteTask(task.id);
                             }}>タスクを削除</button>
