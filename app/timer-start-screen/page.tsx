@@ -13,24 +13,26 @@ export default function TimerStartScreen() {
   const [currentTask, setCurrentTask] = useState<Task | undefined>();
 
   useEffect(() => {
-    getUser().then((user) => {
-      setUser(user);
-      if (user.current_task) {
-        getTask(user.current_task).then((task) => {
-          setCurrentTask(task);
-        })
-      }
-    });
+    getUser()
+      .then((user) => {
+        setUser(user);
+        if (user.current_task) {
+          getTask(user.current_task)
+            .then((task) => {
+              setCurrentTask(task);
+            })
+        }
+      });
   }, []);
 
   return (
     <main className={styles.main}>
       <Header />
       <div className={styles.TaskTextComponets}>
-      <ProgressBar taskName={currentTask?.task_name || "loading"} isTask={true} progress={10} />
+        <ProgressBar task={currentTask} isTask={true} progress={10} />
       </div>
       <div className={styles.NavigateTaskButton}>
-            <NavigateTaskButton />
+        <NavigateTaskButton />
       </div>
     </main>
   );
