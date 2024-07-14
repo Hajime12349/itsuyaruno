@@ -1,7 +1,7 @@
 "use client";
 import ProgressBar from "./ProgressBar";
 import React from "react";
-import styles from "./start_stop_button.module.css";
+import styles from "./StartStopButton.module.css";
 
 interface ButtonProps{
     onClick: () => void;

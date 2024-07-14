@@ -1,9 +1,12 @@
 /* TimerStartScreen.module.css */
+@import url('https://fonts.googleapis.com/css2?family=Sarpanch:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c&family=Noto+Sans+JP:wght@100..900&family=Zen+Kaku+Gothic+New&display=swap');
+
   .main {
     display: flex;
     flex-direction: column;
     height: 100vh;
-    background-color: #f2f7d5; /*背景色の指定 */
+    /* background-color: #f2f7d5; */
   }
   
   .Header {
@@ -23,38 +26,56 @@
     margin-top: 20px;
   }
   
+  .AskFinish{
+    margin: 0 auto;
+  }
+
+  .AskButtonDiv{
+    display: flex;
+    justify-content: space-around;
+  }
+
+
   .FinishTexts {
     display: flex;
     font-size: 30px;
     justify-content: center; /* 中央寄せ */
     align-items: center; /* 垂直方向に中央寄せ */
     margin-top: 50px; /* 文字を少し下に */
-    gap: 60px; /* テキストの幅を開ける */
+    gap: 90px; /* テキストの幅を開ける */
   }
 
   .TaskContinue{
-    font-size: 30px;
+    font-size: 40px;
     height: 100px;
-    width: 150px;
-    margin-left: 370px;
+    width: 250px;
+    margin-left: 300px;
     margin-top: 100px;
+    border-radius: 15px;
+    background-color: rgb(251,253,161);
+    font-family: 'Sarpanch', 'M PLUS Rounded 1c', sans-serif;
   }
 
+  .TaskContinue:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15);
+}
+
   .TextOR{
-    font-size: 30px;
+    font-size: 50px;
     position: absolute;
     left: 700px;
-    top: 400px;
+    top: 350px;
   }
 
   .ControlNextTaskFrame {
-    height: 1000px; /* 高さを増やしました */
+    height: 300px; /* 高さを増やしました */
   }
 
   .NextTasks{
     position: absolute;
-    left: 850px; /* 'or'の横に配置 */
-    top: 400px;
+    left: 870px; /* 'or'の横に配置 */
+    top: 350px;
   }
   
   .TimeGage {
@@ -96,9 +117,7 @@
   
   .NavigateTaskButton{
     position: absolute;
-    left: 100px;
-    top: 800px;
+    left: 300px;
+    top: 700px;
   }
-  
-  
   

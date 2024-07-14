@@ -9,8 +9,10 @@ interface TaskStartButtonProps {
     task: Task
 }
 
+
 const TaskStartButton: React.FC<TaskStartButtonProps> = ({ task }) => {
     const router = useRouter()
+    const current_task = task.id
     function onStart() {
         updateUser({ current_task: task.id }).then(() => { // ユーザーのcurrent_taskを更新できたら
             console.log('Task started');

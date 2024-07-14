@@ -1,16 +1,10 @@
-/* TimerStartScreen.module.css */
-@keyframes backgroundAnimation {
-  0% { background-color: #e0ffe0; }
-  50% { background-color: #ffebcd; }
-  100% { background-color: #e0ffe0; }
-}
+
 
 .main {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: #e0ffe0; /*背景色の指定 */
-  animation: backgroundAnimation 10s infinite; /* アニメーションの適用 */
+  background-color: #ffffff; /*背景色の指定 */
 }
 
 .Header {

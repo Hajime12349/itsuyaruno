@@ -1,10 +1,11 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import SignoutButton from "@/components/signout_button";
-import SigninButton from "@/components/signin_button";
+"use client";
+import { NextAuthProvider } from "../provider";
+import { useSession } from "next-auth/react";
+import SignoutButton from "@/components/SignOutButton";
+import SigninButton from "@/components/SignInButton";
 
-export default async function Profile() {
-  const session = await getServerSession(authOptions);
+export default function Profile() {
+  const { data: session } = useSession();
   const user = session?.user;
   let identifier = "";
   if (user && "id" in user) {
@@ -12,7 +13,7 @@ export default async function Profile() {
   }
 
   return (
-    <>
+    <NextAuthProvider>
       <p>Profile Page</p>
       {!user ? (
         <SigninButton />
@@ -33,6 +34,6 @@ export default async function Profile() {
           <SignoutButton />
         </>
       )}
-    </>
+    </NextAuthProvider>
   );
 }
