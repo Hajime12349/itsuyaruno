@@ -6,7 +6,7 @@ import { Task, User } from '@/lib/entity'
 import { createTask } from '@/lib/db_api_wrapper'
 import { useRouter } from 'next/navigation'
 
-const AddTaskWindow = ({setIsActive}:any) => {
+const AddTaskWindow = ({ setIsActive }: any) => {
   // フォームの値を管理するためのステート
   const { register, handleSubmit, setValue, getValues } = useForm()
   // 詳細設定の表示状態を管理するためのステート
@@ -18,11 +18,11 @@ const AddTaskWindow = ({setIsActive}:any) => {
 
   // クリック時のアクション
   const onSubmit = (data: any) => {
-     let { task_name, total_set, deadline } = data;
-     let current_set = total_set; // current_setをtotal_setと同じに設定
+    let { task_name, total_set, deadline } = data;
+    let current_set = 0; // current_setを0に設定
     let is_complete = false; // is_completeをfalseに設定
-        
-    if (!task_name || !total_set ) {
+
+    if (!task_name || !total_set) {
       alert("タイトルとセット数と期限を入力してください");
       return;
     }
@@ -50,44 +50,44 @@ const AddTaskWindow = ({setIsActive}:any) => {
 
   // 今日の日付を取得
   //※デフォルトは空にしました。
- // const today = new Date().toISOString().split('T')[0];
+  // const today = new Date().toISOString().split('T')[0];
 
   // totalSetをランダムに設定する関数
   const setRandomTotalSet = () => {
-      const randomValue = Math.floor(Math.random() * 3) + 1;
-      setValue('total_set', randomValue);
+    const randomValue = Math.floor(Math.random() * 3) + 1;
+    setValue('total_set', randomValue);
   };
 
   return (
-  <div className="App">
+    <div className="App">
       <div className={styles.header}>
-          <h1>タスクを追加</h1>
-          <button className={styles.closeButton} onClick={pageTransition}>×</button>
+        <h1>タスクを追加</h1>
+        <button className={styles.closeButton} onClick={pageTransition}>×</button>
       </div>
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <div>
-        <p>タイトル</p>
-        <input id="task_name" {...register('task_name')}/>
-      </div>
-      <div>
-        <p>セット数</p>
-        <button type="button" onClick={setRandomTotalSet}>自動</button>
-        <input id="total_set" type="number" min="1" step="1" defaultValue={1} {...register('total_set')}/>
-      </div>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div>
+          <p>タイトル</p>
+          <input id="task_name" {...register('task_name')} />
+        </div>
+        <div>
+          <p>セット数</p>
+          <button type="button" onClick={setRandomTotalSet}>自動</button>
+          <input id="total_set" type="number" min="1" step="1" defaultValue={1} {...register('total_set')} />
+        </div>
 
-      <div>
-        <button type="button" onClick={() => setShowDetails(!showDetails)}>詳細設定</button>
-        {showDetails && (
-          <div>
-            <p>期限</p>
-            <input type="date" {...register('deadline')} />
-          </div>
-        )}
-      </div>
+        <div>
+          <button type="button" onClick={() => setShowDetails(!showDetails)}>詳細設定</button>
+          {showDetails && (
+            <div>
+              <p>期限</p>
+              <input type="date" {...register('deadline')} />
+            </div>
+          )}
+        </div>
 
-          <button disabled={disableAddButton} type="submit">追加</button>
+        <button disabled={disableAddButton} type="submit">追加</button>
       </form>
-  </div>
+    </div>
   );
 };
 
