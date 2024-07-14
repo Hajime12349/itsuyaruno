@@ -21,11 +21,13 @@ export default function Home() {
 //<input type="text" placeholder="検索" className={styles.search} />
           
   return (
-    <main className={styles.main}>
-      <div>
-          <Header />
-          <div className={styles.scrollContainer}>
-                <TaskColumn tasks={tasks} />
+    <NextAuthProvider>
+      <WithLoggedIn>
+        <main className={styles.main}>
+          <div>
+            <Header />
+            <div className={styles.scrollContainer}>
+              <TaskColumn tasks={tasks} />
             </div>
           </div>
         </main>

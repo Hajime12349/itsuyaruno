@@ -65,25 +65,18 @@ export default function TimerFinishScreen() {
   }
 
   return (
-    <main className={styles.main}>
-      <Header />  
-      {!isDecided ? (
-        <div className={styles.AskFinish}>
-          <h2>現在のタスクは終わりましたか？</h2>
-          <div className={styles.AskButtonDiv}>
-            <button onClick={decideChange}>はい</button>
-            <button onClick={decideContinue}>いいえ</button>
-          </div>
-        </div>
-      ) : (
-      <div>
-        <div className={styles.FinishTexts}>
-          <h2 className={styles.TaskFinishText}>休憩が終了しました！</h2>
-          <h2 className={styles.TaskChangeText}>タスクを変更しますか？</h2>
-        </div>
-        <div className={styles.ControlNextTaskFrame}>
-          {isFinished ? (
-            <></>
+    <NextAuthProvider>
+      <WithLoggedIn>
+        <main className={styles.main}>
+          <Header />
+          {!isDecided ? (
+            <div className={styles.AskFinish}>
+              <h2>現在のタスクは終わりましたか？</h2>
+              <div className={styles.AskButtonDiv}>
+                <button onClick={decideChange}>はい</button>
+                <button onClick={decideContinue}>いいえ</button>
+              </div>
+            </div>
           ) : (
             <div>
               <div className={styles.FinishTexts}>
