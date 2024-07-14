@@ -17,7 +17,7 @@ export const WithLoggedIn = ({ children }: Props) => {
     const router = useRouter();
 
     if (status === "loading") {
-        return <div>Loading...</div>;
+        return <div></div>;
     }
     if (status === "unauthenticated") {
         router.replace("/login");
