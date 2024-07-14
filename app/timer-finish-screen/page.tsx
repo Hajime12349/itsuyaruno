@@ -16,6 +16,8 @@ export default function TimerFinishScreen() {
 
   const [currentTask, setCurrentTask] = useState<Task | undefined>();
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [isDecided, setIsDecided] = useState(false);
+  const [isFinished, setIsFinished] = useState(false);
 
   useEffect(() => {
     getUser() // ユーザー情報をDBから取得
@@ -43,6 +45,19 @@ export default function TimerFinishScreen() {
       })
   }, [])
 
+  const decideContinue = () => {
+    setIsFinished(false);
+    setIsDecided(true);
+
+  }
+  const decideChange = () => {
+    setIsFinished(true);
+    setIsDecided(true);
+  }
+
+
+
+
   //ページ遷移用関数
   const pageTransition = () => {
     router.push('/timer-start-screen')
@@ -51,20 +66,39 @@ export default function TimerFinishScreen() {
   return (
     <main className={styles.main}>
       <Header />  
-      <div className={styles.FinishTexts}>
-        <h2 className={styles.TaskFinishText}>休憩が終了しました！</h2>
-        <h2 className={styles.TaskChangeText}>タスクを変更しますか？</h2>
-      </div>
-      <div className={styles.ControlNextTaskFrame}>
-        <button className={styles.TaskContinue} onClick={pageTransition}>Continue</button>
-        <p className={styles.TextOR}>or</p>
-        <div className={styles.NextTasks}>
-          <TaskSuggestionButton />
+      {!isDecided ? (
+        <div>
+          <h2>現在のタスクは終わりましたか？</h2>
+          <button onClick={decideChange}>はい</button>
+          <button onClick={decideContinue}>いいえ</button>
         </div>
-      </div>
-      <div className={styles.NavigateTaskButton}>
-        <NavigateTaskButton />
-      </div>
+      ) : (
+      <div>
+        <div className={styles.FinishTexts}>
+          <h2 className={styles.TaskFinishText}>休憩が終了しました！</h2>
+          <h2 className={styles.TaskChangeText}>タスクを変更しますか？</h2>
+        </div>
+        <div className={styles.ControlNextTaskFrame}>
+          {isFinished ? (
+            <></>
+          ) : (
+            <div>
+              <button className={styles.TaskContinue} onClick={pageTransition}>Continue</button>
+              <p className={styles.TextOR}>or</p>
+            </div>
+          )}
+          
+          <div className={styles.NextTasks}>
+            <TaskSuggestionButton />
+          </div>
+        </div>
+      
+        <div className={styles.NavigateTaskButton}>
+          <NavigateTaskButton />
+        </div>
+        </div>
+      )}
+      
     </main>
   );
 }
