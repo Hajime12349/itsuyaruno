@@ -16,9 +16,21 @@ interface TaskPanelProps {
 }
 
 
-const TaskPanel: React.FC<TaskPanelProps> = ({ task, isSelected,setEditTask, onClick }) => {
+const TaskPanel: React.FC<TaskPanelProps> = ({ task, isSelected, setEditTask, onClick }) => {
   // 残り日数を計算
   const remainingDays = Math.ceil((Date.parse(task.deadline) - Date.now()) / (1000 * 60 * 60 * 24));
+
+  // 表示内容を条件分岐
+  let remainingDaysText;
+  if (isNaN(remainingDays)) {
+    remainingDaysText = "期限なし";
+  } else if (remainingDays > 0) {
+    remainingDaysText = `あと ${remainingDays} 日`;
+  } else if (remainingDays == 0) {
+    remainingDaysText = `今日まで`;
+  } else {
+    remainingDaysText = `${Math.abs(remainingDays)} 日過ぎています`;
+  }
 
   const EditTaskWindow = () => {
     console.log(task.id);
@@ -30,7 +42,7 @@ const TaskPanel: React.FC<TaskPanelProps> = ({ task, isSelected,setEditTask, onC
       <h2 className={styles.title}>{task.task_name}</h2>
       <div className={styles.flexContainer}>
         <div className={styles.text}>{task.current_set} / {task.total_set} セット</div>
-        <div className={styles.text}>あと {remainingDays} 日</div>
+        <div className={styles.text}>{remainingDaysText}</div>
       </div>
       <div className={isSelected ? styles.buttonContainer : styles.buttonContainerHidden}>
         <TaskStartButton task={task} />
