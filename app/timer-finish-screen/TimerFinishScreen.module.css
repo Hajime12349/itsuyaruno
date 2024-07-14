@@ -59,7 +59,7 @@
   }
 
   .ControlNextTaskFrame {
-    height: 1000px; /* 高さを増やしました */
+    height: 300px; /* 高さを増やしました */
   }
 
   .NextTasks{
@@ -110,6 +110,4 @@
     left: 300px;
     top: 700px;
   }
-  
-  
   

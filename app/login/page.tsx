@@ -5,16 +5,26 @@ import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import styles from "./login.module.css";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { NextAuthProvider } from "../provider";
 
 const GoogleSignInButton: React.FC = () => {
+  const router = useRouter();
+  const session = useSession();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") || "/profile";
+  const callbackUrl = searchParams.get("callbackUrl") || "/loggedin";
 
   return (
     <div>
       <div className={styles.square}></div> 
       <h1 className={styles.TitleText}>いつやるの？  |  When will you do it?</h1>
-      <button className={styles.gsiMaterialButton} onClick={() => signIn("google", { callbackUrl })}>
+      <button className={styles.gsiMaterialButton} onClick={() => {
+        if (session.status === "authenticated") {
+            router.push("/loggedin");
+        } else {
+            signIn("google", { callbackUrl: "/loggedin" });
+        }}}>
         <div className={styles.gsiMaterialButtonState}></div>
         <div className={styles.gsiMaterialButtonContentWrapper}>
           <div className={styles.gsiMaterialButtonIcon}>
@@ -56,8 +66,10 @@ const GoogleSignInButton: React.FC = () => {
 
 export default function Login() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <GoogleSignInButton />
-    </Suspense>
+    <NextAuthProvider>
+      <Suspense fallback={<div>Loading...</div>}>
+        <GoogleSignInButton />
+      </Suspense>
+    </NextAuthProvider>
   );
-}
+};
