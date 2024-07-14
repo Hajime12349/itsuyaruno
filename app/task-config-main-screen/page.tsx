@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react';
 import { Task } from "@/lib/entity";
 import { getTasks } from "@/lib/db_api_wrapper";
 import TaskColumn from '@/components/TaskColumn';
+import { NextAuthProvider, WithLoggedIn } from '@/app/provider';
 
 export default function Home() {
 
@@ -14,19 +15,23 @@ export default function Home() {
 
   useEffect(() => {
     getTasks().then(setTasks).catch(console.error);
-}, []);
+  }, []);
 
 
 
   return (
-    <main className={styles.main}>
-      <div>
-          <Header />
-          <input type="text" placeholder="検索" className={styles.search} />
-          <div className={styles.scrollContainer}>
-                <TaskColumn tasks={tasks} />
+    <NextAuthProvider>
+      <WithLoggedIn>
+        <main className={styles.main}>
+          <div>
+            <Header />
+            <input type="text" placeholder="検索" className={styles.search} />
+            <div className={styles.scrollContainer}>
+              <TaskColumn tasks={tasks} />
             </div>
-      </div>
-    </main>
+          </div>
+        </main>
+      </WithLoggedIn>
+    </NextAuthProvider>
   );
 }
