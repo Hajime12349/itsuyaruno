@@ -49,7 +49,8 @@ const AddTaskWindow = ({setIsActive}:any) => {
   }
 
   // 今日の日付を取得
-  const today = new Date().toISOString().split('T')[0];
+  //※デフォルトは空にしました。
+ // const today = new Date().toISOString().split('T')[0];
 
   // totalSetをランダムに設定する関数
   const setRandomTotalSet = () => {
@@ -79,7 +80,7 @@ const AddTaskWindow = ({setIsActive}:any) => {
         {showDetails && (
           <div>
             <p>期限</p>
-            <input type="date" defaultValue={today} {...register('deadline')} />
+            <input type="date" {...register('deadline')} />
           </div>
         )}
       </div>
