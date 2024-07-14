@@ -5,11 +5,10 @@ import NavigateTaskButton from "@/components/NavigateTaskButton";
 import Header from '@/components/Header';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { getUser, getTask, getTasks } from '@/lib/db_api_wrapper';
+import { getUser, getTask, getTasks, updateTask } from '@/lib/db_api_wrapper';
 import { User, Task } from '@/lib/entity';
 import TaskSuggestionButton from '@/components/TaskSuggestionButton';
 import { NextAuthProvider, WithLoggedIn } from "@/app/provider";
-
 
 export default function TimerFinishScreen() {
   // ルーターを取得
@@ -39,7 +38,6 @@ export default function TimerFinishScreen() {
     getTasks()
       .then((tasks) => {
         setTasks(tasks);
-
       })
       .catch((error) => {
         console.error(error);
@@ -49,15 +47,22 @@ export default function TimerFinishScreen() {
   const decideContinue = () => {
     setIsFinished(false);
     setIsDecided(true);
-
   }
   const decideChange = () => {
-    setIsFinished(true);
-    setIsDecided(true);
+    if (!currentTask) return;
+    currentTask.is_complete = true;
+    updateTask(currentTask)
+      .then(() => {
+        console.log("task updated");
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+      .finally(() => {
+        setIsFinished(true);
+        setIsDecided(true);
+      })
   }
-
-
-
 
   //ページ遷移用関数
   const pageTransition = () => {
