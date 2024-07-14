@@ -9,6 +9,7 @@ import { User, Task } from '@/lib/entity';
 import { getUser, getTask } from '@/lib/db_api_wrapper';
 import { useState, useEffect } from 'react';
 import { useRouter } from "next/navigation";
+import { NextAuthProvider, WithLoggedIn } from "@/app/provider";
 
 export default function TimerWorkingScreen() {
   const router = useRouter();
@@ -31,9 +32,13 @@ export default function TimerWorkingScreen() {
   }, [router]);
 
   return (
-    <main className={styles.main}>
-      <Header />
-      <ProgressBar task={currentTask} isTask={true} progress={10} />
-    </main>
+    <NextAuthProvider>
+      <WithLoggedIn>
+        <main className={styles.main}>
+          <Header />
+          <ProgressBar task={currentTask} isTask={true} progress={10} />
+        </main>
+      </WithLoggedIn>
+    </NextAuthProvider>
   );
 }
