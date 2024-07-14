@@ -13,6 +13,8 @@ const EditTaskWindow = ({ task }: { task:Task}) => {
   const { register, handleSubmit, setValue, getValues } = useForm()
   // 詳細設定の表示状態を管理するためのステート
   const [showDetails, setShowDetails] = useState(true);
+  // 編集ボタンをクリックしたかどうか
+  const [disableAddButton, setDisableAddButton] = useState(false);
   // ルーターを取得
   const router = useRouter()
 
@@ -33,6 +35,7 @@ const EditTaskWindow = ({ task }: { task:Task}) => {
   }
   // 受け渡し用関数
   const handleTaskData = (taskData: { task_name: string, total_set: number, deadline: string, current_set: number, is_complete: boolean }) => {
+    setDisableAddButton(true)
     createTask(taskData).then(() => {
       if (task.id) {
         deleteTask(task.id).then(()=>{
@@ -91,7 +94,7 @@ const EditTaskWindow = ({ task }: { task:Task}) => {
         )}
       </div>
 
-          <button type="submit">追加</button>
+          <button disabled={disableAddButton} type="submit">編集</button>
       </form>
   </div>
   );
