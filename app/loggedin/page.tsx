@@ -13,7 +13,7 @@ const LoggedIn = () => {
         getUser()
             .then(
                 (user) => {
-                    if (user) {
+                    if (user.id) {
                         console.log("user", user);
                         console.log("user.current_task", user.current_task);
                         if (user.current_task) {
