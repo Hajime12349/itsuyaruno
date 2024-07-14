@@ -70,10 +70,12 @@ export default function TimerFinishScreen() {
         <main className={styles.main}>
           <Header />
           {!isDecided ? (
-            <div>
+            <div className={styles.AskFinish}>
               <h2>現在のタスクは終わりましたか？</h2>
-              <button onClick={decideChange}>はい</button>
-              <button onClick={decideContinue}>いいえ</button>
+              <div className={styles.AskButtonDiv}>
+                <button onClick={decideChange}>はい</button>
+                <button onClick={decideContinue}>いいえ</button>
+              </div>
             </div>
           ) : (
             <div>

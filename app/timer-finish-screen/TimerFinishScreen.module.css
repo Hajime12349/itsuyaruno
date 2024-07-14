@@ -26,6 +26,16 @@
     margin-top: 20px;
   }
   
+  .AskFinish{
+    margin: 0 auto;
+  }
+
+  .AskButtonDiv{
+    display: flex;
+    justify-content: space-around;
+  }
+
+
   .FinishTexts {
     display: flex;
     font-size: 30px;
