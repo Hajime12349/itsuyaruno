@@ -2,12 +2,17 @@ import Image from "next/image";
 import styles from "./TimerBreakScreen.module.css";
 import Header from '@/components/Header';
 import ProgressBar from '@/components/ProgressBar';
+import { NextAuthProvider, WithLoggedIn } from '@/app/provider';
 
 export default function TimerBreakScreen() {
   return (
-    <main className={styles.main}>
-      <Header />  
-      <ProgressBar taskName="休憩" isTask={false} progress={10} />
-    </main>
+    <NextAuthProvider>
+      <WithLoggedIn>
+        <main className={styles.main}>
+          <Header />
+          <ProgressBar task={undefined} isTask={false} progress={10} />
+        </main>
+      </WithLoggedIn>
+    </NextAuthProvider>
   );
 }

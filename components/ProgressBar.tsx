@@ -4,17 +4,21 @@ import StartButton from './StartButton';
 import StopButton from './StopButton';
 import styles from "./ProgressBar.module.css";
 import { getUser, getTask, updateTask } from "@/lib/db_api_wrapper";
+import { useRouter } from "next/navigation"
+import { Task } from "@/lib/entity";
 let timer: NodeJS.Timeout | null = null;
 
 //形を定義するのがここ
 interface ProgressBarProps {
-  taskName: string;
+  task: Task | undefined;
   isTask: boolean;
   progress: number;
 }
 
 //定義した形の引数を受け取る関数
-const ProgressBar: React.FC<ProgressBarProps> = ({ isTask, progress, taskName }) => {
+const ProgressBar: React.FC<ProgressBarProps> = ({ task, isTask, progress }) => {
+
+  const router = useRouter();
 
   //---------------------------------------------------------------------------------------
   //ここからタイマーのカウント
@@ -123,7 +127,12 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ isTask, progress, taskName })
       ctx.lineWidth = 3;
       ctx.strokeRect(x, y, rectWidth, rectHeight);
 
-      ctx.fillStyle = "skyblue";
+      if (window.location.pathname === '/timer-break-screen') {
+        ctx.fillStyle = "rgb(251, 253, 161)";/*黄色*/
+      }
+      else {
+        ctx.fillStyle = "rgb(178, 223, 242)";/*水色*/
+      }
       ctx.fillRect(x + 2, y + 2, (rectWidth - 4) * (count / progress), rectHeight - 4);
     }
   };
@@ -158,12 +167,12 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ isTask, progress, taskName })
   return (
     <div>
       <div className={styles.TaskTextComponets}>
-        <h2 className={styles.TaskText}>レポート課題 25分</h2>
+        <h2 className={styles.TaskText}> {isTask ? (task?.task_name || "loading...") : "休憩"}</h2>
         <h2 className={styles.TaskLogo}>ロゴマーク</h2>
       </div>
       <canvas ref={canvasRef} id="canvas-in" width="100" height="150"></canvas>
       <div style={{ display: "flex", justifyContent: "center", marginTop: "40px" }}>
-        {startFlg ? <StartButton onClick={handleStartButtonClick} /> : <StopButton onClick={countStop} />}
+        {task && (startFlg ? <StartButton onClick={handleStartButtonClick} /> : <StopButton onClick={countStop} />)}
       </div>
     </div>
   );

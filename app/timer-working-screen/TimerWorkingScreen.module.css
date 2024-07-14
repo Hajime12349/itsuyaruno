@@ -1,16 +1,9 @@
-/* TimerStartScreen.module.css */
-@keyframes backgroundAnimation {
-    0% { background-color: #2899e5; } /* 青色 */
-    50% { background-color: #af76c7; } /* 紫色 */
-    100% { background-color: #a8b0b1; } /* 灰色 */
-  }
-  
+
   .main {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    background-color: #3498db;
-    animation: backgroundAnimation 10s infinite;
+    background-color: white;
   }
   
   .Header {
