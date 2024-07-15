@@ -1,3 +1,7 @@
+export type Tag = {
+    tag_name: string;
+}
+
 export type Task = {
     id?: number;
     user_id?: string;
@@ -6,6 +10,7 @@ export type Task = {
     total_set: number;
     current_set: number;
     is_complete: boolean;
+    tags?: Tag[];
 }
 
 export type User = {
