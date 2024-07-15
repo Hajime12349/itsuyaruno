@@ -135,10 +135,10 @@ export async function createTag(tag: Tag): Promise<Tag> {
  * @param tag 更新するタグ
  * @returns 更新されたタグをPromiseとして返します。
  */
-export async function updateTag(tag: Tag): Promise<Tag> {
-    const response = await fetch(`/api/tags/${tag.tag_name}`, {
+export async function updateTag(targetTag: Tag, newTag: Tag): Promise<Tag> {
+    const response = await fetch(`/api/tags/${targetTag.tag_name}`, {
         method: 'PUT',
-        body: JSON.stringify(tag),
+        body: JSON.stringify({ new_tag_name: newTag.tag_name }),
     });
     return await response.json() as Promise<Tag>;
 }
