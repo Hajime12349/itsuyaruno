@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import styles from './ConfigSidebar.module.css'; // CSSモジュールをインポート
+import SignOutButton from './SignOutButton';
 
 interface ConfigSidebarProps {
   onClose: () => void;
@@ -27,6 +28,7 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({ onClose }) => {
             <span className={styles.slider}></span>
           </label>
         </div>
+        <SignOutButton />
         <button className={styles.closeButton} onClick={onClose}>サイドバーを閉じる</button>
       </div>
     </div>
