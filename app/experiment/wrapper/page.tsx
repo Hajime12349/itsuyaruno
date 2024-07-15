@@ -160,6 +160,41 @@ const CRUDApiWrapperTestComponent = () => {
             });
     }
 
+    function onDeleteTag(tag_name?: string) {
+        if (!tag_name) {
+            console.error('Failed to delete tag');
+            return;
+        }
+        deleteTag(tag_name).then(
+            () => {
+                getTags()
+                    .then(setTags)
+                    .catch((error) => {
+                        console.error('Failed to get tags:', error);
+                    });
+            }
+        )
+            .catch((error) => {
+                console.error('Failed to delete tag:', error);
+            });
+    }
+
+    function onUpdateTag(targetTag: Tag, newTag: Tag) {
+        alert('onUpdateTag' + targetTag.tag_name + 'to' + newTag.tag_name);
+        updateTag(targetTag, newTag).then(
+            () => {
+                getTags()
+                    .then(setTags)
+                    .catch((error) => {
+                        console.error('Failed to get tags:', error);
+                    });
+            }
+        )
+            .catch((error) => {
+                console.error('Failed to update tag:', error);
+            });
+    }
+
     // ユーザー情報を表示するTSX要素
     var user_info_tsx = (
         <div>
@@ -209,10 +244,7 @@ const CRUDApiWrapperTestComponent = () => {
     // タグ一覧のヘッダーを表示するTSX要素
     var tags_header_tsx = (
         <div>
-            <h1>タグ一覧</h1>
-            <button onClick={() => {
-                onCreateTag({ tag_name: '新しいタグ' });
-            }}>タグを作成</button>
+            <TagInput onCreateTag={onCreateTag} />
         </div>
     );
 
@@ -255,7 +287,15 @@ const CRUDApiWrapperTestComponent = () => {
             <ul>
                 {tags?.map((tag) => {
                     return (
-                        <div key={tag.tag_name}>{tag.tag_name}</div>
+                        <div key={tag.tag_name}>
+                            {tag.tag_name}
+                            <button onClick={() => {
+                                onDeleteTag(tag.tag_name);
+                            }}>タグを削除</button>
+                            <button onClick={() => {
+                                onUpdateTag(tag, { tag_name: tag.tag_name + '更新' });
+                            }}>タグの名前を更新</button>
+                        </div>
                     );
                 })}
             </ul>
@@ -274,3 +314,15 @@ const CRUDApiWrapperTest = () => {
 }
 
 export default CRUDApiWrapperTest;
+
+const TagInput = ({ onCreateTag }: { onCreateTag: (tag: Tag) => void }) => {
+    const [tagName, setTagName] = useState('');
+    return (
+        <div>
+            <input type="text" value={tagName} onChange={(e) => setTagName(e.target.value)} />
+            <button onClick={() => {
+                onCreateTag({ tag_name: tagName });
+            }}>タグを作成</button>
+        </div>
+    );
+}
