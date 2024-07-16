@@ -20,7 +20,7 @@ import {
 } from "@/lib/db_api_wrapper";
 import { Task, User, Tag } from "@/lib/entity";
 import TaskPanel from "@/components/TaskPanel";
-import { MultiSelect } from "react-multi-select-component";
+import { Autocomplete, TextField, Chip } from "@mui/material";
 
 
 
@@ -299,6 +299,10 @@ const CRUDApiWrapperTestComponent = () => {
                     );
                 })}
             </ul>
+
+            <TagEdit tagOptions={tags?.map((tag) => tag.tag_name) || []} selectedTags={[]} onChangeTags={(tags) => {
+                console.log(tags);
+            }} />
         </div>
     );
 }
@@ -323,6 +327,39 @@ const TagInput = ({ onCreateTag }: { onCreateTag: (tag: Tag) => void }) => {
             <button onClick={() => {
                 onCreateTag({ tag_name: tagName });
             }}>タグを作成</button>
+        </div>
+    );
+}
+
+const TagEdit = ({ tagOptions, selectedTags, onChangeTags }: { tagOptions: string[], selectedTags: string[], onChangeTags: (tags: string[]) => void }) => {
+    return (
+        <div>
+            <Autocomplete
+                multiple
+                id="tags-filled"
+                options={tagOptions}
+                defaultValue={[]}
+                freeSolo
+                onChange={(event, newValue) => {
+                    onChangeTags(newValue);
+                }}
+                renderTags={(value: readonly string[], getTagProps) =>
+                    value.map((option: string, index: number) => {
+                        const { key, ...tagProps } = getTagProps({ index });
+                        return (
+                            <Chip variant="outlined" label={option} key={key} {...tagProps} />
+                        );
+                    })
+                }
+                renderInput={(params) => (
+                    <TextField
+                        {...params}
+                        variant="filled"
+                        label="freeSolo"
+                        placeholder="Favorites"
+                    />
+                )}
+            />
         </div>
     );
 }
