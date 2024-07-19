@@ -6,7 +6,7 @@ export type Task = {
     id?: number;
     user_id?: string;
     task_name: string;
-    deadline: string;
+    deadline?: string;
     total_set: number;
     current_set: number;
     is_complete: boolean;
