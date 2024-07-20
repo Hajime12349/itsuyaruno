@@ -5,8 +5,9 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Collapse from '@mui/material/Collapse';
 import { useState } from 'react';
-import { Task } from '@/lib/entity';
+import { Task, Tag } from '@/lib/entity';
 import { useForm, Controller } from 'react-hook-form';
+import TagInput from './TagInput';
 
 interface AddTaskPanelProps {
     onAddTask: (task: Task) => void;
@@ -14,7 +15,7 @@ interface AddTaskPanelProps {
 
 interface TaskFormInputs {
     taskName: string;
-    taskTag: string;
+    taskTag: Tag[];
     totalSet: number;
     currentSet: number;
     taskDeadline: string | null;
@@ -22,7 +23,15 @@ interface TaskFormInputs {
 
 export default function AddTaskPanel({ onAddTask }: AddTaskPanelProps) {
     const [expanded, setExpanded] = useState(false);
-    const { handleSubmit, control, reset } = useForm<TaskFormInputs>();
+    const { handleSubmit, control, reset } = useForm<TaskFormInputs>({
+        defaultValues: {
+            taskName: "",
+            taskTag: [],
+            totalSet: 0,
+            currentSet: 0,
+            taskDeadline: null,
+        },
+    });
 
     const handleExpandClick = () => {
         setExpanded(!expanded);
@@ -40,7 +49,7 @@ export default function AddTaskPanel({ onAddTask }: AddTaskPanelProps) {
             current_set: data.currentSet,
             is_complete: false,
             deadline: data.taskDeadline ? new Date(data.taskDeadline).toISOString() : undefined,
-            tags: data.taskTag ? [{ tag_name: data.taskTag }] : undefined,
+            tags: data.taskTag,
         };
         onAddTask(newTask);
         handleCancel();
@@ -76,12 +85,10 @@ export default function AddTaskPanel({ onAddTask }: AddTaskPanelProps) {
                         <Controller
                             name="taskTag"
                             control={control}
-                            defaultValue=""
+                            defaultValue={[]}
                             render={({ field }) => (
-                                <TextField
+                                <TagInput
                                     {...field}
-                                    label="Tag"
-                                    fullWidth
                                     style={{ marginTop: '16px' }}
                                 />
                             )}
