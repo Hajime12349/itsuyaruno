@@ -11,10 +11,7 @@ A task planner, inspired by the Pomodoro Technique.
 - Git
   
 ### Process
-1.リポジトリをクローン
-2.ローカルリポジトリに移動
-3.`npm i`
-4.`docker-compose up`
-
-
-
+1. `git clone https://github.com/wachinaba/Itsuyaruno.git`
+2. `cd Istuyaruno`
+3. `npm i`
+4. `docker-compose up`
