@@ -1,5 +1,9 @@
 import { Autocomplete, TextField, Chip } from "@mui/material";
 import { Tag } from "@/lib/entity";
+import { useState, useEffect } from "react";
+import { getTags } from "@/lib/db_api_wrapper";
+import React from "react";
+import { CircularProgress } from "@mui/material";
 
 interface TagInputProps {
     defaultTags?: Tag[];
@@ -11,12 +15,34 @@ interface TagInputProps {
 }
 
 export default function TagInput({ onChange, style, value, onBlur, ref }: TagInputProps) {
-    const tagOptions: Tag[] = [{ tag_name: "tag1" }, { tag_name: "tag2" }, { tag_name: "tag3" }];
+    const [tagOptions, setTagOptions] = useState<Tag[]>([]);
+    const loading = tagOptions.length === 0;
+
+    useEffect(() => {
+        let active = true;
+
+        if (!loading) {
+            return;
+        }
+
+        getTags().then((tags) => {
+            if (active) {
+                setTagOptions(tags);
+            }
+        }).catch((error) => {
+            console.error(error);
+        });
+
+        return () => {
+            active = false;
+        };
+    }, [loading]);
 
     return (
         <Autocomplete
             multiple
             options={tagOptions.map((tag) => tag.tag_name)}
+            loading={loading}
             defaultValue={value?.map((tag) => tag.tag_name) ?? []}
             value={value?.map((tag) => tag.tag_name) ?? []}
             onChange={(e, newValue) => {
@@ -39,6 +65,15 @@ export default function TagInput({ onChange, style, value, onBlur, ref }: TagInp
                     label="タグ"
                     ref={ref}
                     style={style}
+                    InputProps={{
+                        ...params.InputProps,
+                        endAdornment: (
+                            <React.Fragment>
+                                {loading ? <CircularProgress size={20} /> : null}
+                                {params.InputProps?.endAdornment}
+                            </React.Fragment>
+                        )
+                    }}
                 />
             )}
         />
