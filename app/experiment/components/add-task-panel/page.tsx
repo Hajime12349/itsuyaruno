@@ -3,6 +3,8 @@ import AddTaskPanel from "@/components/AddTaskPanel"
 
 export default function AddTaskPanelPage() {
   return (
-    <AddTaskPanel onAddTask={() => { }} />
+    <AddTaskPanel onAddTask={(task) => {
+      alert(JSON.stringify(task))
+    }} />
   )
 }
