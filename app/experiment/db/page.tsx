@@ -1,4 +1,3 @@
-"use client"
 import { db, Task } from "@/lib/kysely"
 import { useState, useEffect } from "react"
 
