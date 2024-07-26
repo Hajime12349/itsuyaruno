@@ -8,10 +8,11 @@ async function TaskList() {
 
 export default function DBPage() {
     return (
-        <Suspense fallback={<div>Loading...</div>}>
-            <div>
+        <div>
+            <h1>tasks</h1>
+            <Suspense fallback={<div>Loading...</div>}>
                 <TaskList />
-            </div>
-        </Suspense>
+            </Suspense>
+        </div>
     )
 }
