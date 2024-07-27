@@ -1,5 +1,6 @@
-import { Generated, ColumnType, Selectable, Insertable, Updateable } from 'kysely'
+import { Generated, ColumnType, Selectable, Insertable, Updateable, Kysely, PostgresDialect } from 'kysely'
 import { createKysely } from '@vercel/postgres-kysely'
+import { Pool } from 'pg'
 
 export interface TagTable {
     tag_name: string
@@ -51,5 +52,20 @@ export interface Database {
     task_tags: TaskTagsTable
 }
 
-export const db = createKysely<Database>()
+let kyselyDb: Kysely<Database>
+if (process.env.NODE_ENV === 'development') {
+    const dialect = new PostgresDialect({
+        pool: new Pool({
+            connectionString: process.env.DATABASE_URL!,
+        }),
+    })
+    kyselyDb = new Kysely<Database>({
+        dialect,
+        log: console.log,
+    })
+} else {
+    kyselyDb = createKysely<Database>()
+}
+
+export const db = kyselyDb
 export { sql } from 'kysely'
