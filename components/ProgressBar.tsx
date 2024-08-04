@@ -43,6 +43,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ task, isTask, progress }) => 
                   task.current_set += 1;
                   updateTask(task).then(() => {
                     window.location.href = '/timer-break-screen'; // カウントが0になったらtimer-break-screenに移動する
+                    history.replaceState(null, '', '/timer-break-screen'); // 元画面に戻るのを防ぐ
                   });
                 });
               }
@@ -50,6 +51,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ task, isTask, progress }) => 
           }
           else if (window.location.pathname === '/timer-break-screen') {
             window.location.href = '/timer-finish-screen'; // カウントが0になったらtimer-finish-screenに移動する
+            history.replaceState(null, '', '/timer-finish-screen'); // 元画面に戻るのを防ぐ
           }
           setRedirected(true);
         }
