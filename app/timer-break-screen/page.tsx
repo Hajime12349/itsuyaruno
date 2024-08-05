@@ -10,7 +10,7 @@ export default function TimerBreakScreen() {
       <WithLoggedIn>
         <main className={styles.main}>
           <Header />
-          <ProgressBar task={undefined} isTask={false} progress={10} />
+          <ProgressBar task={undefined} isTask={false} progress={300} />
         </main>
       </WithLoggedIn>
     </NextAuthProvider>

@@ -36,7 +36,7 @@ export default function TimerWorkingScreen() {
       <WithLoggedIn>
         <main className={styles.main}>
           <Header />
-          <ProgressBar task={currentTask} isTask={true} progress={10} />
+          <ProgressBar task={currentTask} isTask={true} progress={1500} />
         </main>
       </WithLoggedIn>
     </NextAuthProvider>
