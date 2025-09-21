@@ -1,10 +1,35 @@
 .TaskAll {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 20px;
+  margin-top: 50px;
 }
 
-.TaskText{
+.TaskImage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.TaskTextComponents {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.TaskText {
   font-size: 60px;
+  text-align: center;
+  margin: 0;
+}
+
+.TaskLogo {
+  font-size: 20px;
+  text-align: center;
+  margin: 0;
+  border: 2px solid black;
+  padding: 5px 10px;
 }

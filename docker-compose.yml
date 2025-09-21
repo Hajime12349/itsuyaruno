@@ -8,6 +8,9 @@ services:
       - ./:/app
     environment:
       - WATCHPACK_POLLING=true
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres
+    depends_on:
+      - postgres
     command: npm run dev
   postgres:
     container_name: app-db

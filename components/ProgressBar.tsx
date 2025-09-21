@@ -173,7 +173,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ task, isTask, progress }) => 
         <div className={styles.TaskImage}>
           <Image src={TaskImage} alt="Task Image" width={100} height={100} />
         </div>
-      <div className={styles.TaskTextComponets}>
+      <div className={styles.TaskTextComponents}>
         <h2 className={styles.TaskText}> {isTask ? (task?.task_name || "loading...") : "休憩"}</h2>
         <h2 className={styles.TaskLogo}>ロゴマーク</h2>
       </div>
