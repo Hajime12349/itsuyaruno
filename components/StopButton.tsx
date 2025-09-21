@@ -2,6 +2,7 @@
 
 import React from "react";
 import styles from "./StartStopButton.module.css";
+import { MdStop } from "react-icons/md";
 
 interface ButtonProps{
     onClick: () => void;
@@ -9,10 +10,9 @@ interface ButtonProps{
 
 const StopButton: React.FC<ButtonProps> = ({onClick}) => {
     return (
-        <button className={styles.startStopButton} onClick={onClick}>
+        <button className={`${styles.startStopButton} ${styles.stopButton}`} onClick={onClick}>
             <div className={styles.startStopIcon}>
-                <div className={styles.stopIconInner}></div>
-                <div className={styles.stopIconInner}></div>
+                <MdStop className={styles.muiIcon} />
             </div>
         </button>
     );
