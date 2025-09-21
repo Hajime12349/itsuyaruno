@@ -5,8 +5,33 @@ import type { Task, User, Tag } from '@/lib/entity';
  * @returns タスクの配列をPromiseとして返します。
  */
 export async function getTasks(): Promise<Task[]> {
-    const response = await fetch('/api/tasks');
-    return await response.json() as Promise<Task[]>;
+    try {
+        const response = await fetch('/api/tasks');
+        
+        if (!response.ok) {
+            console.error('Failed to fetch tasks:', response.status, response.statusText);
+            return [];
+        }
+        
+        const data = await response.json();
+        
+        // エラーレスポンスの場合は空配列を返す
+        if (data.error) {
+            console.error('API error:', data.error);
+            return [];
+        }
+        
+        // 配列でない場合は空配列を返す
+        if (!Array.isArray(data)) {
+            console.error('Expected array but got:', typeof data, data);
+            return [];
+        }
+        
+        return data as Task[];
+    } catch (error) {
+        console.error('Error fetching tasks:', error);
+        return [];
+    }
 }
 
 /**

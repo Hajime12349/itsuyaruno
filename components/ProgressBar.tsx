@@ -4,6 +4,8 @@ import StartButton from './StartButton';
 import StopButton from './StopButton';
 import styles from "./ProgressBar.module.css";
 import { getUser, getTask, updateTask } from "@/lib/db_api_wrapper";
+import Image from 'next/image';
+import TaskImage from '@/public/icon_3.png';
 import { useRouter } from "next/navigation"
 import { Task } from "@/lib/entity";
 let timer: NodeJS.Timeout | null = null;
@@ -166,15 +168,21 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ task, isTask, progress }) => 
   }, []);
 
   //<h1 style={{ fontFamily: "sans-serif", fontWeight: 300, fontSize: "80px", textAlign: "center", marginTop: "100px" }}>{taskName}</h1>
+  //<h2 className={styles.TaskText}> {taskName}</h2>
   return (
     <div>
-      <div className={styles.TaskTextComponets}>
+      <div className={styles.TaskAll}>
+        <div className={styles.TaskImage}>
+          <Image src={TaskImage} alt="Task Image" width={100} height={100} />
+        </div>
+      <div className={styles.TaskTextComponents}>
         <h2 className={styles.TaskText}> {isTask ? (task?.task_name || "loading...") : "休憩"}</h2>
         <h2 className={styles.TaskLogo}>ロゴマーク</h2>
       </div>
       <canvas ref={canvasRef} id="canvas-in" width="100" height="150"></canvas>
       <div style={{ display: "flex", justifyContent: "center", marginTop: "40px" }}>
         {task && (startFlg ? <StartButton onClick={handleStartButtonClick} /> : <StopButton onClick={countStop} />)}
+      </div>
       </div>
     </div>
   );

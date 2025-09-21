@@ -17,7 +17,7 @@ const Header: React.FC<HeaderProps> = () => {
             setHeaderMessage("作業中 | Working state");
         } else if (pathname === "/timer-break-screen") {
             setHeaderMessage("休憩 | Break time");
-        } else if (pathname === "/time-finish-screen") {
+        } else if (pathname === "/timer-finish-screen") {
             setHeaderMessage("終了 | Completed");
         } else {
             setHeaderMessage("いつやるの？ | When will you do it?");

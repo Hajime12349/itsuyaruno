@@ -1,18 +1,35 @@
+.TaskAll {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin-top: 50px;
+}
+
+.TaskImage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .TaskTextComponents {
   display: flex;
-  /* justify-content: space-between; */
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
 }
 
-.TaskText{
+.TaskText {
   font-size: 60px;
   text-align: center;
-  margin-top: 140px;
+  margin: 0;
 }
 
-.TaskLogo{
+.TaskLogo {
   font-size: 20px;
-  position: absolute;
-  left: 280px;
-  top: 260px;
+  text-align: center;
+  margin: 0;
   border: 2px solid black;
+  padding: 5px 10px;
 }

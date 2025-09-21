@@ -254,7 +254,7 @@ const CRUDApiWrapperTestComponent = () => {
             {user_info_in_db_tsx}
             {tasks_header_tsx}
             <ul>
-                {tasks?.map((task) => {
+                {Array.isArray(tasks) && tasks.map((task) => {
                     return (
                         <div key={task.id}>
                             <TaskPanel task={task} isSelected={false} onClick={() => { }} setEditTask={() => { }} />

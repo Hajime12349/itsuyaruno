@@ -45,7 +45,7 @@ const TaskColumn = ({ tasks }: TaskColumnProps) => {
                 {pathname == "/task-config-main-screen" && (
                     <AddTaskButton setIsAddModalActive={setIsAddModalActive} />
                 )}
-              {tasks.map((task) => (
+              {Array.isArray(tasks) && tasks.map((task) => (
 
                 <TaskPanel key={task.id} task={task} isSelected={selectedTaskId === task.id} setEditTask={setEditTask} onClick={() => handleClick(task.id)} />
             ))}

@@ -8,6 +8,8 @@ import styles from "./login.module.css";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { NextAuthProvider } from "../provider";
+import Image from 'next/image';
+import settingsIcon from '@/public/icon.png';
 
 const GoogleSignInButton: React.FC = () => {
   const router = useRouter();
@@ -17,7 +19,9 @@ const GoogleSignInButton: React.FC = () => {
 
   return (
     <div>
-      <div className={styles.square}></div> 
+      <div className={styles.IconImage}>
+        <Image src={settingsIcon} alt="Icon Image" width={100} height={100} />
+      </div>
       <h1 className={styles.TitleText}>いつやるの？  |  When will you do it?</h1>
       <button className={styles.gsiMaterialButton} onClick={() => {
         if (session.status === "authenticated") {
