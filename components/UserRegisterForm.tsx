@@ -2,41 +2,34 @@
 
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { getSession } from "next-auth/react";
-import { registerUser } from "@/lib/db_api_wrapper";
 import styles from "./UserRegisterForm.module.css";
 
 type FormValues = {
     display_name: string;
 };
 
-const UserRegisterForm = () => {
+interface UserRegisterFormProps {
+    defaultDisplayName?: string;
+    onSubmit?: (data: FormValues) => Promise<void> | void;
+}
+
+const UserRegisterForm = ({ defaultDisplayName = "", onSubmit }: UserRegisterFormProps) => {
     const { register, handleSubmit, setValue } = useForm<FormValues>();
 
     useEffect(() => {
-        const fetchUser = async () => {
-            const session = await getSession();
-            if (session && session.user) {
-                setValue("display_name", session.user.name || "");
-            }
-        };
+        setValue("display_name", defaultDisplayName);
+    }, [defaultDisplayName, setValue]);
 
-        fetchUser();
-    }, [setValue]);
-
-    const onSubmit = (data: FormValues) => {
-        registerUser({
-            display_name: data.display_name,
-        }).then(() => {
-            console.log("User registered successfully!");
-            window.location.href = '/task-config-main-screen';
-        });
+    const handleSubmitInternal = async (data: FormValues) => {
+        if (onSubmit) {
+            await onSubmit(data);
+        }
     };
 
     return (
         <div className={styles.container}>
             <h1 className={styles.h1}>ユーザー新規登録</h1>
-            <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
+            <form onSubmit={handleSubmit(handleSubmitInternal)} className={styles.form}>
                 <div>
                     <label htmlFor="display_name" className={styles.label}>表示名</label>
                     <input

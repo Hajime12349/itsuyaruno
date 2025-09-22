@@ -2,29 +2,23 @@
 
 import React from "react"
 import { Task } from "@/lib/entity"
-import { updateUser } from "@/lib/db_api_wrapper"
-import { useRouter } from "next/navigation"
 
 interface TaskStartButtonProps {
     task: Task
+    onStart?: (task: Task) => void
 }
 
 
-const TaskStartButton: React.FC<TaskStartButtonProps> = ({ task }) => {
-    const router = useRouter()
-    const current_task = task.id
-    function onStart() {
-        updateUser({ current_task: task.id }).then(() => { // ユーザーのcurrent_taskを更新できたら
-            console.log('Task started');
-            router.push(`/timer-start-screen`);
-        }).catch((error) => { // ユーザーのcurrent_taskを更新できなかったら
-            console.error('Failed to start task:', error);
-        });
+const TaskStartButton: React.FC<TaskStartButtonProps> = ({ task, onStart }) => {
+    function handleClick() {
+        if (onStart) {
+            onStart(task)
+        }
     }
 
     // TSXを返す
     // TODO: ボタンのスタイルを設定する
-    return <button onClick={onStart}>開始</button>
+    return <button onClick={handleClick}>開始</button>
 }
 
 export default TaskStartButton

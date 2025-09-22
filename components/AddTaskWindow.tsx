@@ -3,21 +3,24 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form'
 import styles from './TaskWindow.module.css'
 import { Task, User } from '@/lib/entity'
-import { createTask } from '@/lib/db_api_wrapper'
-import { useRouter } from 'next/navigation'
 
-const AddTaskWindow = ({ setIsActive }: any) => {
+interface AddTaskWindowProps {
+  onSubmitTask?: (task: { task_name: string, total_set: number, deadline: string, current_set: number, is_complete: boolean }) => Promise<void> | void
+  onClose?: () => void
+  setIsActive?: (active: boolean) => void
+}
+
+const AddTaskWindow = ({ onSubmitTask, onClose, setIsActive }: AddTaskWindowProps) => {
   // フォームの値を管理するためのステート
   const { register, handleSubmit, setValue, getValues } = useForm()
   // 詳細設定の表示状態を管理するためのステート
   const [showDetails, setShowDetails] = useState(false);
   // 追加ボタンをクリックしたかどうか
   const [disableAddButton, setDIsableAddButton] = useState(false);
-  // ルーターを取得
-  const router = useRouter()
+  // ルーター依存を排除
 
   // クリック時のアクション
-  const onSubmit = (data: any) => {
+  const onSubmit = async (data: any) => {
     let { task_name, total_set, deadline } = data;
     let current_set = 0; // current_setを0に設定
     let is_complete = false; // is_completeをfalseに設定
@@ -27,25 +30,29 @@ const AddTaskWindow = ({ setIsActive }: any) => {
       return;
     }
     const taskData = { task_name, total_set, deadline, current_set, is_complete };
-    handleTaskData(taskData); // 受け渡し用関数にデータを渡す
+    await handleTaskData(taskData); // 受け渡し用関数にデータを渡す
     pageTransition(); // ページ遷移
   }
   // 受け渡し用関数
-  const handleTaskData = (taskData: { task_name: string, total_set: number, deadline: string, current_set: number, is_complete: boolean }) => {
+  const handleTaskData = async (taskData: { task_name: string, total_set: number, deadline: string, current_set: number, is_complete: boolean }) => {
     setDIsableAddButton(true)
-    createTask(taskData).then(() => {
-      console.log("タスクを追加しました");
-      setIsActive(false)
-      window.location.reload();
-
-    }).catch((error) => {
+    try {
+      if (onSubmitTask) {
+        await onSubmitTask(taskData)
+      }
+      if (setIsActive) {
+        setIsActive(false)
+      }
+    } catch (error) {
       console.error("タスクの追加に失敗しました", error);
-    });
+    }
   }
 
   //ページ遷移用関数
   const pageTransition = () => {
-    router.push('/task-config-main-screen')
+    if (onClose) {
+      onClose()
+    }
   }
 
   // 今日の日付を取得

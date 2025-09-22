@@ -3,10 +3,10 @@ import React, { useRef, useEffect, useState } from 'react';
 import StartButton from './StartButton';
 import StopButton from './StopButton';
 import styles from "./ProgressBar.module.css";
-import { getUser, getTask, updateTask } from "@/lib/db_api_wrapper";
+// Remove direct API usage; delegate via props callbacks
 import Image from 'next/image';
 import TaskImage from '@/public/icon_3.png';
-import { useRouter } from "next/navigation"
+// import { useRouter } from "next/navigation"
 import { Task } from "@/lib/entity";
 let timer: NodeJS.Timeout | null = null;
 
@@ -15,12 +15,14 @@ interface ProgressBarProps {
   task: Task | undefined;
   isTask: boolean;
   progress: number;
+  onTickComplete?: (context: { currentPathname: string, task?: Task }) => Promise<void> | void
+  onStartFromStartScreen?: () => void
 }
 
 //定義した形の引数を受け取る関数
-const ProgressBar: React.FC<ProgressBarProps> = ({ task, isTask, progress }) => {
+const ProgressBar: React.FC<ProgressBarProps> = ({ task, isTask, progress, onTickComplete, onStartFromStartScreen }) => {
 
-  const router = useRouter();
+  // const router = useRouter();
 
   //---------------------------------------------------------------------------------------
   //ここからタイマーのカウント
@@ -38,22 +40,8 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ task, isTask, progress }) => 
     setCount((prevCount) => {
       if (prevCount <= 1) {
         if (!redirected) {
-          if (window.location.pathname === '/timer-working-screen') {
-            getUser().then((user) => {
-              if (user.current_task) {
-                getTask(user.current_task).then((task) => {
-                  task.current_set += 1;
-                  updateTask(task).then(() => {
-                    window.location.href = '/timer-break-screen'; // カウントが0になったらtimer-break-screenに移動する
-                    history.replaceState(null, '', '/timer-break-screen'); // 元画面に戻るのを防ぐ
-                  });
-                });
-              }
-            });
-          }
-          else if (window.location.pathname === '/timer-break-screen') {
-            window.location.href = '/timer-finish-screen'; // カウントが0になったらtimer-finish-screenに移動する
-            history.replaceState(null, '', '/timer-finish-screen'); // 元画面に戻るのを防ぐ
+          if (onTickComplete) {
+            onTickComplete({ currentPathname: window.location.pathname, task })
           }
           setRedirected(true);
         }
@@ -99,7 +87,9 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ task, isTask, progress }) => 
   //もしtimer-start-screenにいたら、スタートボタンを押した時にtimer-working-screenに移動する。
   const handleStartButtonClick = () => {
     if (window.location.pathname === '/timer-start-screen') {
-      window.location.href = '/timer-working-screen'; // 特定のURLに移動する
+      if (onStartFromStartScreen) {
+        onStartFromStartScreen()
+      }
     } else {
       countStart();
     }
