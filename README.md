@@ -17,6 +17,17 @@ Next.js environment with Docker. To be used at the hackathon.
 
 2.ローカルリポジトリに移動
 
+3..env.localを追加
+```
+# Google OAuth設定
+GOOGLE_CLIENT_ID=Your Client Id
+GOOGLE_CLIENT_SECRET=Your Client Secret
+
+# NextAuth設定
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=Set Own Secret
+```
+
 3.`docker-compose up`
 
 
