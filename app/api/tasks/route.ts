@@ -14,7 +14,11 @@ export async function GET(req: NextRequest) {
     }
 
     const searchParams = req.nextUrl.searchParams;
-    const include_complete = searchParams.get('include_complete') === 'true';
+    const includeParam = searchParams.get('include_complete');
+    if (includeParam !== null && includeParam !== 'true' && includeParam !== 'false') {
+        return new Response(JSON.stringify({ error: 'Bad Request: invalid query' }), { status: 400 });
+    }
+    const include_complete = includeParam === 'true';
 
     try {
         const repo = new PostgresTaskRepository();
@@ -33,7 +37,24 @@ export async function POST(req: Request) {
     if (!session_user_id) {
         return new Response(JSON.stringify({ error: 'Unauthorized: session user does not have a valid id' }), { status: 401 });
     }
-    var { task_name, deadline, total_set, current_set, is_complete } = await req.json();
+    const json = await req.json();
+    const { task_name, deadline: raw_deadline, total_set, current_set, is_complete } = json ?? {};
+    if (typeof task_name !== 'string' || task_name.trim().length === 0) {
+        return new Response(JSON.stringify({ error: 'Bad Request: task_name' }), { status: 400 });
+    }
+    if (typeof total_set !== 'number' || !Number.isInteger(total_set) || total_set < 1) {
+        return new Response(JSON.stringify({ error: 'Bad Request: total_set' }), { status: 400 });
+    }
+    if (typeof current_set !== 'number' || !Number.isInteger(current_set) || current_set < 0) {
+        return new Response(JSON.stringify({ error: 'Bad Request: current_set' }), { status: 400 });
+    }
+    if (typeof is_complete !== 'boolean') {
+        return new Response(JSON.stringify({ error: 'Bad Request: is_complete' }), { status: 400 });
+    }
+    let deadline = raw_deadline as string | undefined;
+    if (deadline === '') {
+        deadline = undefined;
+    }
     // when deadline is empty, set it to undefined
     if (!deadline) {
         deadline = undefined;
@@ -53,6 +74,10 @@ export async function POST(req: Request) {
         return new Response(JSON.stringify(toDTO(created)), { status: 201 });
     } catch (error) {
         console.error('Database query failed:', error);
+        const message = (error as Error)?.message ?? '';
+        if (message.startsWith('ValidationError:')) {
+            return new Response(JSON.stringify({ error: message }), { status: 400 });
+        }
         return new Response(JSON.stringify({ error: 'Failed to add task' }), { status: 500 });
     }
 }

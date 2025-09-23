@@ -37,7 +37,24 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     }
 
     const { id } = params;
-    var { task_name, deadline, total_set, current_set, is_complete } = await req.json();
+    const json = await req.json();
+    const { task_name, deadline: raw_deadline, total_set, current_set, is_complete } = json ?? {};
+    if (typeof task_name !== 'string' || task_name.trim().length === 0) {
+        return new Response(JSON.stringify({ error: 'Bad Request: task_name' }), { status: 400 });
+    }
+    if (typeof total_set !== 'number' || !Number.isInteger(total_set) || total_set < 1) {
+        return new Response(JSON.stringify({ error: 'Bad Request: total_set' }), { status: 400 });
+    }
+    if (typeof current_set !== 'number' || !Number.isInteger(current_set) || current_set < 0) {
+        return new Response(JSON.stringify({ error: 'Bad Request: current_set' }), { status: 400 });
+    }
+    if (typeof is_complete !== 'boolean') {
+        return new Response(JSON.stringify({ error: 'Bad Request: is_complete' }), { status: 400 });
+    }
+    let deadline = raw_deadline as string | undefined;
+    if (deadline === '') {
+        deadline = undefined;
+    }
 
     if (!deadline) {
         deadline = undefined;
@@ -61,6 +78,10 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
         return new Response(JSON.stringify(toDTO(updated)), { status: 200 });
     } catch (error) {
         console.error('Database query failed:', error);
+        const message = (error as Error)?.message ?? '';
+        if (message.startsWith('ValidationError:')) {
+            return new Response(JSON.stringify({ error: message }), { status: 400 });
+        }
         return new Response(JSON.stringify({ error: 'Failed to update task' }), { status: 500 });
     }
 }

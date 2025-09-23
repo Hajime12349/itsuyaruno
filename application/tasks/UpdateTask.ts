@@ -15,6 +15,17 @@ export class UpdateTaskUseCase {
     constructor(private readonly taskRepository: TaskRepository) {}
 
     async execute(input: UpdateTaskInput) {
+        // business guards
+        const name = (input.name ?? "").trim();
+        if (name.length === 0) {
+            throw new Error('ValidationError: name must be non-empty');
+        }
+        if (!Number.isInteger(input.totalSet) || input.totalSet < 1) {
+            throw new Error('ValidationError: totalSet must be >= 1');
+        }
+        if (!Number.isInteger(input.currentSet) || input.currentSet < 0 || input.currentSet > input.totalSet) {
+            throw new Error('ValidationError: currentSet must be between 0 and totalSet');
+        }
         const entity = TaskEntity.create({
             id: input.id,
             userId: input.userId,

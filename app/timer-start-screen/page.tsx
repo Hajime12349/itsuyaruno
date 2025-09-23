@@ -8,10 +8,12 @@ import { User, Task } from '@/lib/entity';
 import { getUser, getTask } from '@/lib/db_api_wrapper';
 import { useState, useEffect } from 'react';
 import { NextAuthProvider, WithLoggedIn } from "@/app/provider";
+import { useRouter } from "next/navigation";
 
 export default function TimerStartScreen() {
   const [user, setUser] = useState<User | undefined>();
   const [currentTask, setCurrentTask] = useState<Task | undefined>();
+  const router = useRouter();
 
   useEffect(() => {
     getUser()
@@ -32,7 +34,14 @@ export default function TimerStartScreen() {
         <main className={styles.main}>
           <Header />
           <div className={styles.TaskTextComponets}>
-            <ProgressBar task={currentTask} isTask={true} progress={10} />
+            <ProgressBar
+              task={currentTask}
+              isTask={true}
+              progress={10}
+              onStartFromStartScreen={() => {
+                router.push('/timer-working-screen');
+              }}
+            />
           </div>
           <div className={styles.NavigateTaskButton}>
             <NavigateTaskButton />

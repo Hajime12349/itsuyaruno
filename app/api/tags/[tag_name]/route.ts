@@ -13,7 +13,11 @@ export async function PUT(req: Request, { params }: { params: { tag_name: string
     }
 
     const { tag_name } = params;
-    const { new_tag_name } = await req.json();
+    const json = await req.json();
+    const { new_tag_name } = json ?? {};
+    if (typeof new_tag_name !== 'string' || new_tag_name.trim().length === 0) {
+        return new Response(JSON.stringify({ error: 'Bad Request: new_tag_name' }), { status: 400 });
+    }
 
     try {
         const repo = new PostgresTagRepository();
@@ -25,6 +29,10 @@ export async function PUT(req: Request, { params }: { params: { tag_name: string
         return new Response(JSON.stringify(toDTO(updated)), { status: 200 });
     } catch (error) {
         console.error('Database query failed:', error);
+        const message = (error as Error)?.message ?? '';
+        if (message.startsWith('ValidationError:')) {
+            return new Response(JSON.stringify({ error: message }), { status: 400 });
+        }
         return new Response(JSON.stringify({ error: 'Failed to update tag' }), { status: 500 });
     }
 }

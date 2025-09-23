@@ -4,8 +4,9 @@ import styles from './TaskPanel.module.css';
 import { Task } from '@/lib/entity';
 import TaskStartButton from './TaskStartButton';
 import EditTaskButton from './EditTaskButton';
-import { usePathname} from 'next/navigation'; // usePathname フックをインポート
+import { usePathname, useRouter} from 'next/navigation'; // usePathname フックをインポート
 import EditTaskWindow from "./EditTaskWindow";
+import { updateUser } from "@/lib/db_api_wrapper";
 
 import { useState } from "react";
 
@@ -20,8 +21,10 @@ interface TaskPanelProps {
 
 const TaskPanel: React.FC<TaskPanelProps> = ({ task, isSelected,setEditTask, onClick }) => {
   const pathname = usePathname();//現在のパスを取得
+  const router = useRouter();
   // 残り日数を計算
-  const remainingDays = Math.ceil((Date.parse(task.deadline) - Date.now()) / (1000 * 60 * 60 * 24));
+  const deadlineMs = task.deadline ? Date.parse(task.deadline) : NaN;
+  const remainingDays = Math.ceil((deadlineMs - Date.now()) / (1000 * 60 * 60 * 24));
 
   // 表示内容を条件分岐
   let remainingDaysText;
@@ -40,6 +43,14 @@ const TaskPanel: React.FC<TaskPanelProps> = ({ task, isSelected,setEditTask, onC
     setEditTask(task)
   }
 
+  async function handleStart(selectedTask: Task) {
+    try {
+      await updateUser({ current_task: selectedTask.id, current_task_time: new Date().toISOString() } as unknown as any);
+      router.replace('/timer-start-screen');
+    } catch (e) {
+      console.error(e);
+    }
+  }
 
 
   return (
@@ -50,7 +61,7 @@ const TaskPanel: React.FC<TaskPanelProps> = ({ task, isSelected,setEditTask, onC
         <div className={styles.text}>{remainingDaysText}</div>
       </div>
       <div className={isSelected ? styles.buttonContainer : styles.buttonContainerHidden}>
-        <TaskStartButton task={task} />
+        <TaskStartButton task={task} onStart={handleStart} />
         {pathname == "/task-config-main-screen" && (
           <EditTaskButton onClick={EditTaskWindow} />
         )}
