@@ -69,6 +69,10 @@ export async function updateTask(task: Task): Promise<Task> {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(task),
     });
+    if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Update failed: ${response.status} ${text}`);
+    }
     return await response.json() as Promise<Task>;
 }
 
