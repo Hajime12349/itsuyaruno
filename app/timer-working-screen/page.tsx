@@ -14,6 +14,7 @@ export default function TimerWorkingScreen() {
   const router = useRouter();
   const [user, setUser] = useState<User | undefined>();
   const [currentTask, setCurrentTask] = useState<Task | undefined>();
+  const WORK_DURATION = process.env.NODE_ENV === 'development' ? 3 : 1500
 
   useEffect(() => {
     getUser()
@@ -35,7 +36,7 @@ export default function TimerWorkingScreen() {
       <WithLoggedIn>
         <main className={styles.main}>
           <Header />
-          <ProgressBar task={currentTask} isTask={true} progress={1500} />
+          <ProgressBar task={currentTask} isTask={true} progress={WORK_DURATION} />
         </main>
       </WithLoggedIn>
     </NextAuthProvider>
