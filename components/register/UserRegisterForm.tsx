@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { registerUser } from "@/lib/db_api_wrapper";
 import styles from "./UserRegisterForm.module.css";
 
 type FormValues = {
@@ -20,10 +21,18 @@ const UserRegisterForm = ({ defaultDisplayName = "", onSubmit }: UserRegisterFor
         setValue("display_name", defaultDisplayName);
     }, [defaultDisplayName, setValue]);
 
-    const handleSubmitInternal = async (data: FormValues) => {
+    const handleSubmitInternal: SubmitHandler<FormValues> = async (data) => {
         if (onSubmit) {
             await onSubmit(data);
+            return;
         }
+
+        await registerUser({
+            display_name: data.display_name,
+        });
+
+        console.log("User registered successfully!");
+        window.location.href = "/task-config-main-screen";
     };
 
     return (

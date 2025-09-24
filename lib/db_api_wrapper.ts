@@ -55,6 +55,10 @@ export async function createTask(task: Task): Promise<Task> {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(task),
     });
+    if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Create failed: ${response.status} ${text}`);
+    }
     return await response.json() as Promise<Task>;
 }
 
@@ -81,9 +85,13 @@ export async function updateTask(task: Task): Promise<Task> {
  * @param taskId 削除するタスクのID
  */
 export async function deleteTask(taskId: number): Promise<void> {
-    await fetch(`/api/tasks/${taskId}`, {
+    const response = await fetch(`/api/tasks/${taskId}`, {
         method: 'DELETE',
     });
+    if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Delete failed: ${response.status} ${text}`);
+    }
 }
 
 /**
@@ -106,6 +114,10 @@ export async function registerUser(user: User): Promise<User> {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(user),
     });
+    if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Register failed: ${response.status} ${text}`);
+    }
     return await response.json() as Promise<User>;
 }
 
@@ -121,6 +133,10 @@ export async function updateUser(user: User): Promise<User> {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(user),
         });
+        if (!response.ok) {
+            const text = await response.text();
+            throw new Error(`Update failed: ${response.status} ${text}`);
+        }
         return await response.json() as Promise<User>;
     }
 
@@ -129,6 +145,10 @@ export async function updateUser(user: User): Promise<User> {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(user),
     });
+    if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Update failed: ${response.status} ${text}`);
+    }
     return await response.json() as Promise<User>;
 }
 
@@ -137,9 +157,13 @@ export async function updateUser(user: User): Promise<User> {
  * @param userId 削除するユーザーのID
  */
 export async function deleteUser(userId: string): Promise<void> {
-    await fetch(`/api/users/${userId}`, {
+    const response = await fetch(`/api/users/${userId}`, {
         method: 'DELETE',
     });
+    if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Delete failed: ${response.status} ${text}`);
+    }
 }
 
 /**
@@ -162,6 +186,10 @@ export async function createTag(tag: Tag): Promise<Tag> {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(tag),
     });
+    if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Create failed: ${response.status} ${text}`);
+    }
     return await response.json() as Promise<Tag>;
 }
 
@@ -177,6 +205,10 @@ export async function updateTag(targetTag: Tag, newTag: Tag): Promise<Tag> {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ new_tag_name: newTag.tag_name }),
     });
+    if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Update failed: ${response.status} ${text}`);
+    }
     return await response.json() as Promise<Tag>;
 }
 
@@ -185,7 +217,11 @@ export async function updateTag(targetTag: Tag, newTag: Tag): Promise<Tag> {
  * @param tagName 削除するタグの名前
  */
 export async function deleteTag(tagName: string): Promise<void> {
-    await fetch(`/api/tags/${tagName}`, {
+    const response = await fetch(`/api/tags/${tagName}`, {
         method: 'DELETE',
     });
+    if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Delete failed: ${response.status} ${text}`);
+    }
 }

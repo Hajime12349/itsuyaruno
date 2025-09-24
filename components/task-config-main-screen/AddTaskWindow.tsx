@@ -1,65 +1,59 @@
 'use client'
 import { useState } from 'react';
-import { useForm } from 'react-hook-form'
-import styles from './TaskWindow.module.css'
-import { Task, User } from '@/lib/entity'
+import { useForm } from 'react-hook-form';
+import styles from './TaskWindow.module.css';
+import type { TaskDraft } from './types';
 
 interface AddTaskWindowProps {
-  onSubmitTask?: (task: { task_name: string, total_set: number, deadline: string, current_set: number, is_complete: boolean }) => Promise<void> | void
-  onClose?: () => void
-  setIsActive?: (active: boolean) => void
+  onSubmitTask: (task: TaskDraft) => Promise<void>;
+  onClose: () => void;
 }
 
-const AddTaskWindow = ({ onSubmitTask, onClose, setIsActive }: AddTaskWindowProps) => {
-  // フォームの値を管理するためのステート
-  const { register, handleSubmit, setValue, getValues } = useForm()
-  // 詳細設定の表示状態を管理するためのステート
+const AddTaskWindow = ({ onSubmitTask, onClose }: AddTaskWindowProps) => {
+  const { register, handleSubmit, setValue } = useForm();
   const [showDetails, setShowDetails] = useState(false);
-  // 追加ボタンをクリックしたかどうか
-  const [disableAddButton, setDIsableAddButton] = useState(false);
-  // ルーター依存を排除
+  const [disableAddButton, setDisableAddButton] = useState(false);
 
-  // クリック時のアクション
   const onSubmit = async (data: any) => {
-    let { task_name, total_set, deadline } = data;
-    let current_set = 0; // current_setを0に設定
-    let is_complete = false; // is_completeをfalseに設定
+    const { task_name, total_set, deadline } = data ?? {};
+    const trimmedName = typeof task_name === 'string' ? task_name.trim() : '';
+    const parsedTotalSet = typeof total_set === 'number' ? total_set : Number(total_set);
 
-    if (!task_name || !total_set) {
-      alert("タイトルとセット数と期限を入力してください");
+    if (trimmedName.length === 0 || Number.isNaN(parsedTotalSet) || parsedTotalSet < 1) {
+      alert("タイトルとセット数を入力してください");
       return;
     }
-    const taskData = { task_name, total_set, deadline, current_set, is_complete };
-    await handleTaskData(taskData); // 受け渡し用関数にデータを渡す
-    pageTransition(); // ページ遷移
-  }
-  // 受け渡し用関数
-  const handleTaskData = async (taskData: { task_name: string, total_set: number, deadline: string, current_set: number, is_complete: boolean }) => {
-    setDIsableAddButton(true)
+
+    const normalizedDeadline =
+      typeof deadline === 'string' && deadline.trim().length > 0 ? deadline : undefined;
+
+    const taskData: TaskDraft = {
+      task_name: trimmedName,
+      total_set: parsedTotalSet,
+      deadline: normalizedDeadline,
+      current_set: 0,
+      is_complete: false,
+    };
+
+    await handleTaskData(taskData);
+  };
+
+  const handleTaskData = async (taskData: TaskDraft) => {
+    setDisableAddButton(true);
     try {
-      if (onSubmitTask) {
-        await onSubmitTask(taskData)
-      }
-      if (setIsActive) {
-        setIsActive(false)
-      }
+      await onSubmitTask(taskData);
+      onClose();
     } catch (error) {
       console.error("タスクの追加に失敗しました", error);
+      alert('タスクの追加に失敗しました');
+      setDisableAddButton(false);
     }
-  }
+  };
 
-  //ページ遷移用関数
-  const pageTransition = () => {
-    if (onClose) {
-      onClose()
-    }
-  }
+  const closeModal = () => {
+    onClose();
+  };
 
-  // 今日の日付を取得
-  //※デフォルトは空にしました。
-  // const today = new Date().toISOString().split('T')[0];
-
-  // totalSetをランダムに設定する関数
   const setRandomTotalSet = () => {
     const randomValue = Math.floor(Math.random() * 3) + 1;
     setValue('total_set', randomValue);
@@ -69,7 +63,7 @@ const AddTaskWindow = ({ onSubmitTask, onClose, setIsActive }: AddTaskWindowProp
     <div className="App">
       <div className={styles.header}>
         <h1>タスクを追加</h1>
-        <button className={styles.closeButton} onClick={pageTransition}>×</button>
+        <button className={styles.closeButton} onClick={closeModal}>×</button>
       </div>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>

@@ -6,46 +6,7 @@ import { GetMeUseCase } from '../../../application/users/GetMe';
 import { CreateUserUseCase } from '../../../application/users/CreateUser';
 import { UpdateUserUseCase } from '../../../application/users/UpdateUser';
 import { toDTO } from '../../../interfaces/http/users/mappers';
-
-function normalizeOptionalText(fieldName: string, value: unknown): string | undefined {
-    if (value === undefined || value === null) {
-        return undefined;
-    }
-    if (typeof value !== 'string') {
-        throw new Error(`BadRequest: ${fieldName}`);
-    }
-    const trimmed = value.trim();
-    return trimmed.length > 0 ? trimmed : undefined;
-}
-
-function normalizeOptionalTaskId(fieldName: string, value: unknown): number | undefined {
-    if (value === undefined || value === null || value === '') {
-        return undefined;
-    }
-    const numeric = typeof value === 'number' ? value : Number(value);
-    if (!Number.isInteger(numeric) || numeric < 0) {
-        throw new Error(`BadRequest: ${fieldName}`);
-    }
-    return numeric;
-}
-
-function normalizeOptionalDateTime(fieldName: string, value: unknown): string | undefined {
-    if (value === undefined || value === null) {
-        return undefined;
-    }
-    if (typeof value !== 'string') {
-        throw new Error(`BadRequest: ${fieldName}`);
-    }
-    const trimmed = value.trim();
-    if (trimmed.length === 0) {
-        return undefined;
-    }
-    const parsed = Date.parse(trimmed);
-    if (Number.isNaN(parsed)) {
-        throw new Error(`BadRequest: ${fieldName}`);
-    }
-    return new Date(parsed).toISOString();
-}
+import { normalizeOptionalDateTime, normalizeOptionalTaskId, normalizeOptionalText } from './normalizers';
 
 export async function GET(req: Request) {
     const session = await getServerSession(authOptions);

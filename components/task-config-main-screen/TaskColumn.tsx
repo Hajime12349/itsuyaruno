@@ -1,59 +1,73 @@
-import React, { PureComponent } from 'react';
+import { useState } from 'react';
+import { usePathname } from 'next/navigation';
 import TaskPanel from './TaskPanel';
-import { Task } from '@/lib/entity';
+import type { Task } from '@/lib/entity';
 import styles from './TaskColumn.module.css';
 import AddTaskButton from './AddTaskButton';
 import AddTaskWindow from './AddTaskWindow';
 import EditTaskWindow from './EditTaskWindow';
-import { useState } from 'react';
-import { usePathname } from 'next/navigation'; // usePathname フックをインポート
+import type { TaskDraft } from './types';
 
 interface TaskColumnProps {
-    tasks: Task[];
+  tasks: Task[];
+  onCreateTask: (task: TaskDraft) => Promise<void>;
+  onUpdateTask: (task: Task) => Promise<void>;
+  onDeleteTask: (taskId: number) => Promise<void>;
 }
 
-const TaskColumn = ({ tasks }: TaskColumnProps) => {
-    const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
-    const [isAddModalActive,setIsAddModalActive] = useState(false)
-    const [editTask,setEditTask] = useState<Task | undefined>()
+const TaskColumn = ({ tasks, onCreateTask, onUpdateTask, onDeleteTask }: TaskColumnProps) => {
+  const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
+  const [isAddModalActive, setIsAddModalActive] = useState(false);
+  const [editTask, setEditTask] = useState<Task | undefined>();
 
-    const pathname = usePathname();
-    const boxClass = pathname === '/task-config-main-screen' ? styles.taskColumnLarge : styles.taskColumnSmall;
+  const pathname = usePathname();
+  const boxClass = pathname === '/task-config-main-screen' ? styles.taskColumnLarge : styles.taskColumnSmall;
 
-    const handleClick = (taskId?: number) => {
-        if (taskId === undefined) { // 無効なクリックの場合
-            setSelectedTaskId(null);
-            return;
-        }
-        if (taskId === selectedTaskId) { // 既に選択されているタスクを再度選択した場合
-            setSelectedTaskId(null);
-        } else { // 新しいタスクを選択した場合
-            setSelectedTaskId(taskId);
-        }
-    };
+  const handleClick = (taskId?: number) => {
+    if (taskId === undefined) {
+      setSelectedTaskId(null);
+      return;
+    }
+    setSelectedTaskId((prev) => (prev === taskId ? null : taskId));
+  };
 
-    // const handleAddTaskClick = () => {
-    //     console.log("Add task button clicked");
-    // }
-
-
-    return (
-        <main>
-            {isAddModalActive && <AddTaskWindow setIsActive={setIsAddModalActive}/>}
-            {editTask && <EditTaskWindow task={editTask} />}
-            <div className={boxClass}>
-                {pathname == "/task-config-main-screen" && (
-                    <AddTaskButton setIsAddModalActive={setIsAddModalActive} />
-                )}
-              {Array.isArray(tasks) && tasks.map((task) => (
-
-                <TaskPanel key={task.id} task={task} isSelected={selectedTaskId === task.id} setEditTask={setEditTask} onClick={() => handleClick(task.id)} />
-            ))}
-            </div>
-            <div className={styles.taskWindow}>
-            </div>
-        </main>
-    );
+  return (
+    <main>
+      {isAddModalActive && (
+        <AddTaskWindow
+          onSubmitTask={onCreateTask}
+          onClose={() => setIsAddModalActive(false)}
+        />
+      )}
+      {editTask && (
+        <EditTaskWindow
+          task={editTask}
+          onSubmitTask={onUpdateTask}
+          onDeleteTask={async (taskId) => {
+            await onDeleteTask(taskId);
+            setSelectedTaskId((prev) => (prev === taskId ? null : prev));
+          }}
+          onClose={() => setEditTask(undefined)}
+        />
+      )}
+      <div className={boxClass}>
+        {pathname === '/task-config-main-screen' && (
+          <AddTaskButton setIsAddModalActive={setIsAddModalActive} />
+        )}
+        {Array.isArray(tasks) && tasks.map((task) => (
+          <TaskPanel
+            key={task.id}
+            task={task}
+            isSelected={selectedTaskId === task.id}
+            setEditTask={setEditTask}
+            onClick={() => handleClick(task.id)}
+          />
+        ))}
+      </div>
+      <div className={styles.taskWindow}>
+      </div>
+    </main>
+  );
 };
 
 export default TaskColumn;
