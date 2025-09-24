@@ -5,7 +5,7 @@ import styles from "./TimerWorkingScreen.module.css";
 import Header from '@/components/Header';
 import ProgressBar from '@/components/ProgressBar';
 import { User, Task } from '@/lib/entity';
-import { getUser, getTask } from '@/lib/db_api_wrapper';
+import { getUser, getTask, updateTask } from '@/lib/db_api_wrapper';
 import { useState, useEffect } from 'react';
 import { useRouter } from "next/navigation";
 import { NextAuthProvider, WithLoggedIn } from "@/app/provider";
@@ -15,6 +15,25 @@ export default function TimerWorkingScreen() {
   const [user, setUser] = useState<User | undefined>();
   const [currentTask, setCurrentTask] = useState<Task | undefined>();
   const WORK_DURATION = process.env.NODE_ENV === 'development' ? 3 : 1500
+
+  const handleWorkTimerComplete = async () => {
+    if (!currentTask || typeof currentTask.id !== 'number') {
+      router.replace('/timer-break-screen');
+      return;
+    }
+
+    const nextSet = Math.min(currentTask.current_set + 1, currentTask.total_set);
+    const taskPayload: Task = { ...currentTask, current_set: nextSet };
+
+    try {
+      const updated = await updateTask(taskPayload);
+      setCurrentTask(updated);
+    } catch (error) {
+      console.error('タスクのセット数更新に失敗しました', error);
+    } finally {
+      router.replace('/timer-break-screen');
+    }
+  };
 
   useEffect(() => {
     getUser()
@@ -40,9 +59,7 @@ export default function TimerWorkingScreen() {
             task={currentTask}
             isTask={true}
             progress={WORK_DURATION}
-            onTickComplete={() => {
-              router.replace('/timer-break-screen');
-            }}
+            onTickComplete={handleWorkTimerComplete}
           />
         </main>
       </WithLoggedIn>

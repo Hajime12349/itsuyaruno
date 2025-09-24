@@ -1,8 +1,6 @@
 import { useMemo } from 'react';
-import { User, Task } from '@/lib/entity';
+import { Task } from '@/lib/entity';
 import styles from './TaskSuggestionButton.module.css';
-import TaskColumn from '@/components/task-config-main-screen/TaskColumn';
-import { randomInt } from 'crypto';
 
 interface TaskSuggestionButtonProps {
   tasks: Task[]
@@ -18,9 +16,17 @@ function TaskSuggestionButton({ tasks }: TaskSuggestionButtonProps) {
   return (
     <div>
       {randomTasks.length > 0 ? (
-        <>
-          <TaskColumn tasks={randomTasks} />
-        </>
+        <ul className={styles.TaskList}>
+          {randomTasks.map((task) => (
+            <li key={task.id ?? task.task_name} className={styles.TaskItem}>
+              <div className={styles.TaskName}>{task.task_name}</div>
+              <div className={styles.TaskMeta}>
+                <span>{task.current_set} / {task.total_set} セット</span>
+                {task.deadline && <span>期限: {new Date(task.deadline).toLocaleDateString()}</span>}
+              </div>
+            </li>
+          ))}
+        </ul>
       ) : (
         <p className={styles.TaskNotFound}>タスクが見つかりませんでした</p>
       )}

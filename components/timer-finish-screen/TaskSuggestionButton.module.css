@@ -6,3 +6,32 @@
     padding: 10px;
     background-color: yellow;
 }
+
+.TaskList {
+    display: grid;
+    gap: 16px;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.TaskItem {
+    border: 2px solid black;
+    border-radius: 8px;
+    padding: 16px;
+    background: #fff;
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.15);
+}
+
+.TaskName {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.TaskMeta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 14px;
+}
