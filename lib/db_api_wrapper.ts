@@ -7,26 +7,26 @@ import type { Task, User, Tag } from '@/lib/entity';
 export async function getTasks(): Promise<Task[]> {
     try {
         const response = await fetch('/api/tasks');
-        
+
         if (!response.ok) {
             console.error('Failed to fetch tasks:', response.status, response.statusText);
             return [];
         }
-        
+
         const data = await response.json();
-        
+
         // エラーレスポンスの場合は空配列を返す
         if (data.error) {
             console.error('API error:', data.error);
             return [];
         }
-        
+
         // 配列でない場合は空配列を返す
         if (!Array.isArray(data)) {
             console.error('Expected array but got:', typeof data, data);
             return [];
         }
-        
+
         return data as Task[];
     } catch (error) {
         console.error('Error fetching tasks:', error);
@@ -35,7 +35,7 @@ export async function getTasks(): Promise<Task[]> {
 }
 
 /**
- * 特定のタスクを取得します。
+ * 指定のタスクを取得します。
  * @param taskId タスクのID
  * @returns タスクをPromiseとして返します。
  */
@@ -52,8 +52,13 @@ export async function getTask(taskId: number): Promise<Task> {
 export async function createTask(task: Task): Promise<Task> {
     const response = await fetch('/api/tasks', {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(task),
     });
+    if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Create failed: ${response.status} ${text}`);
+    }
     return await response.json() as Promise<Task>;
 }
 
@@ -65,8 +70,13 @@ export async function createTask(task: Task): Promise<Task> {
 export async function updateTask(task: Task): Promise<Task> {
     const response = await fetch(`/api/tasks/${task.id}`, {
         method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(task),
     });
+    if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Update failed: ${response.status} ${text}`);
+    }
     return await response.json() as Promise<Task>;
 }
 
@@ -75,9 +85,13 @@ export async function updateTask(task: Task): Promise<Task> {
  * @param taskId 削除するタスクのID
  */
 export async function deleteTask(taskId: number): Promise<void> {
-    await fetch(`/api/tasks/${taskId}`, {
+    const response = await fetch(`/api/tasks/${taskId}`, {
         method: 'DELETE',
     });
+    if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Delete failed: ${response.status} ${text}`);
+    }
 }
 
 /**
@@ -97,8 +111,13 @@ export async function getUser(): Promise<User> {
 export async function registerUser(user: User): Promise<User> {
     const response = await fetch('/api/users', {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(user),
     });
+    if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Register failed: ${response.status} ${text}`);
+    }
     return await response.json() as Promise<User>;
 }
 
@@ -108,18 +127,28 @@ export async function registerUser(user: User): Promise<User> {
  * @returns 更新されたユーザーをPromiseとして返します。
  */
 export async function updateUser(user: User): Promise<User> {
-    if (!(user.id)) {
+    if (!user.id) {
         const response = await fetch('/api/users', {
             method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(user),
         });
+        if (!response.ok) {
+            const text = await response.text();
+            throw new Error(`Update failed: ${response.status} ${text}`);
+        }
         return await response.json() as Promise<User>;
     }
 
     const response = await fetch(`/api/users/${user.id}`, {
         method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(user),
     });
+    if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Update failed: ${response.status} ${text}`);
+    }
     return await response.json() as Promise<User>;
 }
 
@@ -127,10 +156,14 @@ export async function updateUser(user: User): Promise<User> {
  * ユーザーを削除します。
  * @param userId 削除するユーザーのID
  */
-export async function deleteUser(userId: number): Promise<void> {
-    await fetch(`/api/users/${userId}`, {
+export async function deleteUser(userId: string): Promise<void> {
+    const response = await fetch(`/api/users/${userId}`, {
         method: 'DELETE',
     });
+    if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Delete failed: ${response.status} ${text}`);
+    }
 }
 
 /**
@@ -150,21 +183,32 @@ export async function getTags(): Promise<Tag[]> {
 export async function createTag(tag: Tag): Promise<Tag> {
     const response = await fetch('/api/tags', {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(tag),
     });
+    if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Create failed: ${response.status} ${text}`);
+    }
     return await response.json() as Promise<Tag>;
 }
 
 /**
  * タグを更新します。
- * @param tag 更新するタグ
+ * @param tag 更新対象のタグ
+ * @param newTag 更新後のタグ
  * @returns 更新されたタグをPromiseとして返します。
  */
 export async function updateTag(targetTag: Tag, newTag: Tag): Promise<Tag> {
     const response = await fetch(`/api/tags/${targetTag.tag_name}`, {
         method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ new_tag_name: newTag.tag_name }),
     });
+    if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Update failed: ${response.status} ${text}`);
+    }
     return await response.json() as Promise<Tag>;
 }
 
@@ -173,7 +217,11 @@ export async function updateTag(targetTag: Tag, newTag: Tag): Promise<Tag> {
  * @param tagName 削除するタグの名前
  */
 export async function deleteTag(tagName: string): Promise<void> {
-    await fetch(`/api/tags/${tagName}`, {
+    const response = await fetch(`/api/tags/${tagName}`, {
         method: 'DELETE',
     });
+    if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Delete failed: ${response.status} ${text}`);
+    }
 }

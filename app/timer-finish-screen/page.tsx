@@ -3,11 +3,11 @@ import Image from "next/image";
 import styles from "./TimerFinishScreen.module.css";
 import NavigateTaskButton from "@/components/NavigateTaskButton";
 import Header from '@/components/Header';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { getUser, getTask, getTasks, updateTask } from '@/lib/db_api_wrapper';
 import { User, Task } from '@/lib/entity';
-import TaskSuggestionButton from '@/components/TaskSuggestionButton';
+import TaskSuggestionButton from '@/components/timer-finish-screen/TaskSuggestionButton';
 import { NextAuthProvider, WithLoggedIn } from "@/app/provider";
 
 export default function TimerFinishScreen() {
@@ -18,6 +18,10 @@ export default function TimerFinishScreen() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isDecided, setIsDecided] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
+
+  const taskSuggestions = useMemo(() => {
+    return tasks.filter((task) => !task.is_complete);
+  }, [tasks]);
 
   useEffect(() => {
     getUser() // ユーザー情報をDBから取得
@@ -99,7 +103,7 @@ export default function TimerFinishScreen() {
                 )}
 
                 <div className={styles.NextTasks}>
-                  <TaskSuggestionButton />
+                  <TaskSuggestionButton tasks={taskSuggestions} />
                 </div>
               </div>
 
@@ -114,4 +118,3 @@ export default function TimerFinishScreen() {
     </NextAuthProvider>
   );
 }
-

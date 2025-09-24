@@ -3,6 +3,7 @@
 import { SessionProvider } from "next-auth/react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import LoadingScreen from "@/components/common/LoadingScreen";
 
 type Props = {
     children?: React.ReactNode;
@@ -17,11 +18,11 @@ export const WithLoggedIn = ({ children }: Props) => {
     const router = useRouter();
 
     if (status === "loading") {
-        return <div></div>;
+        return <LoadingScreen />;
     }
     if (status === "unauthenticated") {
         router.replace("/login");
-        return <div>Unauthenticated</div>;
+        return <LoadingScreen />;
     }
     return <>{children}</>;
 }

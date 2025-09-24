@@ -1,9 +1,12 @@
-import { query } from '../../../lib/db';
-
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { getUserID } from "@/lib/auth";
-import { sql } from "@vercel/postgres";
+import { PostgresUserRepository } from '../../../infrastructure/users/PostgresUserRepository';
+import { GetMeUseCase } from '../../../application/users/GetMe';
+import { CreateUserUseCase } from '../../../application/users/CreateUser';
+import { UpdateUserUseCase } from '../../../application/users/UpdateUser';
+import { toDTO } from '../../../interfaces/http/users/mappers';
+import { normalizeOptionalDateTime, normalizeOptionalTaskId, normalizeOptionalText } from './normalizers';
 
 export async function GET(req: Request) {
     const session = await getServerSession(authOptions);
@@ -13,18 +16,13 @@ export async function GET(req: Request) {
     }
 
     try {
-        var user;
-        if (process.env.NODE_ENV === 'production') {
-            const { rows } = await sql`SELECT * FROM users WHERE id = ${session_user_id}`;
-            user = rows[0];
-        } else {
-            const { rows } = await query('SELECT * FROM users WHERE id = $1', [session_user_id]);
-            user = rows[0];
-        }
+        const repo = new PostgresUserRepository();
+        const usecase = new GetMeUseCase(repo);
+        const user = await usecase.execute({ userId: session_user_id });
         if (!user) {
             return new Response(JSON.stringify({ error: 'User not found' }), { status: 404 });
         }
-        return new Response(JSON.stringify(user), { status: 200 });
+        return new Response(JSON.stringify(toDTO(user)), { status: 200 });
     } catch (error) {
         console.error('Database query failed:', error);
         return new Response(JSON.stringify({ error: 'Failed to get user' }), { status: 500 });
@@ -38,28 +36,32 @@ export async function POST(req: Request) {
         return new Response(JSON.stringify({ error: 'Unauthorized: session user does not have a valid id' }), { status: 401 });
     }
 
-    var { id, display_name, icon_path, current_task, current_task_time } = await req.json();
+    const body = await req.json().catch(() => ({}));
+    const { id: requestedId, display_name, icon_path, current_task, current_task_time } = body ?? {};
 
-    if (!id) {
-        id = session_user_id;
-    }
+    const id = requestedId ?? session_user_id;
 
     if (id !== session_user_id) {
         return new Response(JSON.stringify({ error: 'Forbidden: user id does not match session user id' }), { status: 403 });
     }
 
     try {
-        var user;
-        if (process.env.NODE_ENV === 'production') {
-            const { rows } = await sql`INSERT INTO users (id, display_name, icon_path, current_task, current_task_time) VALUES (${id}, ${display_name}, ${icon_path}, ${current_task}, ${current_task_time}) RETURNING *`;
-            user = rows[0];
-        } else {
-            const { rows } = await query('INSERT INTO users (id, display_name, icon_path, current_task, current_task_time) VALUES ($1, $2, $3, $4, $5) RETURNING *', [id, display_name, icon_path, current_task, current_task_time]);
-            user = rows[0];
-        }
-        return new Response(JSON.stringify(user), { status: 201 });
+        const repo = new PostgresUserRepository();
+        const usecase = new CreateUserUseCase(repo);
+        const created = await usecase.execute({
+            id,
+            displayName: normalizeOptionalText('display_name', display_name),
+            iconPath: normalizeOptionalText('icon_path', icon_path),
+            currentTask: normalizeOptionalTaskId('current_task', current_task),
+            currentTaskTime: normalizeOptionalDateTime('current_task_time', current_task_time),
+        });
+        return new Response(JSON.stringify(toDTO(created)), { status: 201 });
     } catch (error) {
         console.error('Database query failed:', error);
+        const message = (error as Error)?.message ?? '';
+        if (message.startsWith('BadRequest:')) {
+            return new Response(JSON.stringify({ error: message }), { status: 400 });
+        }
         return new Response(JSON.stringify({ error: 'Failed to add user' }), { status: 500 });
     }
 }
@@ -71,28 +73,46 @@ export async function PUT(req: Request) {
         return new Response(JSON.stringify({ error: 'Unauthorized: session user does not have a valid id' }), { status: 401 });
     }
 
-    var { id, display_name, icon_path, current_task, current_task_time } = await req.json();
+    const body = await req.json().catch(() => ({}));
+    const { id: requestedId, display_name, icon_path, current_task, current_task_time } = body ?? {};
 
-    if (!id) {
-        id = session_user_id;
-    }
+    const id = requestedId ?? session_user_id;
 
     if (id !== session_user_id) {
         return new Response(JSON.stringify({ error: 'Forbidden: user id does not match session user id' }), { status: 403 });
     }
 
+    const hasDisplayName = Object.prototype.hasOwnProperty.call(body ?? {}, 'display_name');
+    const hasIconPath = Object.prototype.hasOwnProperty.call(body ?? {}, 'icon_path');
+    const hasCurrentTask = Object.prototype.hasOwnProperty.call(body ?? {}, 'current_task');
+    const hasCurrentTaskTime = Object.prototype.hasOwnProperty.call(body ?? {}, 'current_task_time');
+
     try {
-        var user;
-        if (process.env.NODE_ENV === 'production') {
-            const { rows } = await sql`UPDATE users SET display_name = ${display_name}, icon_path = ${icon_path}, current_task = ${current_task}, current_task_time = ${current_task_time} WHERE id = ${id} RETURNING *`;
-            user = rows[0];
-        } else {
-            const { rows } = await query('UPDATE users SET display_name = $1, icon_path = $2, current_task = $3, current_task_time = $4 WHERE id = $5 RETURNING *', [display_name, icon_path, current_task, current_task_time, id]);
-            user = rows[0];
+        const repo = new PostgresUserRepository();
+        const getMe = new GetMeUseCase(repo);
+        const existing = await getMe.execute({ userId: id });
+        if (!existing) {
+            return new Response(JSON.stringify({ error: 'User not found' }), { status: 404 });
         }
-        return new Response(JSON.stringify(user), { status: 200 });
+
+        const updateUseCase = new UpdateUserUseCase(repo);
+        const updated = await updateUseCase.execute({
+            id,
+            displayName: hasDisplayName ? normalizeOptionalText('display_name', display_name) : existing.displayName,
+            iconPath: hasIconPath ? normalizeOptionalText('icon_path', icon_path) : existing.iconPath,
+            currentTask: hasCurrentTask ? normalizeOptionalTaskId('current_task', current_task) : existing.currentTask,
+            currentTaskTime: hasCurrentTaskTime ? normalizeOptionalDateTime('current_task_time', current_task_time) : existing.currentTaskTime,
+        });
+        return new Response(JSON.stringify(toDTO(updated)), { status: 200 });
     } catch (error) {
         console.error('Database query failed:', error);
+        const message = (error as Error)?.message ?? '';
+        if (message.startsWith('BadRequest:')) {
+            return new Response(JSON.stringify({ error: message }), { status: 400 });
+        }
+        if (message === 'UserNotFound') {
+            return new Response(JSON.stringify({ error: 'User not found' }), { status: 404 });
+        }
         return new Response(JSON.stringify({ error: 'Failed to update user' }), { status: 500 });
     }
 }

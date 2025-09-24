@@ -2,7 +2,7 @@ CREATE TABLE users (
     id TEXT NOT NULL PRIMARY KEY,
     display_name TEXT,
     icon_path TEXT,
-    current_task TEXT,
+    current_task INTEGER,
     current_task_time TIMESTAMP
 );
 CREATE TABLE tasks (
@@ -23,3 +23,5 @@ CREATE TABLE task_tags (
     FOREIGN KEY (tag_name) REFERENCES tags(tag_name) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE
 );
+ALTER TABLE users
+    ADD CONSTRAINT users_current_task_fkey FOREIGN KEY (current_task) REFERENCES tasks(id) ON DELETE SET NULL;

@@ -1,7 +1,9 @@
 import { getServerSession } from 'next-auth';
 import { authOptions, getUserID } from '@/lib/auth';
-import { query } from '@/lib/db';
-import { sql } from '@vercel/postgres';
+import { PostgresTagRepository } from '../../../infrastructure/tags/PostgresTagRepository';
+import { GetTagsUseCase } from '../../../application/tags/GetTags';
+import { CreateTagUseCase } from '../../../application/tags/CreateTag';
+import { toDTO } from '../../../interfaces/http/tags/mappers';
 
 export async function GET(req: Request) {
     const session = await getServerSession(authOptions);
@@ -11,13 +13,10 @@ export async function GET(req: Request) {
     }
 
     try {
-        if (process.env.NODE_ENV === 'production') {
-            const { rows } = await sql`SELECT * FROM tags`;
-            return new Response(JSON.stringify(rows), { status: 200 });
-        } else {
-            const { rows } = await query('SELECT * FROM tags', []);
-            return new Response(JSON.stringify(rows), { status: 200 });
-        }
+        const repo = new PostgresTagRepository();
+        const usecase = new GetTagsUseCase(repo);
+        const tags = await usecase.execute();
+        return new Response(JSON.stringify(tags.map(toDTO)), { status: 200 });
     } catch (error) {
         console.error('Database query failed:', error);
         return new Response(JSON.stringify({ error: 'Failed to fetch tags' }), { status: 500 });
@@ -33,13 +32,10 @@ export async function POST(req: Request) {
     var { tag_name } = await req.json();
 
     try {
-        if (process.env.NODE_ENV === 'production') {
-            const { rows } = await sql`INSERT INTO tags (tag_name) VALUES (${tag_name}) RETURNING *`;
-            return new Response(JSON.stringify(rows[0]), { status: 201 });
-        } else {
-            const { rows } = await query('INSERT INTO tags (tag_name) VALUES ($1) RETURNING *', [tag_name]);
-            return new Response(JSON.stringify(rows[0]), { status: 201 });
-        }
+        const repo = new PostgresTagRepository();
+        const usecase = new CreateTagUseCase(repo);
+        const created = await usecase.execute({ name: tag_name });
+        return new Response(JSON.stringify(toDTO(created)), { status: 201 });
     } catch (error) {
         console.error('Database query failed:', error);
         return new Response(JSON.stringify({ error: 'Failed to add tag' }), { status: 500 });

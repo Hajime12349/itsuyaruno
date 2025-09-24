@@ -1,5 +1,5 @@
 "use client"
-import AddTaskPanel from "@/components/AddTaskPanel"
+import AddTaskPanel from "@/components/task-config-main-screen/AddTaskPanel"
 
 export default function AddTaskPanelPage() {
   return (

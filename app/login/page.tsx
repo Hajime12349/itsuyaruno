@@ -10,6 +10,7 @@ import { useSession } from "next-auth/react";
 import { NextAuthProvider } from "../provider";
 import Image from 'next/image';
 import settingsIcon from '@/public/icon.png';
+import LoadingScreen from "@/components/common/LoadingScreen";
 
 const GoogleSignInButton: React.FC = () => {
   const router = useRouter();
@@ -71,7 +72,7 @@ const GoogleSignInButton: React.FC = () => {
 export default function Login() {
   return (
     <NextAuthProvider>
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<LoadingScreen />}>
         <GoogleSignInButton />
       </Suspense>
     </NextAuthProvider>

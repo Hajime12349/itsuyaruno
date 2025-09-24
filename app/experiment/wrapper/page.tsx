@@ -19,7 +19,7 @@ import {
     deleteTag
 } from "@/lib/db_api_wrapper";
 import { Task, User, Tag } from "@/lib/entity";
-import TaskPanel from "@/components/TaskPanel";
+import TaskPanel from "@/components/task-config-main-screen/TaskPanel";
 import { Autocomplete, TextField, Chip } from "@mui/material";
 
 
