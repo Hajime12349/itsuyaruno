@@ -6,6 +6,13 @@ import { Task } from '@/lib/entity'
 import { updateTask } from '@/lib/db_api_wrapper'
 import { useRouter } from 'next/navigation'
 
+interface EditTaskWindowProps {
+  task: Task
+  onSubmitTask?: (task: Task) => Promise<void> | void
+  onDeleteTask?: (taskId: number) => Promise<void> | void
+  onClose?: () => void
+}
+
 
 
 const EditTaskWindow = ({ task, onSubmitTask, onDeleteTask, onClose }: EditTaskWindowProps) => {
