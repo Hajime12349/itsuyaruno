@@ -2,9 +2,9 @@ import React, { PureComponent } from 'react';
 import TaskPanel from './TaskPanel';
 import { Task } from '@/lib/entity';
 import styles from './TaskColumn.module.css';
-import AddTaskButton from '@/components/AddTaskButton';
-import AddTaskWindow from "@/components/AddTaskWindow"
-import EditTaskWindow from "@/components/EditTaskWindow"
+import AddTaskButton from './AddTaskButton';
+import AddTaskWindow from './AddTaskWindow';
+import EditTaskWindow from './EditTaskWindow';
 import { useState } from 'react';
 import { usePathname } from 'next/navigation'; // usePathname フックをインポート
 

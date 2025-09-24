@@ -6,7 +6,7 @@ import Header from '@/components/Header';
 import { useState, useEffect } from 'react';
 import { Task } from "@/lib/entity";
 import { getTasks } from "@/lib/db_api_wrapper";
-import TaskColumn from '@/components/TaskColumn';
+import TaskColumn from '@/components/task-config-main-screen/TaskColumn';
 import { NextAuthProvider, WithLoggedIn } from '@/app/provider';
 
 export default function Home() {

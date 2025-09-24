@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { User, Task } from '@/lib/entity';
 import styles from './TaskSuggestionButton.module.css';
-import TaskColumn from './TaskColumn';
+import TaskColumn from '@/components/task-config-main-screen/TaskColumn';
 import { randomInt } from 'crypto';
 
 interface TaskSuggestionButtonProps {

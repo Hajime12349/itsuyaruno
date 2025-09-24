@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { getUser, getTask, getTasks, updateTask } from '@/lib/db_api_wrapper';
 import { User, Task } from '@/lib/entity';
-import TaskSuggestionButton from '@/components/TaskSuggestionButton';
+import TaskSuggestionButton from '@/components/timer-finish-screen/TaskSuggestionButton';
 import { NextAuthProvider, WithLoggedIn } from "@/app/provider";
 
 export default function TimerFinishScreen() {
@@ -114,4 +114,3 @@ export default function TimerFinishScreen() {
     </NextAuthProvider>
   );
 }
-
