@@ -36,7 +36,14 @@ export default function TimerWorkingScreen() {
       <WithLoggedIn>
         <main className={styles.main}>
           <Header />
-          <ProgressBar task={currentTask} isTask={true} progress={WORK_DURATION} />
+          <ProgressBar
+            task={currentTask}
+            isTask={true}
+            progress={WORK_DURATION}
+            onTickComplete={() => {
+              router.replace('/timer-break-screen');
+            }}
+          />
         </main>
       </WithLoggedIn>
     </NextAuthProvider>
