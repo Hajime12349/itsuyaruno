@@ -1,0 +1,18 @@
+export class UserId {
+    private constructor(private readonly _value: string) {}
+
+    static create(value: string): UserId {
+        if (typeof value !== 'string') {
+            throw new Error('UserId must be a string');
+        }
+        const trimmed = value.trim();
+        if (trimmed.length === 0) {
+            throw new Error('UserId must not be empty');
+        }
+        return new UserId(trimmed);
+    }
+
+    get value(): string {
+        return this._value;
+    }
+}

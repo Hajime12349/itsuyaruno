@@ -3,7 +3,7 @@ import { authOptions, getUserID } from '@/lib/auth';
 import { GetMeUseCase } from '@/application/users/GetMe';
 import { UpdateUserUseCase } from '@/application/users/UpdateUser';
 import { DeleteUserUseCase } from '@/application/users/DeleteUser';
-import { toDTO } from '@/interfaces/http/users/mappers';
+import { toDTO, toPlain } from '@/interfaces/http/users/mappers';
 import { resolveUserRepository } from '@/interfaces/http/users/repositoryProvider';
 import { normalizeOptionalDateTime, normalizeOptionalTaskId, normalizeOptionalText } from '../normalizers';
 
@@ -74,12 +74,13 @@ export async function PUT(request: Request, { params }: { params: { userId: stri
     }
 
     const updateUseCase = new UpdateUserUseCase(repo);
+    const existingPlain = toPlain(existing);
     const updated = await updateUseCase.execute({
       id: sessionId,
-      displayName: hasDisplayName ? normalizeOptionalText('display_name', display_name) : existing.displayName,
-      iconPath: hasIconPath ? normalizeOptionalText('icon_path', icon_path) : existing.iconPath,
-      currentTask: hasCurrentTask ? normalizeOptionalTaskId('current_task', current_task) : existing.currentTask,
-      currentTaskTime: hasCurrentTaskTime ? normalizeOptionalDateTime('current_task_time', current_task_time) : existing.currentTaskTime,
+      displayName: hasDisplayName ? normalizeOptionalText('display_name', display_name) : existingPlain.displayName,
+      iconPath: hasIconPath ? normalizeOptionalText('icon_path', icon_path) : existingPlain.iconPath,
+      currentTask: hasCurrentTask ? normalizeOptionalTaskId('current_task', current_task) : existingPlain.currentTask,
+      currentTaskTime: hasCurrentTaskTime ? normalizeOptionalDateTime('current_task_time', current_task_time) : existingPlain.currentTaskTime,
     });
 
     return Response.json(toDTO(updated), { status: 200 });
