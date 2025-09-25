@@ -1,10 +1,10 @@
 import { getServerSession } from 'next-auth';
 import { authOptions, getUserID } from '@/lib/auth';
-import { PostgresTaskRepository } from '@/infrastructure/tasks/PostgresTaskRepository';
 import { GetTaskByIdUseCase } from '@/application/tasks/GetTaskById';
 import { UpdateTaskUseCase } from '@/application/tasks/UpdateTask';
 import { DeleteTaskUseCase } from '@/application/tasks/DeleteTask';
 import { toDTO } from '@/interfaces/http/tasks/mappers';
+import { resolveTaskRepository } from '@/interfaces/http/tasks/repositoryProvider';
 
 function parseTaskId(raw: string | string[] | undefined) {
   if (typeof raw !== 'string') {
@@ -67,7 +67,7 @@ export async function GET(request: Request, { params }: { params: { taskId: stri
 
   try {
     const userId = await requireUserId();
-    const repo = new PostgresTaskRepository();
+    const repo = resolveTaskRepository();
     const usecase = new GetTaskByIdUseCase(repo);
     const task = await usecase.execute({ id: taskId, userId });
     if (!task) {
@@ -104,7 +104,7 @@ export async function PUT(request: Request, { params }: { params: { taskId: stri
 
   try {
     const userId = await requireUserId();
-    const repo = new PostgresTaskRepository();
+    const repo = resolveTaskRepository();
     const usecase = new UpdateTaskUseCase(repo);
     const updated = await usecase.execute({
       id: taskId,
@@ -140,7 +140,7 @@ export async function DELETE(request: Request, { params }: { params: { taskId: s
 
   try {
     const userId = await requireUserId();
-    const repo = new PostgresTaskRepository();
+    const repo = resolveTaskRepository();
     const usecase = new DeleteTaskUseCase(repo);
     await usecase.execute({ id: taskId, userId });
     return new Response(null, { status: 204 });

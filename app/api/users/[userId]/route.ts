@@ -1,10 +1,10 @@
 import { getServerSession } from 'next-auth';
 import { authOptions, getUserID } from '@/lib/auth';
-import { PostgresUserRepository } from '@/infrastructure/users/PostgresUserRepository';
 import { GetMeUseCase } from '@/application/users/GetMe';
 import { UpdateUserUseCase } from '@/application/users/UpdateUser';
 import { DeleteUserUseCase } from '@/application/users/DeleteUser';
 import { toDTO } from '@/interfaces/http/users/mappers';
+import { resolveUserRepository } from '@/interfaces/http/users/repositoryProvider';
 import { normalizeOptionalDateTime, normalizeOptionalTaskId, normalizeOptionalText } from '../normalizers';
 
 async function requireSessionUserId() {
@@ -32,7 +32,7 @@ export async function GET(request: Request, { params }: { params: { userId: stri
     const sessionId = await requireSessionUserId();
     ensureUserIdMatch(sessionId, requestedId);
 
-    const repo = new PostgresUserRepository();
+    const repo = resolveUserRepository();
     const usecase = new GetMeUseCase(repo);
     const user = await usecase.execute({ userId: sessionId });
     if (!user) {
@@ -66,7 +66,7 @@ export async function PUT(request: Request, { params }: { params: { userId: stri
     const sessionId = await requireSessionUserId();
     ensureUserIdMatch(sessionId, requestedId);
 
-    const repo = new PostgresUserRepository();
+    const repo = resolveUserRepository();
     const getMe = new GetMeUseCase(repo);
     const existing = await getMe.execute({ userId: sessionId });
     if (!existing) {
@@ -109,9 +109,9 @@ export async function DELETE(request: Request, { params }: { params: { userId: s
     const sessionId = await requireSessionUserId();
     ensureUserIdMatch(sessionId, requestedId);
 
-    const repo = new PostgresUserRepository();
-    const usecase = new DeleteUserUseCase(repo);
-    await usecase.execute({ id: sessionId });
+    const repo = resolveUserRepository();
+    const deleteUsecase = new DeleteUserUseCase(repo);
+    await deleteUsecase.execute({ id: sessionId });
     return new Response(null, { status: 204 });
   } catch (error) {
     if (error instanceof Response) {

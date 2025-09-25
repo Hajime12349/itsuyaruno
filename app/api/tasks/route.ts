@@ -1,10 +1,10 @@
 import { getServerSession } from 'next-auth';
 import { authOptions, getUserID } from '@/lib/auth';
-import { PostgresTaskRepository } from '../../../infrastructure/tasks/PostgresTaskRepository';
 import { GetTasksUseCase } from '../../../application/tasks/GetTasks';
 import { CreateTaskUseCase } from '../../../application/tasks/CreateTask';
 import { toDTO } from '../../../interfaces/http/tasks/mappers';
 import { NextRequest } from 'next/server';
+import { resolveTaskRepository } from '@/interfaces/http/tasks/repositoryProvider';
 
 export async function GET(req: NextRequest) {
     const session = await getServerSession(authOptions);
@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
     const include_complete = includeParam === 'true';
 
     try {
-        const repo = new PostgresTaskRepository();
+        const repo = resolveTaskRepository();
         const usecase = new GetTasksUseCase(repo);
         const entities = await usecase.execute({ userId: session_user_id, includeComplete: include_complete });
         return new Response(JSON.stringify(entities.map(toDTO)), { status: 200 });
@@ -61,7 +61,7 @@ export async function POST(req: Request) {
     }
 
     try {
-        const repo = new PostgresTaskRepository();
+        const repo = resolveTaskRepository();
         const usecase = new CreateTaskUseCase(repo);
         const created = await usecase.execute({
             userId: session_user_id,

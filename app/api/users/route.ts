@@ -1,11 +1,11 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { getUserID } from "@/lib/auth";
-import { PostgresUserRepository } from '../../../infrastructure/users/PostgresUserRepository';
 import { GetMeUseCase } from '../../../application/users/GetMe';
 import { CreateUserUseCase } from '../../../application/users/CreateUser';
 import { UpdateUserUseCase } from '../../../application/users/UpdateUser';
 import { toDTO } from '../../../interfaces/http/users/mappers';
+import { resolveUserRepository } from '@/interfaces/http/users/repositoryProvider';
 import { normalizeOptionalDateTime, normalizeOptionalTaskId, normalizeOptionalText } from './normalizers';
 
 export async function GET(req: Request) {
@@ -16,9 +16,9 @@ export async function GET(req: Request) {
     }
 
     try {
-        const repo = new PostgresUserRepository();
-        const usecase = new GetMeUseCase(repo);
-        const user = await usecase.execute({ userId: session_user_id });
+        const repo = resolveUserRepository();
+        const getUsecase = new GetMeUseCase(repo);
+        const user = await getUsecase.execute({ userId: session_user_id });
         if (!user) {
             return new Response(JSON.stringify({ error: 'User not found' }), { status: 404 });
         }
@@ -46,9 +46,9 @@ export async function POST(req: Request) {
     }
 
     try {
-        const repo = new PostgresUserRepository();
-        const usecase = new CreateUserUseCase(repo);
-        const created = await usecase.execute({
+        const repo = resolveUserRepository();
+        const createUsecase = new CreateUserUseCase(repo);
+        const created = await createUsecase.execute({
             id,
             displayName: normalizeOptionalText('display_name', display_name),
             iconPath: normalizeOptionalText('icon_path', icon_path),
@@ -88,7 +88,7 @@ export async function PUT(req: Request) {
     const hasCurrentTaskTime = Object.prototype.hasOwnProperty.call(body ?? {}, 'current_task_time');
 
     try {
-        const repo = new PostgresUserRepository();
+        const repo = resolveUserRepository();
         const getMe = new GetMeUseCase(repo);
         const existing = await getMe.execute({ userId: id });
         if (!existing) {

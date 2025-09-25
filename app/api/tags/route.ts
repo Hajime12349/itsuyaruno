@@ -1,9 +1,9 @@
 import { getServerSession } from 'next-auth';
 import { authOptions, getUserID } from '@/lib/auth';
-import { PostgresTagRepository } from '../../../infrastructure/tags/PostgresTagRepository';
 import { GetTagsUseCase } from '../../../application/tags/GetTags';
 import { CreateTagUseCase } from '../../../application/tags/CreateTag';
 import { toDTO } from '../../../interfaces/http/tags/mappers';
+import { resolveTagRepository } from '@/interfaces/http/tags/repositoryProvider';
 
 export async function GET(req: Request) {
     const session = await getServerSession(authOptions);
@@ -13,7 +13,7 @@ export async function GET(req: Request) {
     }
 
     try {
-        const repo = new PostgresTagRepository();
+        const repo = resolveTagRepository();
         const usecase = new GetTagsUseCase(repo);
         const tags = await usecase.execute();
         return new Response(JSON.stringify(tags.map(toDTO)), { status: 200 });
@@ -32,7 +32,7 @@ export async function POST(req: Request) {
     var { tag_name } = await req.json();
 
     try {
-        const repo = new PostgresTagRepository();
+        const repo = resolveTagRepository();
         const usecase = new CreateTagUseCase(repo);
         const created = await usecase.execute({ name: tag_name });
         return new Response(JSON.stringify(toDTO(created)), { status: 201 });

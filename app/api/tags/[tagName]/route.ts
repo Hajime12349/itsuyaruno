@@ -1,9 +1,9 @@
 import { getServerSession } from 'next-auth';
 import { authOptions, getUserID } from '@/lib/auth';
-import { PostgresTagRepository } from '@/infrastructure/tags/PostgresTagRepository';
 import { UpdateTagUseCase } from '@/application/tags/UpdateTag';
 import { DeleteTagUseCase } from '@/application/tags/DeleteTag';
 import { toDTO } from '@/interfaces/http/tags/mappers';
+import { resolveTagRepository } from '@/interfaces/http/tags/repositoryProvider';
 
 async function requireUserId() {
   const session = await getServerSession(authOptions);
@@ -43,7 +43,7 @@ export async function PUT(request: Request, { params }: { params: { tagName: str
 
   try {
     await requireUserId();
-    const repo = new PostgresTagRepository();
+    const repo = resolveTagRepository();
     const usecase = new UpdateTagUseCase(repo);
     const updated = await usecase.execute({ tagName: currentName, newName: trimmedNewName });
     if (!updated) {
@@ -67,7 +67,7 @@ export async function DELETE(request: Request, { params }: { params: { tagName: 
   try {
     const currentName = ensureTagName(params?.tagName);
     await requireUserId();
-    const repo = new PostgresTagRepository();
+    const repo = resolveTagRepository();
     const usecase = new DeleteTagUseCase(repo);
     await usecase.execute({ tagName: currentName });
     return new Response(null, { status: 204 });
