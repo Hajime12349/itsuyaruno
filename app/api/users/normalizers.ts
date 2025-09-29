@@ -1,4 +1,5 @@
 import { BadRequestError } from '@/shared/errors/AppError';
+import { toOptionalTrimmedString } from '@/shared/utils/string';
 
 export function normalizeOptionalText(fieldName: string, value: unknown): string | undefined {
   if (value === undefined || value === null) {
@@ -7,8 +8,7 @@ export function normalizeOptionalText(fieldName: string, value: unknown): string
   if (typeof value !== 'string') {
     throw new BadRequestError(`${fieldName} must be a string`);
   }
-  const trimmed = value.trim();
-  return trimmed.length > 0 ? trimmed : undefined;
+  return toOptionalTrimmedString(value);
 }
 
 export function normalizeOptionalTaskId(fieldName: string, value: unknown): number | undefined {

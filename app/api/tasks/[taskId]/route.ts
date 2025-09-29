@@ -5,7 +5,7 @@ import { UpdateTaskUseCase } from '@/application/tasks/UpdateTask';
 import { DeleteTaskUseCase } from '@/application/tasks/DeleteTask';
 import { toDTO } from '@/interfaces/http/tasks/mappers';
 import { resolveTaskRepository } from '@/interfaces/http/tasks/repositoryProvider';
-import { AppError, BadRequestError } from '@/shared/errors/AppError';
+import { AppError } from '@/shared/errors/AppError';
 import {
     normalizeBoolean,
     normalizeNonNegativeInteger,
@@ -61,9 +61,6 @@ export async function PUT(request: Request, { params }: { params: { taskId: stri
         const normalizedDeadline = normalizeOptionalDeadline('deadline', deadline);
         const totalSet = normalizePositiveInteger('total_set', total_set);
         const currentSet = normalizeNonNegativeInteger('current_set', current_set);
-        if (currentSet > totalSet) {
-            throw new BadRequestError('current_set must be less than or equal to total_set');
-        }
         const isComplete = normalizeBoolean('is_complete', is_complete);
 
         const repo = resolveTaskRepository();

@@ -1,6 +1,7 @@
 import { sql } from '@vercel/postgres';
 import { query } from '@/lib/db';
 import { AppError, NotFoundError } from '@/shared/errors/AppError';
+import { toOptionalTrimmedString } from '@/shared/utils/string';
 import { UserEntity } from '../../domain/users/User';
 import type { UserRepository } from '../../domain/users/UserRepository';
 import { UserId } from '../../domain/users/valueObjects/UserId';
@@ -17,14 +18,6 @@ function mapRowToEntity(row: any): UserEntity {
         : currentTaskValue !== null && currentTaskValue !== undefined
             ? Number(currentTaskValue)
             : undefined;
-
-    const normalizeOptionalText = (value: unknown): string | undefined => {
-        if (typeof value !== 'string') {
-            return undefined;
-        }
-        const trimmed = value.trim();
-        return trimmed.length > 0 ? trimmed : undefined;
-    };
 
     const normalizeTimestamp = (value: unknown): string | undefined => {
         if (value instanceof Date) {
@@ -46,8 +39,8 @@ function mapRowToEntity(row: any): UserEntity {
         throw new AppError('InternalError', 'User row is missing id');
     }
 
-    const displayNameValue = normalizeOptionalText(row.display_name);
-    const iconPathValue = normalizeOptionalText(row.icon_path);
+    const displayNameValue = toOptionalTrimmedString(row.display_name);
+    const iconPathValue = toOptionalTrimmedString(row.icon_path);
     const currentTaskValueOrUndefined = Number.isFinite(parsedCurrentTask)
         ? parsedCurrentTask as number
         : undefined;

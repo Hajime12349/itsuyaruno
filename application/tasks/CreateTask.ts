@@ -6,6 +6,7 @@ import { TaskDeadline } from '../../domain/tasks/valueObjects/TaskDeadline';
 import { TaskTotalSet } from '../../domain/tasks/valueObjects/TaskTotalSet';
 import { TaskCurrentSet } from '../../domain/tasks/valueObjects/TaskCurrentSet';
 import { TaskCompletionStatus } from '../../domain/tasks/valueObjects/TaskCompletionStatus';
+import { ensureCurrentSetWithinTotal } from '../../domain/tasks/validators';
 
 export type CreateTaskInput = {
     userId: string;
@@ -20,14 +21,18 @@ export class CreateTaskUseCase {
     constructor(private readonly taskRepository: TaskRepository) {}
 
     async execute(input: CreateTaskInput) {
+        const totalSet = TaskTotalSet.create(input.totalSet);
+        const currentSet = TaskCurrentSet.create(input.currentSet);
+        ensureCurrentSetWithinTotal(totalSet, currentSet);
+
         const entity = TaskEntity.create({
             userId: TaskOwnerId.create(input.userId),
             name: TaskName.create(input.name),
             deadline: input.deadline !== undefined && input.deadline !== null
                 ? TaskDeadline.create(input.deadline)
                 : undefined,
-            totalSet: TaskTotalSet.create(input.totalSet),
-            currentSet: TaskCurrentSet.create(input.currentSet),
+            totalSet,
+            currentSet,
             isComplete: TaskCompletionStatus.create(input.isComplete),
         });
         return await this.taskRepository.create(entity);

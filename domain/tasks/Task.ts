@@ -6,6 +6,7 @@ import { TaskId } from './valueObjects/TaskId';
 import { TaskName } from './valueObjects/TaskName';
 import { TaskOwnerId } from './valueObjects/TaskOwnerId';
 import { TaskTotalSet } from './valueObjects/TaskTotalSet';
+import { ensureCurrentSetWithinTotal } from './validators';
 
 export interface TaskValueProps {
     id?: TaskId;
@@ -64,9 +65,7 @@ export class TaskEntity {
             throw new BadRequestError('TaskEntity isComplete must be a TaskCompletionStatus');
         }
 
-        if (currentSet.value > totalSet.value) {
-            throw new BadRequestError('TaskEntity currentSet cannot exceed totalSet');
-        }
+        ensureCurrentSetWithinTotal(totalSet, currentSet);
 
         return new TaskEntity({ id, userId, name, deadline, totalSet, currentSet, isComplete });
     }
