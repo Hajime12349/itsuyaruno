@@ -7,6 +7,7 @@ import { UpdateUserUseCase } from '../../../application/users/UpdateUser';
 import { toDTO, toPlain } from '../../../interfaces/http/users/mappers';
 import { resolveUserRepository } from '@/interfaces/http/users/repositoryProvider';
 import { normalizeOptionalDateTime, normalizeOptionalTaskId, normalizeOptionalText } from './normalizers';
+import { AppError } from '@/shared/errors/AppError';
 
 export async function GET(req: Request) {
     const session = await getServerSession(authOptions);
@@ -25,7 +26,16 @@ export async function GET(req: Request) {
         return new Response(JSON.stringify(toDTO(user)), { status: 200 });
     } catch (error) {
         console.error('Database query failed:', error);
-        return new Response(JSON.stringify({ error: 'Failed to get user' }), { status: 500 });
+        if (error instanceof AppError) {
+            if (error.code === 'BadRequest') {
+                return new Response(JSON.stringify({ error: error.message }), { status: 400 });
+            }
+            if (error.code === 'NotFound') {
+                return new Response(JSON.stringify({ error: error.message }), { status: 404 });
+            }
+        }
+        const message = (error as Error)?.message ?? 'Unknown error';
+        return new Response(JSON.stringify({ error: 'Failed to get user', detail: message }), { status: 500 });
     }
 }
 
@@ -58,11 +68,16 @@ export async function POST(req: Request) {
         return new Response(JSON.stringify(toDTO(created)), { status: 201 });
     } catch (error) {
         console.error('Database query failed:', error);
-        const message = (error as Error)?.message ?? '';
-        if (message.startsWith('BadRequest:')) {
-            return new Response(JSON.stringify({ error: message }), { status: 400 });
+        if (error instanceof AppError) {
+            if (error.code === 'BadRequest') {
+                return new Response(JSON.stringify({ error: error.message }), { status: 400 });
+            }
+            if (error.code === 'NotFound') {
+                return new Response(JSON.stringify({ error: error.message }), { status: 404 });
+            }
         }
-        return new Response(JSON.stringify({ error: 'Failed to add user' }), { status: 500 });
+        const message = (error as Error)?.message ?? 'Unknown error';
+        return new Response(JSON.stringify({ error: 'Failed to add user', detail: message }), { status: 500 });
     }
 }
 
@@ -108,13 +123,19 @@ export async function PUT(req: Request) {
         return new Response(JSON.stringify(toDTO(updated)), { status: 200 });
     } catch (error) {
         console.error('Database query failed:', error);
-        const message = (error as Error)?.message ?? '';
-        if (message.startsWith('BadRequest:')) {
-            return new Response(JSON.stringify({ error: message }), { status: 400 });
+        if (error instanceof AppError) {
+            if (error.code === 'BadRequest') {
+                return new Response(JSON.stringify({ error: error.message }), { status: 400 });
+            }
+            if (error.code === 'NotFound') {
+                return new Response(JSON.stringify({ error: error.message }), { status: 404 });
+            }
         }
-        if (message === 'UserNotFound') {
+        const legacyMessage = (error as Error)?.message;
+        if (legacyMessage === 'UserNotFound' || legacyMessage === 'User not found') {
             return new Response(JSON.stringify({ error: 'User not found' }), { status: 404 });
         }
-        return new Response(JSON.stringify({ error: 'Failed to update user' }), { status: 500 });
+        const message = legacyMessage ?? 'Unknown error';
+        return new Response(JSON.stringify({ error: 'Failed to update user', detail: message }), { status: 500 });
     }
 }

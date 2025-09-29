@@ -1,17 +1,19 @@
+import { BadRequestError } from '@/shared/errors/AppError';
+
 export class CurrentTaskTime {
     private constructor(private readonly _value: Date) {}
 
     static create(value: string): CurrentTaskTime {
         if (typeof value !== 'string') {
-            throw new Error('CurrentTaskTime must be a string');
+            throw new BadRequestError('CurrentTaskTime must be a string');
         }
         const trimmed = value.trim();
         if (trimmed.length === 0) {
-            throw new Error('CurrentTaskTime must not be empty');
+            throw new BadRequestError('CurrentTaskTime must not be empty');
         }
         const parsed = Date.parse(trimmed);
         if (Number.isNaN(parsed)) {
-            throw new Error('CurrentTaskTime must be a valid date string');
+            throw new BadRequestError('CurrentTaskTime must be a valid date string');
         }
         return new CurrentTaskTime(new Date(parsed));
     }

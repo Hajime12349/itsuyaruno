@@ -1,9 +1,11 @@
+import { BadRequestError } from '@/shared/errors/AppError';
+
 export function normalizeOptionalText(fieldName: string, value: unknown): string | undefined {
   if (value === undefined || value === null) {
     return undefined;
   }
   if (typeof value !== 'string') {
-    throw new Error(`BadRequest: ${fieldName}`);
+    throw new BadRequestError(`${fieldName} must be a string`);
   }
   const trimmed = value.trim();
   return trimmed.length > 0 ? trimmed : undefined;
@@ -15,7 +17,7 @@ export function normalizeOptionalTaskId(fieldName: string, value: unknown): numb
   }
   const numeric = typeof value === 'number' ? value : Number(value);
   if (!Number.isInteger(numeric) || numeric < 0) {
-    throw new Error(`BadRequest: ${fieldName}`);
+    throw new BadRequestError(`${fieldName} must be a non-negative integer`);
   }
   return numeric;
 }
@@ -25,7 +27,7 @@ export function normalizeOptionalDateTime(fieldName: string, value: unknown): st
     return undefined;
   }
   if (typeof value !== 'string') {
-    throw new Error(`BadRequest: ${fieldName}`);
+    throw new BadRequestError(`${fieldName} must be a string`);
   }
   const trimmed = value.trim();
   if (trimmed.length === 0) {
@@ -33,7 +35,7 @@ export function normalizeOptionalDateTime(fieldName: string, value: unknown): st
   }
   const parsed = Date.parse(trimmed);
   if (Number.isNaN(parsed)) {
-    throw new Error(`BadRequest: ${fieldName}`);
+    throw new BadRequestError(`${fieldName} must be a valid date string`);
   }
   return new Date(parsed).toISOString();
 }

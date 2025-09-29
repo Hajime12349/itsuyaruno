@@ -1,13 +1,18 @@
+import { BadRequestError } from '@/shared/errors/AppError';
+
 export class DisplayName {
     private constructor(private readonly _value: string) {}
 
     static create(value: string): DisplayName {
         if (typeof value !== 'string') {
-            throw new Error('DisplayName must be a string');
+            throw new BadRequestError('DisplayName must be a string');
         }
         const trimmed = value.trim();
         if (trimmed.length === 0) {
-            throw new Error('DisplayName must not be empty');
+            throw new BadRequestError('DisplayName must not be empty');
+        }
+        if (trimmed.length > 25) {
+            throw new BadRequestError('DisplayName must be 25 characters or fewer');
         }
         return new DisplayName(trimmed);
     }

@@ -1,3 +1,5 @@
+import { BadRequestError } from '@/shared/errors/AppError';
+
 export type TaskId = number;
 
 export interface TaskProps {
@@ -30,10 +32,10 @@ export class TaskEntity {
     }
 
     static create(props: TaskProps): TaskEntity {
-        if (!props.userId) throw new Error('userId is required');
-        if (!props.name) throw new Error('name is required');
-        if (props.totalSet < 0) throw new Error('totalSet must be >= 0');
-        if (props.currentSet < 0) throw new Error('currentSet must be >= 0');
+        if (!props.userId) throw new BadRequestError('userId is required');
+        if (!props.name) throw new BadRequestError('name is required');
+        if (props.totalSet < 0) throw new BadRequestError('totalSet must be >= 0');
+        if (props.currentSet < 0) throw new BadRequestError('currentSet must be >= 0');
         return new TaskEntity(props);
     }
 }

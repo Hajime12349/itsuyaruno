@@ -1,5 +1,6 @@
 import { sql } from '@vercel/postgres';
 import { query } from '@/lib/db';
+import { AppError, NotFoundError } from '@/shared/errors/AppError';
 import { UserEntity } from '../../domain/users/User';
 import type { UserRepository } from '../../domain/users/UserRepository';
 import { UserId } from '../../domain/users/valueObjects/UserId';
@@ -41,7 +42,7 @@ function mapRowToEntity(row: any): UserEntity {
             ? String(row.id)
             : undefined;
     if (idValue === undefined) {
-        throw new Error('User row is missing id');
+        throw new AppError('InternalError', 'User row is missing id');
     }
 
     const displayNameValue = normalizeOptionalText(row.display_name);
@@ -87,7 +88,7 @@ function entityToPersistence(user: UserEntity): {
 function ensureRow<T>(result: { rows: T[]; rowCount?: number | null }, notFoundMessage: string): T {
     const row = result.rows[0];
     if (!row || result.rowCount === 0) {
-        throw new Error(notFoundMessage);
+        throw new NotFoundError(notFoundMessage);
     }
     return row;
 }
@@ -106,33 +107,33 @@ export class PostgresUserRepository implements UserRepository {
         const persistence = entityToPersistence(user);
         if (process.env.NODE_ENV === 'production') {
             const result = await sql`INSERT INTO users (id, display_name, icon_path, current_task, current_task_time) VALUES (${persistence.id}, ${persistence.displayName}, ${persistence.iconPath}, ${persistence.currentTask}, ${persistence.currentTaskTime}) RETURNING *`;
-            return mapRowToEntity(ensureRow(result, 'UserNotFound'));
+            return mapRowToEntity(ensureRow(result, 'User not found'));
         }
         const result = await query('INSERT INTO users (id, display_name, icon_path, current_task, current_task_time) VALUES ($1, $2, $3, $4, $5) RETURNING *', [persistence.id, persistence.displayName, persistence.iconPath, persistence.currentTask, persistence.currentTaskTime]);
-        return mapRowToEntity(ensureRow(result, 'UserNotFound'));
+        return mapRowToEntity(ensureRow(result, 'User not found'));
     }
 
     async update(user: UserEntity): Promise<UserEntity> {
         const persistence = entityToPersistence(user);
         if (process.env.NODE_ENV === 'production') {
             const result = await sql`UPDATE users SET display_name = ${persistence.displayName}, icon_path = ${persistence.iconPath}, current_task = ${persistence.currentTask}, current_task_time = ${persistence.currentTaskTime} WHERE id = ${persistence.id} RETURNING *`;
-            return mapRowToEntity(ensureRow(result, 'UserNotFound'));
+            return mapRowToEntity(ensureRow(result, 'User not found'));
         }
         const result = await query('UPDATE users SET display_name = $1, icon_path = $2, current_task = $3, current_task_time = $4 WHERE id = $5 RETURNING *', [persistence.displayName, persistence.iconPath, persistence.currentTask, persistence.currentTaskTime, persistence.id]);
-        return mapRowToEntity(ensureRow(result, 'UserNotFound'));
+        return mapRowToEntity(ensureRow(result, 'User not found'));
     }
 
     async delete(id: string): Promise<void> {
         if (process.env.NODE_ENV === 'production') {
             const result = await sql`DELETE FROM users WHERE id = ${id}`;
             if ((result.rowCount ?? 0) === 0) {
-                throw new Error('UserNotFound');
+                throw new NotFoundError('User not found');
             }
             return;
         }
         const result = await query('DELETE FROM users WHERE id = $1', [id]);
         if ((result.rowCount ?? 0) === 0) {
-            throw new Error('UserNotFound');
+            throw new NotFoundError('User not found');
         }
     }
 }

@@ -1,3 +1,4 @@
+import { BadRequestError } from '@/shared/errors/AppError';
 import { CurrentTaskId } from './valueObjects/CurrentTaskId';
 import { CurrentTaskTime } from './valueObjects/CurrentTaskTime';
 import { DisplayName } from './valueObjects/DisplayName';
@@ -29,23 +30,23 @@ export class UserEntity {
 
     static create(props: UserValueProps): UserEntity {
         if (!props || typeof props !== 'object') {
-            throw new Error('UserEntity requires a props object');
+            throw new BadRequestError('UserEntity requires a props object');
         }
 
         if (!(props.id instanceof UserId)) {
-            throw new Error('UserEntity requires a UserId');
+            throw new BadRequestError('UserEntity requires a UserId');
         }
         if (props.displayName !== undefined && !(props.displayName instanceof DisplayName)) {
-            throw new Error('UserEntity displayName must be a DisplayName');
+            throw new BadRequestError('UserEntity displayName must be a DisplayName');
         }
         if (props.iconPath !== undefined && !(props.iconPath instanceof IconPath)) {
-            throw new Error('UserEntity iconPath must be an IconPath');
+            throw new BadRequestError('UserEntity iconPath must be an IconPath');
         }
         if (props.currentTask !== undefined && !(props.currentTask instanceof CurrentTaskId)) {
-            throw new Error('UserEntity currentTask must be a CurrentTaskId');
+            throw new BadRequestError('UserEntity currentTask must be a CurrentTaskId');
         }
         if (props.currentTaskTime !== undefined && !(props.currentTaskTime instanceof CurrentTaskTime)) {
-            throw new Error('UserEntity currentTaskTime must be a CurrentTaskTime');
+            throw new BadRequestError('UserEntity currentTaskTime must be a CurrentTaskTime');
         }
 
         return new UserEntity({
