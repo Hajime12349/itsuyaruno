@@ -23,11 +23,7 @@ function mapRowToEntity(row: any): UserEntity {
         if (value instanceof Date) {
             return value.toISOString();
         }
-        if (typeof value === 'string') {
-            const trimmed = value.trim();
-            return trimmed.length > 0 ? trimmed : undefined;
-        }
-        return undefined;
+        return toOptionalTrimmedString(value);
     };
 
     const idValue = typeof row.id === 'string'
