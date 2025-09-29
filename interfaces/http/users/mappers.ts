@@ -1,4 +1,5 @@
 import type { UserEntity } from '../../../domain/users/User';
+import { userEntityToPlain, type UserEntityPlain } from '../../../domain/users/mappers';
 
 export type UserDTO = {
     id: string;
@@ -18,19 +19,8 @@ export function toDTO(user: UserEntity): UserDTO {
     };
 }
 
-export function toPlain(user: UserEntity): {
-    id: string;
-    displayName?: string;
-    iconPath?: string;
-    currentTask?: number;
-    currentTaskTime?: string;
-} {
-    return {
-        id: user.id.value,
-        displayName: user.displayName?.value,
-        iconPath: user.iconPath?.value,
-        currentTask: user.currentTask?.value,
-        currentTaskTime: user.currentTaskTime?.value,
-    };
-}
+export type UserPlain = UserEntityPlain;
 
+export function toPlain(user: UserEntity): UserPlain {
+    return userEntityToPlain(user);
+}

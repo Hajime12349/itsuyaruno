@@ -8,6 +8,7 @@ import { DisplayName } from '../../domain/users/valueObjects/DisplayName';
 import { IconPath } from '../../domain/users/valueObjects/IconPath';
 import { CurrentTaskId } from '../../domain/users/valueObjects/CurrentTaskId';
 import { CurrentTaskTime } from '../../domain/users/valueObjects/CurrentTaskTime';
+import { userEntityToPlain } from '../../domain/users/mappers';
 
 function mapRowToEntity(row: any): UserEntity {
     const currentTaskValue = row.current_task;
@@ -69,22 +70,6 @@ function mapRowToEntity(row: any): UserEntity {
     });
 }
 
-function entityToPersistence(user: UserEntity): {
-    id: string;
-    displayName?: string;
-    iconPath?: string;
-    currentTask?: number;
-    currentTaskTime?: string;
-} {
-    return {
-        id: user.id.value,
-        displayName: user.displayName?.value,
-        iconPath: user.iconPath?.value,
-        currentTask: user.currentTask?.value,
-        currentTaskTime: user.currentTaskTime?.value,
-    };
-}
-
 function ensureRow<T>(result: { rows: T[]; rowCount?: number | null }, notFoundMessage: string): T {
     const row = result.rows[0];
     if (!row || result.rowCount === 0) {
@@ -104,7 +89,7 @@ export class PostgresUserRepository implements UserRepository {
     }
 
     async create(user: UserEntity): Promise<UserEntity> {
-        const persistence = entityToPersistence(user);
+        const persistence = userEntityToPlain(user);
         if (process.env.NODE_ENV === 'production') {
             const result = await sql`INSERT INTO users (id, display_name, icon_path, current_task, current_task_time) VALUES (${persistence.id}, ${persistence.displayName}, ${persistence.iconPath}, ${persistence.currentTask}, ${persistence.currentTaskTime}) RETURNING *`;
             return mapRowToEntity(ensureRow(result, 'User not found'));
@@ -114,7 +99,7 @@ export class PostgresUserRepository implements UserRepository {
     }
 
     async update(user: UserEntity): Promise<UserEntity> {
-        const persistence = entityToPersistence(user);
+        const persistence = userEntityToPlain(user);
         if (process.env.NODE_ENV === 'production') {
             const result = await sql`UPDATE users SET display_name = ${persistence.displayName}, icon_path = ${persistence.iconPath}, current_task = ${persistence.currentTask}, current_task_time = ${persistence.currentTaskTime} WHERE id = ${persistence.id} RETURNING *`;
             return mapRowToEntity(ensureRow(result, 'User not found'));
