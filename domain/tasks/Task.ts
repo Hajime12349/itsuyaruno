@@ -38,9 +38,6 @@ export class TaskEntity {
     }
 
     static create(props: TaskValueProps): TaskEntity {
-        if (!props || typeof props !== 'object') {
-            throw new BadRequestError('TaskEntity requires a props object');
-        }
         const { id, userId, name, deadline, totalSet, currentSet, isComplete } = props;
 
         if (id !== undefined && !(id instanceof TaskId)) {
