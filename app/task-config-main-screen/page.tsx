@@ -1,5 +1,6 @@
 'use client'
 
+import { BadRequestError } from '@/shared/errors/AppError';
 import React from 'react';
 import styles from './page.module.css';
 import Header from '@/components/Header';
@@ -33,7 +34,7 @@ export default function Home() {
 
   const handleUpdateTask = async (task: Task) => {
     if (!task.id) {
-      throw new Error('Task id is required for update');
+      throw new BadRequestError('Task id is required for update');
     }
 
     const sanitized: Task = {

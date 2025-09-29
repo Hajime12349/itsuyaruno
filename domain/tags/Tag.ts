@@ -1,18 +1,21 @@
-export interface TagProps {
-    name: string;
+import { BadRequestError } from '@/shared/errors/AppError';
+import { TagName } from './valueObjects/TagName';
+
+export interface TagValueProps {
+    name: TagName;
 }
 
 export class TagEntity {
-    readonly name: string;
+    readonly name: TagName;
 
-    private constructor(props: TagProps) {
+    private constructor(props: TagValueProps) {
         this.name = props.name;
     }
 
-    static create(props: TagProps): TagEntity {
-        if (!props.name) throw new Error('name is required');
-        return new TagEntity(props);
+    static create(props: TagValueProps): TagEntity {
+        if (!(props.name instanceof TagName)) {
+            throw new BadRequestError('TagEntity name must be a TagName');
+        }
+        return new TagEntity({ name: props.name });
     }
 }
-
-

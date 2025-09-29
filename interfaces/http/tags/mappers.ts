@@ -5,7 +5,5 @@ export type TagDTO = {
 };
 
 export function toDTO(tag: TagEntity): TagDTO {
-    return { tag_name: tag.name };
+    return { tag_name: tag.name.value };
 }
-
-

@@ -1,12 +1,13 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { getUserID } from "@/lib/auth";
-import { PostgresUserRepository } from '../../../infrastructure/users/PostgresUserRepository';
 import { GetMeUseCase } from '../../../application/users/GetMe';
 import { CreateUserUseCase } from '../../../application/users/CreateUser';
 import { UpdateUserUseCase } from '../../../application/users/UpdateUser';
-import { toDTO } from '../../../interfaces/http/users/mappers';
+import { toDTO, toPlain } from '../../../interfaces/http/users/mappers';
+import { resolveUserRepository } from '@/interfaces/http/users/repositoryProvider';
 import { normalizeOptionalDateTime, normalizeOptionalTaskId, normalizeOptionalText } from './normalizers';
+import { AppError } from '@/shared/errors/AppError';
 
 export async function GET(req: Request) {
     const session = await getServerSession(authOptions);
@@ -16,16 +17,25 @@ export async function GET(req: Request) {
     }
 
     try {
-        const repo = new PostgresUserRepository();
-        const usecase = new GetMeUseCase(repo);
-        const user = await usecase.execute({ userId: session_user_id });
+        const repo = resolveUserRepository();
+        const getUsecase = new GetMeUseCase(repo);
+        const user = await getUsecase.execute({ userId: session_user_id });
         if (!user) {
             return new Response(JSON.stringify({ error: 'User not found' }), { status: 404 });
         }
         return new Response(JSON.stringify(toDTO(user)), { status: 200 });
     } catch (error) {
         console.error('Database query failed:', error);
-        return new Response(JSON.stringify({ error: 'Failed to get user' }), { status: 500 });
+        if (error instanceof AppError) {
+            if (error.code === 'BadRequest') {
+                return new Response(JSON.stringify({ error: error.message }), { status: 400 });
+            }
+            if (error.code === 'NotFound') {
+                return new Response(JSON.stringify({ error: error.message }), { status: 404 });
+            }
+        }
+        const message = (error as Error)?.message ?? 'Unknown error';
+        return new Response(JSON.stringify({ error: 'Failed to get user', detail: message }), { status: 500 });
     }
 }
 
@@ -46,9 +56,9 @@ export async function POST(req: Request) {
     }
 
     try {
-        const repo = new PostgresUserRepository();
-        const usecase = new CreateUserUseCase(repo);
-        const created = await usecase.execute({
+        const repo = resolveUserRepository();
+        const createUsecase = new CreateUserUseCase(repo);
+        const created = await createUsecase.execute({
             id,
             displayName: normalizeOptionalText('display_name', display_name),
             iconPath: normalizeOptionalText('icon_path', icon_path),
@@ -58,11 +68,16 @@ export async function POST(req: Request) {
         return new Response(JSON.stringify(toDTO(created)), { status: 201 });
     } catch (error) {
         console.error('Database query failed:', error);
-        const message = (error as Error)?.message ?? '';
-        if (message.startsWith('BadRequest:')) {
-            return new Response(JSON.stringify({ error: message }), { status: 400 });
+        if (error instanceof AppError) {
+            if (error.code === 'BadRequest') {
+                return new Response(JSON.stringify({ error: error.message }), { status: 400 });
+            }
+            if (error.code === 'NotFound') {
+                return new Response(JSON.stringify({ error: error.message }), { status: 404 });
+            }
         }
-        return new Response(JSON.stringify({ error: 'Failed to add user' }), { status: 500 });
+        const message = (error as Error)?.message ?? 'Unknown error';
+        return new Response(JSON.stringify({ error: 'Failed to add user', detail: message }), { status: 500 });
     }
 }
 
@@ -88,31 +103,39 @@ export async function PUT(req: Request) {
     const hasCurrentTaskTime = Object.prototype.hasOwnProperty.call(body ?? {}, 'current_task_time');
 
     try {
-        const repo = new PostgresUserRepository();
+        const repo = resolveUserRepository();
         const getMe = new GetMeUseCase(repo);
         const existing = await getMe.execute({ userId: id });
         if (!existing) {
             return new Response(JSON.stringify({ error: 'User not found' }), { status: 404 });
         }
 
+        const existingPlain = toPlain(existing);
+
         const updateUseCase = new UpdateUserUseCase(repo);
         const updated = await updateUseCase.execute({
             id,
-            displayName: hasDisplayName ? normalizeOptionalText('display_name', display_name) : existing.displayName,
-            iconPath: hasIconPath ? normalizeOptionalText('icon_path', icon_path) : existing.iconPath,
-            currentTask: hasCurrentTask ? normalizeOptionalTaskId('current_task', current_task) : existing.currentTask,
-            currentTaskTime: hasCurrentTaskTime ? normalizeOptionalDateTime('current_task_time', current_task_time) : existing.currentTaskTime,
+            displayName: hasDisplayName ? normalizeOptionalText('display_name', display_name) : existingPlain.displayName,
+            iconPath: hasIconPath ? normalizeOptionalText('icon_path', icon_path) : existingPlain.iconPath,
+            currentTask: hasCurrentTask ? normalizeOptionalTaskId('current_task', current_task) : existingPlain.currentTask,
+            currentTaskTime: hasCurrentTaskTime ? normalizeOptionalDateTime('current_task_time', current_task_time) : existingPlain.currentTaskTime,
         });
         return new Response(JSON.stringify(toDTO(updated)), { status: 200 });
     } catch (error) {
         console.error('Database query failed:', error);
-        const message = (error as Error)?.message ?? '';
-        if (message.startsWith('BadRequest:')) {
-            return new Response(JSON.stringify({ error: message }), { status: 400 });
+        if (error instanceof AppError) {
+            if (error.code === 'BadRequest') {
+                return new Response(JSON.stringify({ error: error.message }), { status: 400 });
+            }
+            if (error.code === 'NotFound') {
+                return new Response(JSON.stringify({ error: error.message }), { status: 404 });
+            }
         }
-        if (message === 'UserNotFound') {
+        const legacyMessage = (error as Error)?.message;
+        if (legacyMessage === 'UserNotFound' || legacyMessage === 'User not found') {
             return new Response(JSON.stringify({ error: 'User not found' }), { status: 404 });
         }
-        return new Response(JSON.stringify({ error: 'Failed to update user' }), { status: 500 });
+        const message = legacyMessage ?? 'Unknown error';
+        return new Response(JSON.stringify({ error: 'Failed to update user', detail: message }), { status: 500 });
     }
 }

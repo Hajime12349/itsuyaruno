@@ -1,7 +1,15 @@
 import { sql } from '@vercel/postgres';
 import { query } from '@/lib/db';
+import { AppError, NotFoundError } from '@/shared/errors/AppError';
+import { toOptionalTrimmedString } from '@/shared/utils/string';
 import { UserEntity } from '../../domain/users/User';
 import type { UserRepository } from '../../domain/users/UserRepository';
+import { UserId } from '../../domain/users/valueObjects/UserId';
+import { DisplayName } from '../../domain/users/valueObjects/DisplayName';
+import { IconPath } from '../../domain/users/valueObjects/IconPath';
+import { CurrentTaskId } from '../../domain/users/valueObjects/CurrentTaskId';
+import { CurrentTaskTime } from '../../domain/users/valueObjects/CurrentTaskTime';
+import { userEntityToPlain } from '../../domain/users/mappers';
 
 function mapRowToEntity(row: any): UserEntity {
     const currentTaskValue = row.current_task;
@@ -11,19 +19,50 @@ function mapRowToEntity(row: any): UserEntity {
             ? Number(currentTaskValue)
             : undefined;
 
+    const normalizeTimestamp = (value: unknown): string | undefined => {
+        if (value instanceof Date) {
+            return value.toISOString();
+        }
+        return toOptionalTrimmedString(value);
+    };
+
+    const idValue = typeof row.id === 'string'
+        ? row.id
+        : row.id !== null && row.id !== undefined
+            ? String(row.id)
+            : undefined;
+    if (idValue === undefined) {
+        throw new AppError('InternalError', 'User row is missing id');
+    }
+
+    const displayNameValue = toOptionalTrimmedString(row.display_name);
+    const iconPathValue = toOptionalTrimmedString(row.icon_path);
+    const currentTaskValueOrUndefined = Number.isFinite(parsedCurrentTask)
+        ? parsedCurrentTask as number
+        : undefined;
+    const currentTaskTimeValue = normalizeTimestamp(row.current_task_time);
+
     return UserEntity.create({
-        id: row.id,
-        displayName: row.display_name ?? undefined,
-        iconPath: row.icon_path ?? undefined,
-        currentTask: Number.isFinite(parsedCurrentTask) ? parsedCurrentTask : undefined,
-        currentTaskTime: row.current_task_time ?? undefined,
+        id: UserId.create(idValue),
+        displayName: displayNameValue !== undefined
+            ? DisplayName.create(displayNameValue)
+            : undefined,
+        iconPath: iconPathValue !== undefined
+            ? IconPath.create(iconPathValue)
+            : undefined,
+        currentTask: currentTaskValueOrUndefined !== undefined
+            ? CurrentTaskId.create(currentTaskValueOrUndefined)
+            : undefined,
+        currentTaskTime: currentTaskTimeValue !== undefined
+            ? CurrentTaskTime.create(currentTaskTimeValue)
+            : undefined,
     });
 }
 
 function ensureRow<T>(result: { rows: T[]; rowCount?: number | null }, notFoundMessage: string): T {
     const row = result.rows[0];
     if (!row || result.rowCount === 0) {
-        throw new Error(notFoundMessage);
+        throw new NotFoundError(notFoundMessage);
     }
     return row;
 }
@@ -39,34 +78,36 @@ export class PostgresUserRepository implements UserRepository {
     }
 
     async create(user: UserEntity): Promise<UserEntity> {
+        const persistence = userEntityToPlain(user);
         if (process.env.NODE_ENV === 'production') {
-            const result = await sql`INSERT INTO users (id, display_name, icon_path, current_task, current_task_time) VALUES (${user.id}, ${user.displayName}, ${user.iconPath}, ${user.currentTask}, ${user.currentTaskTime}) RETURNING *`;
-            return mapRowToEntity(ensureRow(result, 'UserNotFound'));
+            const result = await sql`INSERT INTO users (id, display_name, icon_path, current_task, current_task_time) VALUES (${persistence.id}, ${persistence.displayName}, ${persistence.iconPath}, ${persistence.currentTask}, ${persistence.currentTaskTime}) RETURNING *`;
+            return mapRowToEntity(ensureRow(result, 'User not found'));
         }
-        const result = await query('INSERT INTO users (id, display_name, icon_path, current_task, current_task_time) VALUES ($1, $2, $3, $4, $5) RETURNING *', [user.id, user.displayName, user.iconPath, user.currentTask, user.currentTaskTime]);
-        return mapRowToEntity(ensureRow(result, 'UserNotFound'));
+        const result = await query('INSERT INTO users (id, display_name, icon_path, current_task, current_task_time) VALUES ($1, $2, $3, $4, $5) RETURNING *', [persistence.id, persistence.displayName, persistence.iconPath, persistence.currentTask, persistence.currentTaskTime]);
+        return mapRowToEntity(ensureRow(result, 'User not found'));
     }
 
     async update(user: UserEntity): Promise<UserEntity> {
+        const persistence = userEntityToPlain(user);
         if (process.env.NODE_ENV === 'production') {
-            const result = await sql`UPDATE users SET display_name = ${user.displayName}, icon_path = ${user.iconPath}, current_task = ${user.currentTask}, current_task_time = ${user.currentTaskTime} WHERE id = ${user.id} RETURNING *`;
-            return mapRowToEntity(ensureRow(result, 'UserNotFound'));
+            const result = await sql`UPDATE users SET display_name = ${persistence.displayName}, icon_path = ${persistence.iconPath}, current_task = ${persistence.currentTask}, current_task_time = ${persistence.currentTaskTime} WHERE id = ${persistence.id} RETURNING *`;
+            return mapRowToEntity(ensureRow(result, 'User not found'));
         }
-        const result = await query('UPDATE users SET display_name = $1, icon_path = $2, current_task = $3, current_task_time = $4 WHERE id = $5 RETURNING *', [user.displayName, user.iconPath, user.currentTask, user.currentTaskTime, user.id]);
-        return mapRowToEntity(ensureRow(result, 'UserNotFound'));
+        const result = await query('UPDATE users SET display_name = $1, icon_path = $2, current_task = $3, current_task_time = $4 WHERE id = $5 RETURNING *', [persistence.displayName, persistence.iconPath, persistence.currentTask, persistence.currentTaskTime, persistence.id]);
+        return mapRowToEntity(ensureRow(result, 'User not found'));
     }
 
     async delete(id: string): Promise<void> {
         if (process.env.NODE_ENV === 'production') {
             const result = await sql`DELETE FROM users WHERE id = ${id}`;
             if ((result.rowCount ?? 0) === 0) {
-                throw new Error('UserNotFound');
+                throw new NotFoundError('User not found');
             }
             return;
         }
         const result = await query('DELETE FROM users WHERE id = $1', [id]);
         if ((result.rowCount ?? 0) === 0) {
-            throw new Error('UserNotFound');
+            throw new NotFoundError('User not found');
         }
     }
 }

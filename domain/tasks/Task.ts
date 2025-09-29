@@ -1,25 +1,33 @@
-export type TaskId = number;
+import { BadRequestError } from '@/shared/errors/AppError';
+import { TaskCompletionStatus } from './valueObjects/TaskCompletionStatus';
+import { TaskCurrentSet } from './valueObjects/TaskCurrentSet';
+import { TaskDeadline } from './valueObjects/TaskDeadline';
+import { TaskId } from './valueObjects/TaskId';
+import { TaskName } from './valueObjects/TaskName';
+import { TaskOwnerId } from './valueObjects/TaskOwnerId';
+import { TaskTotalSet } from './valueObjects/TaskTotalSet';
+import { ensureCurrentSetWithinTotal } from './validators';
 
-export interface TaskProps {
+export interface TaskValueProps {
     id?: TaskId;
-    userId: string;
-    name: string;
-    deadline?: string; // ISO date string
-    totalSet: number;
-    currentSet: number;
-    isComplete: boolean;
+    userId: TaskOwnerId;
+    name: TaskName;
+    deadline?: TaskDeadline;
+    totalSet: TaskTotalSet;
+    currentSet: TaskCurrentSet;
+    isComplete: TaskCompletionStatus;
 }
 
 export class TaskEntity {
     readonly id?: TaskId;
-    readonly userId: string;
-    name: string;
-    deadline?: string;
-    totalSet: number;
-    currentSet: number;
-    isComplete: boolean;
+    readonly userId: TaskOwnerId;
+    readonly name: TaskName;
+    readonly deadline?: TaskDeadline;
+    readonly totalSet: TaskTotalSet;
+    readonly currentSet: TaskCurrentSet;
+    readonly isComplete: TaskCompletionStatus;
 
-    private constructor(props: TaskProps) {
+    private constructor(props: TaskValueProps) {
         this.id = props.id;
         this.userId = props.userId;
         this.name = props.name;
@@ -29,13 +37,33 @@ export class TaskEntity {
         this.isComplete = props.isComplete;
     }
 
-    static create(props: TaskProps): TaskEntity {
-        if (!props.userId) throw new Error('userId is required');
-        if (!props.name) throw new Error('name is required');
-        if (props.totalSet < 0) throw new Error('totalSet must be >= 0');
-        if (props.currentSet < 0) throw new Error('currentSet must be >= 0');
-        return new TaskEntity(props);
+    static create(props: TaskValueProps): TaskEntity {
+        const { id, userId, name, deadline, totalSet, currentSet, isComplete } = props;
+
+        if (id !== undefined && !(id instanceof TaskId)) {
+            throw new BadRequestError('TaskEntity id must be a TaskId');
+        }
+        if (!(userId instanceof TaskOwnerId)) {
+            throw new BadRequestError('TaskEntity userId must be a TaskOwnerId');
+        }
+        if (!(name instanceof TaskName)) {
+            throw new BadRequestError('TaskEntity name must be a TaskName');
+        }
+        if (deadline !== undefined && !(deadline instanceof TaskDeadline)) {
+            throw new BadRequestError('TaskEntity deadline must be a TaskDeadline');
+        }
+        if (!(totalSet instanceof TaskTotalSet)) {
+            throw new BadRequestError('TaskEntity totalSet must be a TaskTotalSet');
+        }
+        if (!(currentSet instanceof TaskCurrentSet)) {
+            throw new BadRequestError('TaskEntity currentSet must be a TaskCurrentSet');
+        }
+        if (!(isComplete instanceof TaskCompletionStatus)) {
+            throw new BadRequestError('TaskEntity isComplete must be a TaskCompletionStatus');
+        }
+
+        ensureCurrentSetWithinTotal(totalSet, currentSet);
+
+        return new TaskEntity({ id, userId, name, deadline, totalSet, currentSet, isComplete });
     }
 }
-
-
