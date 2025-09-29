@@ -29,9 +29,6 @@ export class UserEntity {
     }
 
     static create(props: UserValueProps): UserEntity {
-        if (!props || typeof props !== 'object') {
-            throw new BadRequestError('UserEntity requires a props object');
-        }
 
         if (!(props.id instanceof UserId)) {
             throw new BadRequestError('UserEntity requires a UserId');
