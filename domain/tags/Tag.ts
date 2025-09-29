@@ -13,9 +13,6 @@ export class TagEntity {
     }
 
     static create(props: TagValueProps): TagEntity {
-        if (!props || typeof props !== 'object') {
-            throw new BadRequestError('TagEntity requires a props object');
-        }
         if (!(props.name instanceof TagName)) {
             throw new BadRequestError('TagEntity name must be a TagName');
         }
