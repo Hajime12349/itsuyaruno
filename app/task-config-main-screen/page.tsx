@@ -1,15 +1,15 @@
 'use client'
 
-import { BadRequestError } from '@/shared/errors/AppError';
-import React from 'react';
-import styles from './page.module.css';
-import Header from '@/components/Header';
-import { useState, useEffect } from 'react';
-import { Task } from "@/lib/entity";
-import { createTask, deleteTask, getTasks, updateTask } from "@/lib/db_api_wrapper";
-import TaskColumn from '@/components/task-config-main-screen/TaskColumn';
+import React, { useEffect, useState } from 'react';
 import { NextAuthProvider, WithLoggedIn } from '@/app/provider';
+import Header from '@/components/Header';
+import TaskColumn from '@/components/task-config-main-screen/TaskColumn';
 import type { TaskDraft } from '@/components/task-config-main-screen/types';
+import { createTask, deleteTask, getTasks, updateTask } from "@/interfaces/http/api_wrapper";
+import type { TaskCreatePayload } from '@/interfaces/http/api_wrapper';
+import type { TaskDTO as Task } from '@/interfaces/http/tasks/mappers';
+import { BadRequestError } from '@/lib/errors/AppError';
+import styles from './page.module.css';
 
 export default function Home() {
 
@@ -20,7 +20,7 @@ export default function Home() {
   }, []);
 
   const handleCreateTask = async (draft: TaskDraft) => {
-    const payload: Task = {
+    const payload: TaskCreatePayload = {
       task_name: draft.task_name,
       total_set: draft.total_set,
       current_set: draft.current_set,

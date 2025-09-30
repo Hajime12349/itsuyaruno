@@ -1,4 +1,12 @@
-import type { Task, User, Tag } from '@/lib/entity';
+import type { TagDTO as Tag } from '@/interfaces/http/tags/mappers';
+import type { TaskDTO as Task } from '@/interfaces/http/tasks/mappers';
+import type { UserDTO as User } from '@/interfaces/http/users/mappers';
+
+type OptionalKeys<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
+
+export type TaskCreatePayload = OptionalKeys<Task, 'id' | 'user_id'>;
+export type TaskUpdatePayload = OptionalKeys<Task, 'user_id'>;
+export type UserUpsertPayload = OptionalKeys<User, 'id'>;
 
 /**
  * タスクの一覧を取得します。
@@ -49,7 +57,7 @@ export async function getTask(taskId: number): Promise<Task> {
  * @param task 作成するタスク
  * @returns 作成されたタスクをPromiseとして返します。
  */
-export async function createTask(task: Task): Promise<Task> {
+export async function createTask(task: TaskCreatePayload): Promise<Task> {
     const response = await fetch('/api/tasks', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -67,7 +75,7 @@ export async function createTask(task: Task): Promise<Task> {
  * @param task 更新するタスク
  * @returns 更新されたタスクをPromiseとして返します。
  */
-export async function updateTask(task: Task): Promise<Task> {
+export async function updateTask(task: TaskUpdatePayload): Promise<Task> {
     const response = await fetch(`/api/tasks/${task.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -108,7 +116,7 @@ export async function getUser(): Promise<User> {
  * @param user 登録するユーザー
  * @returns 登録されたユーザーをPromiseとして返します。
  */
-export async function registerUser(user: User): Promise<User> {
+export async function registerUser(user: UserUpsertPayload): Promise<User> {
     const response = await fetch('/api/users', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -126,7 +134,7 @@ export async function registerUser(user: User): Promise<User> {
  * @param user 更新するユーザー
  * @returns 更新されたユーザーをPromiseとして返します。
  */
-export async function updateUser(user: User): Promise<User> {
+export async function updateUser(user: UserUpsertPayload): Promise<User> {
     if (!user.id) {
         const response = await fetch('/api/users', {
             method: 'PUT',

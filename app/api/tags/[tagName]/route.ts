@@ -4,7 +4,7 @@ import { UpdateTagUseCase } from '@/application/tags/UpdateTag';
 import { DeleteTagUseCase } from '@/application/tags/DeleteTag';
 import { toDTO } from '@/interfaces/http/tags/mappers';
 import { resolveTagRepository } from '@/interfaces/http/tags/repositoryProvider';
-import { AppError } from '@/shared/errors/AppError';
+import { AppError } from '@/lib/errors/AppError';
 import { normalizeTagName, normalizeTagParam } from '../normalizers';
 
 export async function PUT(request: Request, { params }: { params: { tagName: string } }) {

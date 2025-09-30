@@ -1,4 +1,4 @@
-import { BadRequestError } from '@/shared/errors/AppError';
+import { BadRequestError } from '@/lib/errors/AppError';
 
 export class TaskTotalSet {
     private constructor(private readonly _value: number) {}

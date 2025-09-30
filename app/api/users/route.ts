@@ -7,7 +7,7 @@ import { UpdateUserUseCase } from '../../../application/users/UpdateUser';
 import { toDTO, toPlain } from '../../../interfaces/http/users/mappers';
 import { resolveUserRepository } from '@/interfaces/http/users/repositoryProvider';
 import { normalizeOptionalDateTime, normalizeOptionalTaskId, normalizeOptionalText } from './normalizers';
-import { AppError } from '@/shared/errors/AppError';
+import { AppError } from '@/lib/errors/AppError';
 
 export async function GET(req: Request) {
     const session = await getServerSession(authOptions);

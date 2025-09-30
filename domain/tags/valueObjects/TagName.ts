@@ -1,4 +1,4 @@
-import { BadRequestError } from '@/shared/errors/AppError';
+import { BadRequestError } from '@/lib/errors/AppError';
 
 const MAX_TAG_NAME_LENGTH = 50;
 

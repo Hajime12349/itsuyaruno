@@ -1,4 +1,4 @@
-import { BadRequestError } from '@/shared/errors/AppError';
+import { BadRequestError } from '@/lib/errors/AppError';
 
 export class TaskOwnerId {
     private constructor(private readonly _value: string) {}

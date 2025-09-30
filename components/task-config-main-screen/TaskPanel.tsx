@@ -1,10 +1,11 @@
 import React from 'react';
-import styles from './TaskPanel.module.css';
-import { Task, User } from '@/lib/entity';
-import TaskStartButton from './TaskStartButton';
+import { usePathname, useRouter } from 'next/navigation';
+import { updateUser } from '@/interfaces/http/api_wrapper';
+import type { TaskDTO as Task } from '@/interfaces/http/tasks/mappers';
+import type { UserDTO as User } from '@/interfaces/http/users/mappers';
 import EditTaskButton from './EditTaskButton';
-import { usePathname, useRouter } from 'next/navigation'; // usePathname フックをインポート
-import { updateUser } from '@/lib/db_api_wrapper';
+import TaskStartButton from './TaskStartButton';
+import styles from './TaskPanel.module.css';
 
 interface TaskPanelProps {
   task: Task;

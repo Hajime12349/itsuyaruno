@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
-import TaskPanel from './TaskPanel';
-import type { Task } from '@/lib/entity';
-import styles from './TaskColumn.module.css';
+import type { TaskDTO as Task } from '@/interfaces/http/tasks/mappers';
 import AddTaskButton from './AddTaskButton';
 import AddTaskWindow from './AddTaskWindow';
 import EditTaskWindow from './EditTaskWindow';
+import TaskPanel from './TaskPanel';
 import type { TaskDraft } from './types';
+import styles from './TaskColumn.module.css';
 
 interface TaskColumnProps {
   tasks: Task[];

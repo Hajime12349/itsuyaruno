@@ -1,14 +1,14 @@
 'use client'
-import Image from "next/image";
-import styles from "./TimerFinishScreen.module.css";
-import NavigateTaskButton from "@/components/NavigateTaskButton";
-import Header from '@/components/Header';
-import { useState, useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { getUser, getTask, getTasks, updateTask } from '@/lib/db_api_wrapper';
-import { User, Task } from '@/lib/entity';
-import TaskSuggestionButton from '@/components/timer-finish-screen/TaskSuggestionButton';
 import { NextAuthProvider, WithLoggedIn } from "@/app/provider";
+import Header from '@/components/Header';
+import NavigateTaskButton from "@/components/NavigateTaskButton";
+import TaskSuggestionButton from '@/components/timer-finish-screen/TaskSuggestionButton';
+import { getTask, getTasks, getUser, updateTask } from '@/interfaces/http/api_wrapper';
+import type { TaskDTO as Task } from '@/interfaces/http/tasks/mappers';
+import type { UserDTO as User } from '@/interfaces/http/users/mappers';
+import styles from "./TimerFinishScreen.module.css";
 
 export default function TimerFinishScreen() {
   // ルーターを取得
@@ -49,16 +49,37 @@ export default function TimerFinishScreen() {
   }, [])
 
   const decideContinue = () => {
-    setIsFinished(false);
-    setIsDecided(true);
+    if (!currentTask || typeof currentTask.id !== 'number') {
+      setIsFinished(false);
+      setIsDecided(true);
+      return;
+    }
+
+    const nextSet = currentTask.current_set + 1;
+    const taskPayload: Task = { ...currentTask, current_set: nextSet };
+
+    updateTask(taskPayload)
+      .then((updatedTask) => {
+        setCurrentTask(updatedTask);
+        setTasks((prevTasks) => prevTasks.map((task) => {
+          if (typeof task.id !== 'number' || task.id !== updatedTask.id) {
+            return task;
+          }
+          return updatedTask;
+        }));
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+      .finally(() => {
+        setIsFinished(false);
+        setIsDecided(true);
+      });
   }
   const decideChange = () => {
     if (!currentTask) return;
     currentTask.is_complete = true;
     updateTask(currentTask)
-      .then(() => {
-        console.log("task updated");
-      })
       .catch((error) => {
         console.error(error);
       })

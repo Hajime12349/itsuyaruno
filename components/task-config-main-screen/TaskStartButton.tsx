@@ -1,7 +1,7 @@
 'use client'
 
 import React from "react"
-import { Task } from "@/lib/entity"
+import type { TaskDTO as Task } from "@/interfaces/http/tasks/mappers";
 
 interface TaskStartButtonProps {
     task: Task
@@ -22,4 +22,3 @@ const TaskStartButton: React.FC<TaskStartButtonProps> = ({ task, onStart }) => {
 }
 
 export default TaskStartButton
-

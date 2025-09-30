@@ -1,26 +1,29 @@
 'use client';
 
-import { NextAuthProvider } from "@/app/provider";
 import { useEffect, useState } from 'react';
+import { Autocomplete, Chip, TextField } from "@mui/material";
 import { useSession } from "next-auth/react";
+import { NextAuthProvider } from "@/app/provider";
+import TaskPanel from "@/components/task-config-main-screen/TaskPanel";
 import { getUserID } from "@/lib/auth";
 import {
-    getUser,
+    createTag,
+    createTask,
+    deleteTag,
+    deleteTask,
+    getTags,
     getTask,
     getTasks,
-    createTask,
-    updateTask,
-    deleteTask,
-    updateUser,
+    getUser,
     registerUser,
-    getTags,
-    createTag,
     updateTag,
-    deleteTag
-} from "@/lib/db_api_wrapper";
-import { Task, User, Tag } from "@/lib/entity";
-import TaskPanel from "@/components/task-config-main-screen/TaskPanel";
-import { Autocomplete, TextField, Chip } from "@mui/material";
+    updateTask,
+    updateUser
+} from "@/interfaces/http/api_wrapper";
+import type { TaskCreatePayload, UserUpsertPayload } from "@/interfaces/http/api_wrapper";
+import type { TagDTO as Tag } from "@/interfaces/http/tags/mappers";
+import type { TaskDTO as Task } from "@/interfaces/http/tasks/mappers";
+import type { UserDTO as User } from "@/interfaces/http/users/mappers";
 
 
 
@@ -44,7 +47,7 @@ const CRUDApiWrapperTestComponent = () => {
     }, []);
 
     // タスクを作成する関数を定義
-    function onCreateTask(task: Task) {
+    function onCreateTask(task: TaskCreatePayload) {
         createTask(task).then( // タスクを作成する
             () => {
                 getTasks() // タスク追加後のタスク一覧を取得
@@ -96,7 +99,7 @@ const CRUDApiWrapperTestComponent = () => {
     }
 
     // ユーザーを更新する関数を定義
-    function onUpdateUser(user: User) {
+    function onUpdateUser(user: UserUpsertPayload) {
         updateUser(user).then( // ユーザーを更新する
             () => {
                 getUser()
@@ -112,7 +115,7 @@ const CRUDApiWrapperTestComponent = () => {
     }
 
     // ユーザーを登録する関数を定義
-    function onRegisterUser(user: User) {
+    function onRegisterUser(user: UserUpsertPayload) {
         registerUser(user).then( // ユーザーを登録する
             () => {
                 getUser()
@@ -132,7 +135,8 @@ const CRUDApiWrapperTestComponent = () => {
             console.error('Failed to start task');
             return;
         }
-        updateUser({ current_task: id, current_task_time: new Date().toISOString() }).then(() => {
+        const payload: UserUpsertPayload = { current_task: id, current_task_time: new Date().toISOString() };
+        updateUser(payload).then(() => {
             getUser()
                 .then(setUser)
                 .catch((error) => {

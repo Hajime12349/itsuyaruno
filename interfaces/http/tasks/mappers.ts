@@ -1,4 +1,5 @@
 import type { TaskEntity } from '../../../domain/tasks/Task';
+import type { TagDTO } from '../tags/mappers';
 
 export type TaskDTO = {
     id?: number;
@@ -8,6 +9,7 @@ export type TaskDTO = {
     total_set: number;
     current_set: number;
     is_complete: boolean;
+    tags?: TagDTO[];
 };
 
 export function toDTO(entity: TaskEntity): TaskDTO {

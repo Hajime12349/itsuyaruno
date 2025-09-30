@@ -1,8 +1,6 @@
-import { Autocomplete, TextField, Chip } from "@mui/material";
-import { Tag } from "@/lib/entity";
-import { useMemo } from "react";
-import React from "react";
-import { CircularProgress } from "@mui/material";
+import React, { useMemo } from "react";
+import { Autocomplete, Chip, CircularProgress, TextField } from "@mui/material";
+import type { TagDTO as Tag } from "@/interfaces/http/tags/mappers";
 
 interface TagInputProps {
     defaultTags?: Tag[];

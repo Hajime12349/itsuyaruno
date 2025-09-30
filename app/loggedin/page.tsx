@@ -1,10 +1,9 @@
 "use client";
 
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
-import { getUser } from "@/lib/db_api_wrapper";
-import { User } from "@/lib/entity";
 import { NextAuthProvider } from "@/app/provider";
+import { getUser } from "@/interfaces/http/api_wrapper";
 
 const LoggedIn = () => {
     const router = useRouter();

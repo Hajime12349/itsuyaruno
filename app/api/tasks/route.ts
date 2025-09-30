@@ -5,7 +5,7 @@ import { GetTasksUseCase } from '../../../application/tasks/GetTasks';
 import { CreateTaskUseCase } from '../../../application/tasks/CreateTask';
 import { toDTO } from '../../../interfaces/http/tasks/mappers';
 import { resolveTaskRepository } from '@/interfaces/http/tasks/repositoryProvider';
-import { AppError } from '@/shared/errors/AppError';
+import { AppError } from '@/lib/errors/AppError';
 import {
     normalizeBoolean,
     normalizeIncludeComplete,

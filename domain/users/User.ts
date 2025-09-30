@@ -1,4 +1,4 @@
-import { BadRequestError } from '@/shared/errors/AppError';
+import { BadRequestError } from '@/lib/errors/AppError';
 import { CurrentTaskId } from './valueObjects/CurrentTaskId';
 import { CurrentTaskTime } from './valueObjects/CurrentTaskTime';
 import { DisplayName } from './valueObjects/DisplayName';

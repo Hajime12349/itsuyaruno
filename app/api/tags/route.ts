@@ -4,7 +4,7 @@ import { GetTagsUseCase } from '../../../application/tags/GetTags';
 import { CreateTagUseCase } from '../../../application/tags/CreateTag';
 import { toDTO } from '../../../interfaces/http/tags/mappers';
 import { resolveTagRepository } from '@/interfaces/http/tags/repositoryProvider';
-import { AppError } from '@/shared/errors/AppError';
+import { AppError } from '@/lib/errors/AppError';
 import { normalizeTagName } from './normalizers';
 
 export async function GET(_req: Request) {

@@ -1,4 +1,4 @@
-import { BadRequestError } from '@/shared/errors/AppError';
+import { BadRequestError } from '@/lib/errors/AppError';
 import { TagName } from './valueObjects/TagName';
 
 export interface TagValueProps {
