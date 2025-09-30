@@ -5,7 +5,7 @@ import { NextAuthProvider, WithLoggedIn } from "@/app/provider";
 import Header from '@/components/Header';
 import NavigateTaskButton from "@/components/NavigateTaskButton";
 import TaskSuggestionButton from '@/components/timer-finish-screen/TaskSuggestionButton';
-import { getTask, getTasks, getUser, updateTask } from '@/interfaces/http/api_wrapper';
+import { getTask, getTasks, getUser, updateTask } from '@/lib/api_wrapper';
 import type { TaskDTO as Task } from '@/interfaces/http/tasks/mappers';
 import type { UserDTO as User } from '@/interfaces/http/users/mappers';
 import styles from "./TimerFinishScreen.module.css";

@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { NextAuthProvider } from "@/app/provider";
-import { getUser } from "@/interfaces/http/api_wrapper";
+import { getUser } from "@/lib/api_wrapper";
 
 const LoggedIn = () => {
     const router = useRouter();

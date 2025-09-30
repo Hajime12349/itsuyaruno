@@ -6,7 +6,7 @@ import Collapse from '@mui/material/Collapse';
 import TextField from '@mui/material/TextField';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import type { TaskCreatePayload } from '@/interfaces/http/api_wrapper';
+import type { TaskCreatePayload } from '@/lib/api_wrapper';
 import type { TagDTO as Tag } from '@/interfaces/http/tags/mappers';
 import TagInput from './TagInput';
 

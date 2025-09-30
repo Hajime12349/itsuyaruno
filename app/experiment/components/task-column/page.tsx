@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import TaskColumn from "@/components/task-config-main-screen/TaskColumn";
 import type { TaskDraft } from "@/components/task-config-main-screen/types";
-import { getTasks } from "@/interfaces/http/api_wrapper";
+import { getTasks } from "@/lib/api_wrapper";
 import type { TaskDTO as Task } from "@/interfaces/http/tasks/mappers";
 import styles from "@/components/task-config-main-screen/TaskColumn.module.css";
 

@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { NextAuthProvider, WithLoggedIn } from "@/app/provider";
 import Header from '@/components/Header';
 import ProgressBar from '@/components/ProgressBar';
-import { getTask, getUser, updateTask } from '@/interfaces/http/api_wrapper';
+import { getTask, getUser, updateTask } from '@/lib/api_wrapper';
 import type { TaskDTO as Task } from '@/interfaces/http/tasks/mappers';
 import type { UserDTO as User } from '@/interfaces/http/users/mappers';
 import styles from "./TimerWorkingScreen.module.css";

@@ -1,6 +1,6 @@
 import React from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { updateUser } from '@/interfaces/http/api_wrapper';
+import { updateUser } from '@/lib/api_wrapper';
 import type { TaskDTO as Task } from '@/interfaces/http/tasks/mappers';
 import type { UserDTO as User } from '@/interfaces/http/users/mappers';
 import EditTaskButton from './EditTaskButton';

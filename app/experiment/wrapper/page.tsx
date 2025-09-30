@@ -19,8 +19,8 @@ import {
     updateTag,
     updateTask,
     updateUser
-} from "@/interfaces/http/api_wrapper";
-import type { TaskCreatePayload, UserUpsertPayload } from "@/interfaces/http/api_wrapper";
+} from "@/lib/api_wrapper";
+import type { TaskCreatePayload, UserUpsertPayload } from "@/lib/api_wrapper";
 import type { TagDTO as Tag } from "@/interfaces/http/tags/mappers";
 import type { TaskDTO as Task } from "@/interfaces/http/tasks/mappers";
 import type { UserDTO as User } from "@/interfaces/http/users/mappers";
