@@ -1,11 +1,11 @@
 import { getServerSession } from 'next-auth';
 import { authOptions, getUserID } from '@/lib/auth';
+import { AppError } from '@/lib/errors/AppError';
 import { GetTaskByIdUseCase } from '@/application/tasks/GetTaskById';
 import { UpdateTaskUseCase } from '@/application/tasks/UpdateTask';
 import { DeleteTaskUseCase } from '@/application/tasks/DeleteTask';
 import { toDTO } from '@/interfaces/http/tasks/mappers';
 import { resolveTaskRepository } from '@/interfaces/http/tasks/repositoryProvider';
-import { AppError } from '@/shared/errors/AppError';
 import {
     normalizeBoolean,
     normalizeNonNegativeInteger,

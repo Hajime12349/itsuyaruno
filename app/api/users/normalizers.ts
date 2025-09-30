@@ -1,5 +1,5 @@
-import { BadRequestError } from '@/shared/errors/AppError';
-import { toOptionalTrimmedString } from '@/shared/utils/string';
+import { BadRequestError } from '@/lib/errors/AppError';
+import { toOptionalTrimmedString } from '@/lib/utils/string';
 
 export function normalizeOptionalText(fieldName: string, value: unknown): string | undefined {
   if (value === undefined || value === null) {

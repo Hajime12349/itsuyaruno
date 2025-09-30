@@ -1,11 +1,11 @@
 "use client";
 
-import TaskColumn from "@/components/task-config-main-screen/TaskColumn";
-import styles from "@/components/task-config-main-screen/TaskColumn.module.css";
-import { getTasks } from "@/lib/db_api_wrapper";
 import { useEffect, useState } from "react";
-import { Task } from "@/lib/entity";
-import { TaskDraft } from "@/components/task-config-main-screen/types";
+import TaskColumn from "@/components/task-config-main-screen/TaskColumn";
+import type { TaskDraft } from "@/components/task-config-main-screen/types";
+import { getTasks } from "@/interfaces/http/api_wrapper";
+import type { TaskDTO as Task } from "@/interfaces/http/tasks/mappers";
+import styles from "@/components/task-config-main-screen/TaskColumn.module.css";
 
 export default function TaskColumnTest() {
     const [tasks, setTasks] = useState<Task[]>([]);

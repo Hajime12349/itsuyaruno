@@ -1,6 +1,6 @@
 import { sql } from '@vercel/postgres';
-import { query } from '@/lib/db';
-import { AppError, NotFoundError } from '@/shared/errors/AppError';
+import { query } from '@/infrastructure/db';
+import { AppError, NotFoundError } from '@/lib/errors/AppError';
 import { TagEntity } from '../../domain/tags/Tag';
 import type { TagRepository } from '../../domain/tags/TagRepository';
 import { TagName } from '../../domain/tags/valueObjects/TagName';

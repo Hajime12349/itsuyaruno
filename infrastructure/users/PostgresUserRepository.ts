@@ -1,7 +1,7 @@
 import { sql } from '@vercel/postgres';
-import { query } from '@/lib/db';
-import { AppError, NotFoundError } from '@/shared/errors/AppError';
-import { toOptionalTrimmedString } from '@/shared/utils/string';
+import { query } from '@/infrastructure/db';
+import { AppError, NotFoundError } from '@/lib/errors/AppError';
+import { toOptionalTrimmedString } from '@/lib/utils/string';
 import { UserEntity } from '../../domain/users/User';
 import type { UserRepository } from '../../domain/users/UserRepository';
 import { UserId } from '../../domain/users/valueObjects/UserId';

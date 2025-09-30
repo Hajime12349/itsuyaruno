@@ -1,6 +1,6 @@
 import { sql } from '@vercel/postgres';
-import { query } from '@/lib/db';
-import { AppError, NotFoundError } from '@/shared/errors/AppError';
+import { query } from '@/infrastructure/db';
+import { AppError, NotFoundError } from '@/lib/errors/AppError';
 import { TaskEntity } from '../../domain/tasks/Task';
 import type { TaskRepository } from '../../domain/tasks/TaskRepository';
 import { TaskId } from '../../domain/tasks/valueObjects/TaskId';

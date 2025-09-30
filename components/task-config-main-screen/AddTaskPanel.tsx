@@ -1,16 +1,17 @@
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CardActions from '@mui/material/CardActions';
 import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
+import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
 import Collapse from '@mui/material/Collapse';
+import TextField from '@mui/material/TextField';
 import { useState } from 'react';
-import { Task, Tag } from '@/lib/entity';
-import { useForm, Controller } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
+import type { TaskCreatePayload } from '@/interfaces/http/api_wrapper';
+import type { TagDTO as Tag } from '@/interfaces/http/tags/mappers';
 import TagInput from './TagInput';
 
 interface AddTaskPanelProps {
-    onAddTask: (task: Task) => void;
+    onAddTask: (task: TaskCreatePayload) => void;
 }
 
 interface TaskFormInputs {
@@ -43,7 +44,7 @@ export default function AddTaskPanel({ onAddTask }: AddTaskPanelProps) {
     };
 
     const onSubmit = (data: TaskFormInputs) => {
-        const newTask: Task = {
+        const newTask: TaskCreatePayload = {
             task_name: data.taskName,
             total_set: data.totalSet,
             current_set: data.currentSet,

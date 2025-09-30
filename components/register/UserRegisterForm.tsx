@@ -2,7 +2,7 @@
 
 import React, { useEffect } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
-import { registerUser } from "@/lib/db_api_wrapper";
+import { registerUser } from "@/interfaces/http/api_wrapper";
 import styles from "./UserRegisterForm.module.css";
 
 type FormValues = {

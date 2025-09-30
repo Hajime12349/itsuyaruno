@@ -1,4 +1,4 @@
-import { BadRequestError } from '@/shared/errors/AppError';
+import { BadRequestError } from '@/lib/errors/AppError';
 
 export class TaskDeadline {
     private constructor(private readonly _value: Date) {}

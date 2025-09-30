@@ -1,4 +1,4 @@
-import { BadRequestError } from '@/shared/errors/AppError';
+import { BadRequestError } from '@/lib/errors/AppError';
 
 export function normalizeTagName(fieldName: string, value: unknown): string {
     if (typeof value !== 'string') {

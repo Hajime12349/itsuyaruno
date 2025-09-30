@@ -1,8 +1,8 @@
 'use client'
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import type { TaskDTO as Task } from '@/interfaces/http/tasks/mappers';
 import styles from './TaskWindow.module.css';
-import type { Task } from '@/lib/entity';
 
 interface EditTaskWindowProps {
   task: Task;

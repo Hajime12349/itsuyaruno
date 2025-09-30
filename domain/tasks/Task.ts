@@ -1,4 +1,4 @@
-import { BadRequestError } from '@/shared/errors/AppError';
+import { BadRequestError } from '@/lib/errors/AppError';
 import { TaskCompletionStatus } from './valueObjects/TaskCompletionStatus';
 import { TaskCurrentSet } from './valueObjects/TaskCurrentSet';
 import { TaskDeadline } from './valueObjects/TaskDeadline';

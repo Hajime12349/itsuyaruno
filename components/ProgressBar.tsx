@@ -1,13 +1,11 @@
 "use client";
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
+import type { TaskDTO as Task } from '@/interfaces/http/tasks/mappers';
+import TaskImage from '@/public/icon_3.png';
 import StartButton from './StartButton';
 import StopButton from './StopButton';
 import styles from "./ProgressBar.module.css";
-// Remove direct API usage; delegate via props callbacks
-import Image from 'next/image';
-import TaskImage from '@/public/icon_3.png';
-// import { useRouter } from "next/navigation"
-import { Task } from "@/lib/entity";
 let timer: NodeJS.Timeout | null = null;
 
 //形を定義するのがここ
