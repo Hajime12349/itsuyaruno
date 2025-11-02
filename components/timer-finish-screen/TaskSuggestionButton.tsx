@@ -1,17 +1,17 @@
-import { useMemo } from 'react';
-import type { TaskDTO as Task } from '@/interfaces/http/tasks/mappers';
-import styles from './TaskSuggestionButton.module.css';
+import { useMemo } from "react";
+import type { TaskDTO as Task } from "@/interfaces/http/tasks/mappers";
+import styles from "./TaskSuggestionButton.module.css";
 
 interface TaskSuggestionButtonProps {
-  tasks: Task[]
+  tasks: Task[];
 }
 
 function TaskSuggestionButton({ tasks }: TaskSuggestionButtonProps) {
   const randomTasks = useMemo(() => {
-    if (!tasks || tasks.length === 0) return []
+    if (!tasks || tasks.length === 0) return [];
     const shuffledTasks = [...tasks].sort(() => 0.5 - Math.random());
     return shuffledTasks.slice(0, 3);
-  }, [tasks])
+  }, [tasks]);
 
   return (
     <div>
@@ -21,8 +21,14 @@ function TaskSuggestionButton({ tasks }: TaskSuggestionButtonProps) {
             <li key={task.id ?? task.task_name} className={styles.TaskItem}>
               <div className={styles.TaskName}>{task.task_name}</div>
               <div className={styles.TaskMeta}>
-                <span>{task.current_set} / {task.total_set} セット</span>
-                {task.deadline && <span>期限: {new Date(task.deadline).toLocaleDateString()}</span>}
+                <span>
+                  {task.current_set} / {task.total_set} セット
+                </span>
+                {task.deadline && (
+                  <span>
+                    期限: {new Date(task.deadline).toLocaleDateString()}
+                  </span>
+                )}
               </div>
             </li>
           ))}

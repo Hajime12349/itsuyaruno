@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React from "react";
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
@@ -8,8 +8,8 @@ import styles from "./login.module.css";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { NextAuthProvider } from "../provider";
-import Image from 'next/image';
-import settingsIcon from '@/public/icon.png';
+import Image from "next/image";
+import settingsIcon from "@/public/icon.png";
 import LoadingScreen from "@/components/common/LoadingScreen";
 
 const GoogleSignInButton: React.FC = () => {
@@ -23,13 +23,17 @@ const GoogleSignInButton: React.FC = () => {
       <div className={styles.IconImage}>
         <Image src={settingsIcon} alt="Icon Image" width={100} height={100} />
       </div>
-      <h1 className={styles.TitleText}>いつやるの？  |  When will you do it?</h1>
-      <button className={styles.gsiMaterialButton} onClick={() => {
-        if (session.status === "authenticated") {
+      <h1 className={styles.TitleText}>いつやるの？ | When will you do it?</h1>
+      <button
+        className={styles.gsiMaterialButton}
+        onClick={() => {
+          if (session.status === "authenticated") {
             router.push("/loggedin");
-        } else {
+          } else {
             signIn("google", { callbackUrl: "/loggedin" });
-        }}}>
+          }
+        }}
+      >
         <div className={styles.gsiMaterialButtonState}></div>
         <div className={styles.gsiMaterialButtonContentWrapper}>
           <div className={styles.gsiMaterialButtonIcon}>
@@ -38,7 +42,7 @@ const GoogleSignInButton: React.FC = () => {
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 48 48"
               xmlnsXlink="http://www.w3.org/1999/xlink"
-              style={{ display: 'block' }}
+              style={{ display: "block" }}
             >
               <path
                 fill="#EA4335"
@@ -59,15 +63,15 @@ const GoogleSignInButton: React.FC = () => {
               <path fill="none" d="M0 0h48v48H0z"></path>
             </svg>
           </div>
-          <span className={styles.gsiMaterialButtonContents}>Sign in with Google</span>
-          <span style={{ display: 'none' }}>Sign in with Google</span>
+          <span className={styles.gsiMaterialButtonContents}>
+            Sign in with Google
+          </span>
+          <span style={{ display: "none" }}>Sign in with Google</span>
         </div>
       </button>
     </div>
   );
 };
-
-
 
 export default function Login() {
   return (
@@ -77,4 +81,4 @@ export default function Login() {
       </Suspense>
     </NextAuthProvider>
   );
-};
+}

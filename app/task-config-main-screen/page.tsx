@@ -1,18 +1,22 @@
-'use client'
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import { NextAuthProvider, WithLoggedIn } from '@/app/provider';
-import Header from '@/components/Header';
-import TaskColumn from '@/components/task-config-main-screen/TaskColumn';
-import type { TaskDraft } from '@/components/task-config-main-screen/types';
-import { createTask, deleteTask, getTasks, updateTask } from "@/lib/api_wrapper";
-import type { TaskCreatePayload } from '@/lib/api_wrapper';
-import type { TaskDTO as Task } from '@/interfaces/http/tasks/mappers';
-import { BadRequestError } from '@/lib/errors/AppError';
-import styles from './page.module.css';
+import React, { useEffect, useState } from "react";
+import { NextAuthProvider, WithLoggedIn } from "@/app/provider";
+import Header from "@/components/Header";
+import TaskColumn from "@/components/task-config-main-screen/TaskColumn";
+import type { TaskDraft } from "@/components/task-config-main-screen/types";
+import {
+  createTask,
+  deleteTask,
+  getTasks,
+  updateTask,
+} from "@/lib/api_wrapper";
+import type { TaskCreatePayload } from "@/lib/api_wrapper";
+import type { TaskDTO as Task } from "@/interfaces/http/tasks/mappers";
+import { BadRequestError } from "@/lib/errors/AppError";
+import styles from "./page.module.css";
 
 export default function Home() {
-
   const [tasks, setTasks] = useState<Task[]>([]);
 
   useEffect(() => {
@@ -34,12 +38,15 @@ export default function Home() {
 
   const handleUpdateTask = async (task: Task) => {
     if (!task.id) {
-      throw new BadRequestError('Task id is required for update');
+      throw new BadRequestError("Task id is required for update");
     }
 
     const sanitized: Task = {
       ...task,
-      deadline: task.deadline && task.deadline.trim().length > 0 ? task.deadline : undefined,
+      deadline:
+        task.deadline && task.deadline.trim().length > 0
+          ? task.deadline
+          : undefined,
     };
 
     const updated = await updateTask(sanitized);
@@ -51,9 +58,8 @@ export default function Home() {
     setTasks((prev) => prev.filter((task) => task.id !== taskId));
   };
 
+  //<input type="text" placeholder="検索" className={styles.search} />
 
-//<input type="text" placeholder="検索" className={styles.search} />
-          
   return (
     <NextAuthProvider>
       <WithLoggedIn>

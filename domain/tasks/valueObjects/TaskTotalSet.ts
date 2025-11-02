@@ -1,16 +1,18 @@
-import { BadRequestError } from '@/lib/errors/AppError';
+import { BadRequestError } from "@/lib/errors/AppError";
 
 export class TaskTotalSet {
-    private constructor(private readonly _value: number) {}
+  private constructor(private readonly _value: number) {}
 
-    static create(value: number): TaskTotalSet {
-        if (!Number.isInteger(value) || value < 1) {
-            throw new BadRequestError('TaskTotalSet must be an integer greater than or equal to 1');
-        }
-        return new TaskTotalSet(value);
+  static create(value: number): TaskTotalSet {
+    if (!Number.isInteger(value) || value < 1) {
+      throw new BadRequestError(
+        "TaskTotalSet must be an integer greater than or equal to 1",
+      );
     }
+    return new TaskTotalSet(value);
+  }
 
-    get value(): number {
-        return this._value;
-    }
+  get value(): number {
+    return this._value;
+  }
 }

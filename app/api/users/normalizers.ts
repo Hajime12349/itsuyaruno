@@ -1,32 +1,41 @@
-import { BadRequestError } from '@/lib/errors/AppError';
-import { toOptionalTrimmedString } from '@/lib/utils/string';
+import { BadRequestError } from "@/lib/errors/AppError";
+import { toOptionalTrimmedString } from "@/lib/utils/string";
 
-export function normalizeOptionalText(fieldName: string, value: unknown): string | undefined {
+export function normalizeOptionalText(
+  fieldName: string,
+  value: unknown,
+): string | undefined {
   if (value === undefined || value === null) {
     return undefined;
   }
-  if (typeof value !== 'string') {
+  if (typeof value !== "string") {
     throw new BadRequestError(`${fieldName} must be a string`);
   }
   return toOptionalTrimmedString(value);
 }
 
-export function normalizeOptionalTaskId(fieldName: string, value: unknown): number | undefined {
-  if (value === undefined || value === null || value === '') {
+export function normalizeOptionalTaskId(
+  fieldName: string,
+  value: unknown,
+): number | undefined {
+  if (value === undefined || value === null || value === "") {
     return undefined;
   }
-  const numeric = typeof value === 'number' ? value : Number(value);
+  const numeric = typeof value === "number" ? value : Number(value);
   if (!Number.isInteger(numeric) || numeric < 0) {
     throw new BadRequestError(`${fieldName} must be a non-negative integer`);
   }
   return numeric;
 }
 
-export function normalizeOptionalDateTime(fieldName: string, value: unknown): string | undefined {
+export function normalizeOptionalDateTime(
+  fieldName: string,
+  value: unknown,
+): string | undefined {
   if (value === undefined || value === null) {
     return undefined;
   }
-  if (typeof value !== 'string') {
+  if (typeof value !== "string") {
     throw new BadRequestError(`${fieldName} must be a string`);
   }
   const trimmed = value.trim();

@@ -1,6 +1,6 @@
-import React from 'react';
-import styles from './NavigateTaskButton.module.css';
-import Link from 'next/link';
+import React from "react";
+import styles from "./NavigateTaskButton.module.css";
+import Link from "next/link";
 
 const NavigateTaskButton = () => {
   return (

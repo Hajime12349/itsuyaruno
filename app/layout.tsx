@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { NextAuthProvider } from "./provider";
 
-
 export const metadata: Metadata = {
   title: "Title",
   description: "description",
