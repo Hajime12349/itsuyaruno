@@ -2,14 +2,14 @@ import { sql } from "@vercel/postgres";
 import { query } from "@/infrastructure/db";
 import { AppError, NotFoundError } from "@/lib/errors/AppError";
 import { toOptionalTrimmedString } from "@/lib/utils/string";
-import { UserEntity } from "../../domain/users/User";
-import type { UserRepository } from "../../domain/users/UserRepository";
-import { UserId } from "../../domain/users/valueObjects/UserId";
-import { DisplayName } from "../../domain/users/valueObjects/DisplayName";
-import { IconPath } from "../../domain/users/valueObjects/IconPath";
-import { CurrentTaskId } from "../../domain/users/valueObjects/CurrentTaskId";
-import { CurrentTaskTime } from "../../domain/users/valueObjects/CurrentTaskTime";
-import { userEntityToPlain } from "../../domain/users/mappers";
+import { UserEntity } from "@/domain/users/User";
+import type { UserRepository } from "@/domain/users/UserRepository";
+import { UserId } from "@/domain/users/valueObjects/UserId";
+import { DisplayName } from "@/domain/users/valueObjects/DisplayName";
+import { IconPath } from "@/domain/users/valueObjects/IconPath";
+import { CurrentTaskId } from "@/domain/users/valueObjects/CurrentTaskId";
+import { CurrentTaskTime } from "@/domain/users/valueObjects/CurrentTaskTime";
+import { toDTO } from "@/interfaces/http/users/mappers";
 
 function mapRowToEntity(row: any): UserEntity {
   const currentTaskValue = row.current_task;
@@ -85,7 +85,7 @@ export class PostgresUserRepository implements UserRepository {
   }
 
   async create(user: UserEntity): Promise<UserEntity> {
-    const persistence = userEntityToPlain(user);
+    const persistence = toDTO(user);
     if (process.env.NODE_ENV === "production") {
       const result =
         await sql`INSERT INTO users (id, display_name, icon_path, current_task, current_task_time) VALUES (${persistence.id}, ${persistence.displayName}, ${persistence.iconPath}, ${persistence.currentTask}, ${persistence.currentTaskTime}) RETURNING *`;
@@ -105,7 +105,7 @@ export class PostgresUserRepository implements UserRepository {
   }
 
   async update(user: UserEntity): Promise<UserEntity> {
-    const persistence = userEntityToPlain(user);
+    const persistence = toDTO(user);
     if (process.env.NODE_ENV === "production") {
       const result =
         await sql`UPDATE users SET display_name = ${persistence.displayName}, icon_path = ${persistence.iconPath}, current_task = ${persistence.currentTask}, current_task_time = ${persistence.currentTaskTime} WHERE id = ${persistence.id} RETURNING *`;
