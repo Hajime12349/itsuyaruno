@@ -38,6 +38,9 @@ function mapRowToEntity(row: any): UserEntity {
   }
 
   const displayNameValue = toOptionalTrimmedString(row.display_name);
+  if (displayNameValue === undefined) {
+    throw new AppError("InternalError", "User row is missing display_name");
+  }
   const iconPathValue = toOptionalTrimmedString(row.icon_path);
   const currentTaskValueOrUndefined = Number.isFinite(parsedCurrentTask)
     ? (parsedCurrentTask as number)
@@ -46,10 +49,7 @@ function mapRowToEntity(row: any): UserEntity {
 
   return UserEntity.create({
     id: UserId.create(idValue),
-    displayName:
-      displayNameValue !== undefined
-        ? DisplayName.create(displayNameValue)
-        : undefined,
+    displayName: DisplayName.create(displayNameValue),
     iconPath:
       iconPathValue !== undefined ? IconPath.create(iconPathValue) : undefined,
     currentTask:

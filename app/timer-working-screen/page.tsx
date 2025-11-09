@@ -42,8 +42,8 @@ export default function TimerWorkingScreen() {
   useEffect(() => {
     getUser().then((user) => {
       setUser(user);
-      if (user.current_task) {
-        getTask(user.current_task).then((task) => {
+      if (user.currentTask) {
+        getTask(user.currentTask).then((task) => {
           setCurrentTask(task);
         });
       } else {

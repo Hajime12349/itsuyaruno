@@ -49,8 +49,9 @@ const TaskPanel: React.FC<TaskPanelProps> = ({
     try {
       const payload: User = {
         id: selectedTask.user_id,
-        current_task: selectedTask.id,
-        current_task_time: new Date().toISOString(),
+        displayName: "",
+        currentTask: selectedTask.id,
+        currentTaskTime: new Date().toISOString(),
       };
       await updateUser(payload);
       router.replace("/timer-start-screen");

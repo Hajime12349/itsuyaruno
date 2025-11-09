@@ -13,8 +13,8 @@ const LoggedIn = () => {
       .then((user) => {
         if (user.id) {
           console.log("user", user);
-          console.log("user.current_task", user.current_task);
-          if (user.current_task) {
+          console.log("user.currentTask", user.currentTask);
+          if (user.currentTask) {
             router.replace("/timer-start-screen");
             return;
           } else {

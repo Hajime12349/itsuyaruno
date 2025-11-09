@@ -154,8 +154,9 @@ const CRUDApiWrapperTestComponent = () => {
       return;
     }
     const payload: UserUpsertPayload = {
-      current_task: id,
-      current_task_time: new Date().toISOString(),
+      displayName: user?.displayName || "",
+      currentTask: id,
+      currentTaskTime: new Date().toISOString(),
     };
     updateUser(payload)
       .then(() => {
@@ -233,11 +234,11 @@ const CRUDApiWrapperTestComponent = () => {
   var user_info_in_db_tsx = (
     <div>
       <h1>ユーザー情報 in DB</h1>
-      <p>{user?.display_name}</p>
-      <p>{user?.icon_path}</p>
+      <p>{user?.displayName}</p>
+      <p>{user?.iconPath}</p>
       <p>{user?.id}</p>
-      <p>{user?.current_task}</p>
-      <p>{user?.current_task_time}</p>
+      <p>{user?.currentTask}</p>
+      <p>{user?.currentTaskTime}</p>
     </div>
   );
 
@@ -249,7 +250,7 @@ const CRUDApiWrapperTestComponent = () => {
         <p>ユーザーが存在しません</p>
         <button
           onClick={() => {
-            onRegisterUser({ display_name: session?.user?.name || "" });
+            onRegisterUser({ displayName: session?.user?.name || "" });
           }}
         >
           ユーザーを登録

@@ -11,17 +11,14 @@ export class CreateUserUseCase {
 
   async execute(input: {
     id: string;
-    displayName?: string;
+    displayName: string;
     iconPath?: string;
     currentTask?: number;
     currentTaskTime?: string;
   }): Promise<UserEntity> {
     const entity = UserEntity.create({
       id: UserId.create(input.id),
-      displayName:
-        input.displayName !== undefined
-          ? DisplayName.create(input.displayName)
-          : undefined,
+      displayName: DisplayName.create(input.displayName),
       iconPath:
         input.iconPath !== undefined
           ? IconPath.create(input.iconPath)

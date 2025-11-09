@@ -7,7 +7,7 @@ import { UserId } from "./valueObjects/UserId";
 
 export interface UserValueProps {
   id: UserId;
-  displayName?: DisplayName;
+  displayName: DisplayName;
   iconPath?: IconPath;
   currentTask?: CurrentTaskId;
   currentTaskTime?: CurrentTaskTime;
@@ -15,7 +15,7 @@ export interface UserValueProps {
 
 export class UserEntity {
   readonly id: UserId;
-  readonly displayName?: DisplayName;
+  readonly displayName: DisplayName;
   readonly iconPath?: IconPath;
   readonly currentTask?: CurrentTaskId;
   readonly currentTaskTime?: CurrentTaskTime;
@@ -32,10 +32,10 @@ export class UserEntity {
     if (!(props.id instanceof UserId)) {
       throw new BadRequestError("UserEntity requires a UserId");
     }
-    if (
-      props.displayName !== undefined &&
-      !(props.displayName instanceof DisplayName)
-    ) {
+    if (props.displayName === undefined) {
+      throw new BadRequestError("UserEntity requires a DisplayName");
+    }
+    if (!(props.displayName instanceof DisplayName)) {
       throw new BadRequestError("UserEntity displayName must be a DisplayName");
     }
     if (props.iconPath !== undefined && !(props.iconPath instanceof IconPath)) {

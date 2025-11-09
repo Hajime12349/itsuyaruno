@@ -14,6 +14,17 @@ export function normalizeOptionalText(
   return toOptionalTrimmedString(value);
 }
 
+export function normalizeRequiredText(
+  fieldName: string,
+  value: unknown,
+): string {
+  const normalized = normalizeOptionalText(fieldName, value);
+  if (normalized === undefined) {
+    throw new BadRequestError(`${fieldName} is required`);
+  }
+  return normalized;
+}
+
 export function normalizeOptionalTaskId(
   fieldName: string,
   value: unknown,

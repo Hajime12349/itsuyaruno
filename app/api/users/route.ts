@@ -4,12 +4,13 @@ import { getUserID } from "@/lib/auth";
 import { GetMeUseCase } from "../../../application/users/GetMe";
 import { CreateUserUseCase } from "../../../application/users/CreateUser";
 import { UpdateUserUseCase } from "../../../application/users/UpdateUser";
-import { toDTO, toPlain } from "../../../interfaces/http/users/mappers";
+import { toDTO } from "../../../interfaces/http/users/mappers";
 import { resolveUserRepository } from "@/interfaces/http/users/repositoryProvider";
 import {
   normalizeOptionalDateTime,
   normalizeOptionalTaskId,
   normalizeOptionalText,
+  normalizeRequiredText,
 } from "./normalizers";
 import { AppError } from "@/lib/errors/AppError";
 
@@ -94,7 +95,7 @@ export async function POST(req: Request) {
     const createUsecase = new CreateUserUseCase(repo);
     const created = await createUsecase.execute({
       id,
-      displayName: normalizeOptionalText("display_name", display_name),
+      displayName: normalizeRequiredText("display_name", display_name),
       iconPath: normalizeOptionalText("icon_path", icon_path),
       currentTask: normalizeOptionalTaskId("current_task", current_task),
       currentTaskTime: normalizeOptionalDateTime(
@@ -184,13 +185,13 @@ export async function PUT(req: Request) {
       });
     }
 
-    const existingPlain = toPlain(existing);
+    const existingPlain = toDTO(existing);
 
     const updateUseCase = new UpdateUserUseCase(repo);
     const updated = await updateUseCase.execute({
       id,
       displayName: hasDisplayName
-        ? normalizeOptionalText("display_name", display_name)
+        ? normalizeRequiredText("display_name", display_name)
         : existingPlain.displayName,
       iconPath: hasIconPath
         ? normalizeOptionalText("icon_path", icon_path)

@@ -3,13 +3,15 @@ import { authOptions, getUserID } from "@/lib/auth";
 import { GetMeUseCase } from "@/application/users/GetMe";
 import { UpdateUserUseCase } from "@/application/users/UpdateUser";
 import { DeleteUserUseCase } from "@/application/users/DeleteUser";
-import { toDTO, toPlain } from "@/interfaces/http/users/mappers";
+import { toDTO } from "@/interfaces/http/users/mappers";
 import { resolveUserRepository } from "@/interfaces/http/users/repositoryProvider";
 import {
   normalizeOptionalDateTime,
   normalizeOptionalTaskId,
   normalizeOptionalText,
+  normalizeRequiredText,
 } from "../normalizers";
+import { AppError } from "@/lib/errors/AppError";
 
 async function requireSessionUserId() {
   const session = await getServerSession(authOptions);
@@ -113,11 +115,11 @@ export async function PUT(
     }
 
     const updateUseCase = new UpdateUserUseCase(repo);
-    const existingPlain = toPlain(existing);
+    const existingPlain = toDTO(existing);
     const updated = await updateUseCase.execute({
       id: sessionId,
       displayName: hasDisplayName
-        ? normalizeOptionalText("display_name", display_name)
+        ? normalizeRequiredText("display_name", display_name)
         : existingPlain.displayName,
       iconPath: hasIconPath
         ? normalizeOptionalText("icon_path", icon_path)
@@ -134,6 +136,14 @@ export async function PUT(
   } catch (error) {
     if (error instanceof Response) {
       return error;
+    }
+    if (error instanceof AppError) {
+      if (error.code === "BadRequest") {
+        return Response.json({ error: error.message }, { status: 400 });
+      }
+      if (error.code === "NotFound") {
+        return Response.json({ error: error.message }, { status: 404 });
+      }
     }
     const message = (error as Error)?.message ?? "";
     if (message.startsWith("BadRequest:")) {

@@ -1,8 +1,17 @@
 {
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "eslint.validate": ["javascript", "typescript", "typescriptreact", "javascriptreact"],
+
+  // 保存時に ESLint の auto fix を無効化
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
-  }
+    "source.fixAll.eslint": "never"
+  },
+
+  "eslint.validate": [
+    "javascript",
+    "typescript",
+    "typescriptreact",
+    "javascriptreact"
+  ],
+  "typescript.tsserver.experimental.enableProjectDiagnostics": true
 }

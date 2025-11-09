@@ -27,8 +27,8 @@ export default function TimerFinishScreen() {
     getUser() // ユーザー情報をDBから取得
       .then((user) => {
         // ユーザー情報をDBから取得できたら
-        if (!user.current_task) return; // 現在のタスクが無ければ即リターン
-        getTask(user.current_task) // current_task(現在のタスクの「ID」)をもとに、タスクをDBから取得
+        if (!user.currentTask) return; // 現在のタスクが無ければ即リターン
+        getTask(user.currentTask) // currentTask(現在のタスクの「ID」)をもとに、タスクをDBから取得
           .then((currentTask) => {
             // タスクをDBから取得できたら
             setCurrentTask(currentTask); // taskというコンポーネントの状態に取得したタスクをセット

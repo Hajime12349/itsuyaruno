@@ -6,7 +6,7 @@ import { registerUser } from "@/lib/api_wrapper";
 import styles from "./UserRegisterForm.module.css";
 
 type FormValues = {
-  display_name: string;
+  displayName: string;
 };
 
 interface UserRegisterFormProps {
@@ -21,7 +21,7 @@ const UserRegisterForm = ({
   const { register, handleSubmit, setValue } = useForm<FormValues>();
 
   useEffect(() => {
-    setValue("display_name", defaultDisplayName);
+    setValue("displayName", defaultDisplayName);
   }, [defaultDisplayName, setValue]);
 
   const handleSubmitInternal: SubmitHandler<FormValues> = async (data) => {
@@ -31,7 +31,7 @@ const UserRegisterForm = ({
     }
 
     await registerUser({
-      display_name: data.display_name,
+      displayName: data.displayName,
     });
 
     console.log("User registered successfully!");
@@ -50,9 +50,9 @@ const UserRegisterForm = ({
             表示名
           </label>
           <input
-            id="display_name"
+            id="displayName"
             type="text"
-            {...register("display_name", { required: true })}
+            {...register("displayName", { required: true })}
             className={styles.input}
           />
         </div>
