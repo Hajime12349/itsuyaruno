@@ -4,7 +4,7 @@ import { AppError } from "@/lib/errors/AppError";
 import { GetTaskByIdUseCase } from "@/application/tasks/GetTaskById";
 import { UpdateTaskUseCase } from "@/application/tasks/UpdateTask";
 import { DeleteTaskUseCase } from "@/application/tasks/DeleteTask";
-import { toDTO } from "@/interfaces/http/tasks/mappers";
+import { TaskDataModelBuilder } from "@/application/tasks/TaskDataModelMapper";
 import { resolveTaskRepository } from "@/interfaces/http/tasks/repositoryProvider";
 import {
   normalizeBoolean,
@@ -36,7 +36,9 @@ export async function GET(
     if (!task) {
       return Response.json({ error: "Task not found" }, { status: 404 });
     }
-    return Response.json(toDTO(task), { status: 200 });
+    const builder = new TaskDataModelBuilder();
+    task.notify(builder);
+    return Response.json(builder.build(), { status: 200 });
   } catch (error) {
     if (error instanceof AppError) {
       if (error.code === "BadRequest") {
@@ -87,7 +89,9 @@ export async function PUT(
       currentSet,
       isComplete,
     });
-    return Response.json(toDTO(updated), { status: 200 });
+    const builder = new TaskDataModelBuilder();
+    updated.notify(builder);
+    return Response.json(builder.build(), { status: 200 });
   } catch (error) {
     if (error instanceof AppError) {
       if (error.code === "BadRequest") {

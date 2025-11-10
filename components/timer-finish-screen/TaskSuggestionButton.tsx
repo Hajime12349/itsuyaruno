@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import type { TaskDTO as Task } from "@/interfaces/http/tasks/mappers";
+import type { ITaskDataModel as Task } from "@/application/tasks/TaskDataModelMapper";
 import styles from "./TaskSuggestionButton.module.css";
 
 interface TaskSuggestionButtonProps {

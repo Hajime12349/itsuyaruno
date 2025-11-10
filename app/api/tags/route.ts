@@ -2,7 +2,7 @@ import { getServerSession } from "next-auth";
 import { authOptions, getUserID } from "@/lib/auth";
 import { GetTagsUseCase } from "../../../application/tags/GetTags";
 import { CreateTagUseCase } from "../../../application/tags/CreateTag";
-import { toDTO } from "../../../interfaces/http/tags/mappers";
+import { TagDataModelBuilder } from "@/application/tags/TagDataModelMapper";
 import { resolveTagRepository } from "@/interfaces/http/tags/repositoryProvider";
 import { AppError } from "@/lib/errors/AppError";
 import { normalizeTagName } from "./normalizers";
@@ -21,7 +21,12 @@ export async function GET(_req: Request) {
     const repo = resolveTagRepository();
     const usecase = new GetTagsUseCase(repo);
     const tags = await usecase.execute();
-    return Response.json(tags.map(toDTO), { status: 200 });
+    const plainTags = tags.map((tag) => {
+      const builder = new TagDataModelBuilder();
+      tag.notify(builder);
+      return builder.build();
+    });
+    return Response.json(plainTags, { status: 200 });
   } catch (error) {
     if (error instanceof AppError && error.code === "BadRequest") {
       return Response.json({ error: error.message }, { status: 400 });
@@ -50,7 +55,9 @@ export async function POST(req: Request) {
     const repo = resolveTagRepository();
     const usecase = new CreateTagUseCase(repo);
     const created = await usecase.execute({ name: normalizedName });
-    return Response.json(toDTO(created), { status: 201 });
+    const builder = new TagDataModelBuilder();
+    created.notify(builder);
+    return Response.json(builder.build(), { status: 201 });
   } catch (error) {
     if (error instanceof AppError) {
       if (error.code === "BadRequest") {

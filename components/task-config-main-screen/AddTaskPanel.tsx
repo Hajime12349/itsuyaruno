@@ -7,7 +7,7 @@ import TextField from "@mui/material/TextField";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import type { TaskCreatePayload } from "@/lib/api_wrapper";
-import type { TagDTO as Tag } from "@/interfaces/http/tags/mappers";
+import type { ITagDataModel as Tag } from "@/application/tags/TagDataModelMapper";
 import TagInput from "./TagInput";
 
 interface AddTaskPanelProps {
@@ -52,7 +52,6 @@ export default function AddTaskPanel({ onAddTask }: AddTaskPanelProps) {
       deadline: data.taskDeadline
         ? new Date(data.taskDeadline).toISOString()
         : undefined,
-      tags: data.taskTag,
     };
     onAddTask(newTask);
     handleCancel();

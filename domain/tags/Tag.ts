@@ -1,4 +1,5 @@
 import { BadRequestError } from "@/lib/errors/AppError";
+import { ITagNotification } from "./ITagNotification";
 import { TagName } from "./valueObjects/TagName";
 
 export interface TagValueProps {
@@ -17,5 +18,9 @@ export class TagEntity {
       throw new BadRequestError("TagEntity name must be a TagName");
     }
     return new TagEntity({ name: props.name });
+  }
+
+  notify(notification: ITagNotification): void {
+    notification.Name(this.name);
   }
 }

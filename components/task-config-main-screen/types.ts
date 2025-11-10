@@ -1,4 +1,4 @@
-import type { TaskDTO as Task } from "@/interfaces/http/tasks/mappers";
+import type { ITaskDataModel as Task } from "@/application/tasks/TaskDataModelMapper";
 
 export type TaskDraft = {
   task_name: string;

@@ -12,7 +12,7 @@ import {
   updateTask,
 } from "@/lib/api_wrapper";
 import type { TaskCreatePayload } from "@/lib/api_wrapper";
-import type { TaskDTO as Task } from "@/interfaces/http/tasks/mappers";
+import type { ITaskDataModel as Task } from "@/application/tasks/TaskDataModelMapper";
 import { BadRequestError } from "@/lib/errors/AppError";
 import styles from "./page.module.css";
 

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { usePathname } from "next/navigation";
-import type { TaskDTO as Task } from "@/interfaces/http/tasks/mappers";
+import type { ITaskDataModel as Task } from "@/application/tasks/TaskDataModelMapper";
 import AddTaskButton from "./AddTaskButton";
 import AddTaskWindow from "./AddTaskWindow";
 import EditTaskWindow from "./EditTaskWindow";

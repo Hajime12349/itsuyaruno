@@ -1,4 +1,5 @@
 import { BadRequestError } from "@/lib/errors/AppError";
+import { ITaskNotification } from "./ITaskNotification";
 import { TaskCompletionStatus } from "./valueObjects/TaskCompletionStatus";
 import { TaskCurrentSet } from "./valueObjects/TaskCurrentSet";
 import { TaskDeadline } from "./valueObjects/TaskDeadline";
@@ -78,5 +79,15 @@ export class TaskEntity {
       currentSet,
       isComplete,
     });
+  }
+
+  notify(notification: ITaskNotification): void {
+    notification.Id(this.id);
+    notification.OwnerId(this.userId);
+    notification.Name(this.name);
+    notification.Deadline(this.deadline);
+    notification.TotalSet(this.totalSet);
+    notification.CurrentSet(this.currentSet);
+    notification.IsComplete(this.isComplete);
   }
 }

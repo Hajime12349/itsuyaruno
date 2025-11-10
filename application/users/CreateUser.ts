@@ -5,12 +5,12 @@ import { DisplayName } from "@/domain/users/valueObjects/DisplayName";
 import { IconPath } from "@/domain/users/valueObjects/IconPath";
 import { CurrentTaskId } from "@/domain/users/valueObjects/CurrentTaskId";
 import { CurrentTaskTime } from "@/domain/users/valueObjects/CurrentTaskTime";
-import { IUserDataModel } from "./UserDataModelMapper";
+import { IUserDataModel as User } from "./UserDataModelMapper";
 
 export class CreateUserUseCase {
   constructor(private readonly userRepository: IUserRepository) {}
-
-  async execute(input: IUserDataModel): Promise<UserEntity> {
+  
+  async execute(input: User): Promise<UserEntity> {
     const entity = UserEntity.create({
       id: UserId.create(input.id),
       displayName: DisplayName.create(input.displayName),

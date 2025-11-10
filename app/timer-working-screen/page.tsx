@@ -7,13 +7,13 @@ import { NextAuthProvider, WithLoggedIn } from "@/app/provider";
 import Header from "@/components/Header";
 import ProgressBar from "@/components/ProgressBar";
 import { getTask, getUser, updateTask } from "@/lib/api_wrapper";
-import type { TaskDTO as Task } from "@/interfaces/http/tasks/mappers";
-import type { IUserDataModel } from "@/application/users/UserDataModelMapper";
+import type { ITaskDataModel as Task } from "@/application/tasks/TaskDataModelMapper";
+import type { IUserDataModel as User } from "@/application/users/UserDataModelMapper";
 import styles from "./TimerWorkingScreen.module.css";
 
 export default function TimerWorkingScreen() {
   const router = useRouter();
-  const [user, setUser] = useState<IUserDataModel | undefined>();
+  const [user, setUser] = useState<User | undefined>();
   const [currentTask, setCurrentTask] = useState<Task | undefined>();
   const WORK_DURATION = process.env.NODE_ENV === "development" ? 3 : 1500;
 

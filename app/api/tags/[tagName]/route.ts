@@ -2,7 +2,7 @@ import { getServerSession } from "next-auth";
 import { authOptions, getUserID } from "@/lib/auth";
 import { UpdateTagUseCase } from "@/application/tags/UpdateTag";
 import { DeleteTagUseCase } from "@/application/tags/DeleteTag";
-import { toDTO } from "@/interfaces/http/tags/mappers";
+import { TagDataModelBuilder } from "@/application/tags/TagDataModelMapper";
 import { resolveTagRepository } from "@/interfaces/http/tags/repositoryProvider";
 import { AppError } from "@/lib/errors/AppError";
 import { normalizeTagName, normalizeTagParam } from "../normalizers";
@@ -36,7 +36,9 @@ export async function PUT(
     if (!updated) {
       return Response.json({ error: "Tag not found" }, { status: 404 });
     }
-    return Response.json(toDTO(updated), { status: 200 });
+    const builder = new TagDataModelBuilder();
+    updated.notify(builder);
+    return Response.json(builder.build(), { status: 200 });
   } catch (error) {
     if (error instanceof AppError) {
       if (error.code === "BadRequest") {

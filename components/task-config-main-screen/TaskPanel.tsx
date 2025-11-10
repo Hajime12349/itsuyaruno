@@ -1,8 +1,8 @@
 import React from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { updateUser } from "@/lib/api_wrapper";
-import type { TaskDTO as Task } from "@/interfaces/http/tasks/mappers";
-import type { IUserDataModel } from "@/application/users/UserDataModelMapper";
+import type { ITaskDataModel as Task } from "@/application/tasks/TaskDataModelMapper";
+import type { IUserDataModel as User} from "@/application/users/UserDataModelMapper";
 import EditTaskButton from "./EditTaskButton";
 import TaskStartButton from "./TaskStartButton";
 import styles from "./TaskPanel.module.css";
@@ -48,7 +48,7 @@ const TaskPanel: React.FC<TaskPanelProps> = ({
 
   async function handleStart(selectedTask: Task) {
     try {
-      const payload: IUserDataModel = {
+      const payload: User = {
         id: selectedTask.user_id,
         displayName: "",
         currentTask: selectedTask.id,

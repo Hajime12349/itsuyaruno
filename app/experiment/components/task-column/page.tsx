@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import TaskColumn from "@/components/task-config-main-screen/TaskColumn";
 import type { TaskDraft } from "@/components/task-config-main-screen/types";
 import { getTasks } from "@/lib/api_wrapper";
-import type { TaskDTO as Task } from "@/interfaces/http/tasks/mappers";
+import type { ITaskDataModel as Task } from "@/application/tasks/TaskDataModelMapper";
 import styles from "@/components/task-config-main-screen/TaskColumn.module.css";
 
 export default function TaskColumnTest() {

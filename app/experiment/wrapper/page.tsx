@@ -21,15 +21,15 @@ import {
   updateUser,
 } from "@/lib/api_wrapper";
 import type { TaskCreatePayload, UserUpsertPayload } from "@/lib/api_wrapper";
-import type { TagDTO as Tag } from "@/interfaces/http/tags/mappers";
-import type { TaskDTO as Task } from "@/interfaces/http/tasks/mappers";
-import type { IUserDataModel } from "@/application/users/UserDataModelMapper";
+import type { ITagDataModel as Tag } from "@/application/tags/TagDataModelMapper";
+import type { ITaskDataModel as Task } from "@/application/tasks/TaskDataModelMapper";
+import type { IUserDataModel as User} from "@/application/users/UserDataModelMapper";
 
 const CRUDApiWrapperTestComponent = () => {
   const { data: session } = useSession();
   const [tags, setTags] = useState<Tag[]>();
   const [tasks, setTasks] = useState<Task[]>();
-  const [user, setUser] = useState<IUserDataModel>();
+  const [user, setUser] = useState<User>();
   
   // 最初にタスク一覧を取得する
   useEffect(() => {

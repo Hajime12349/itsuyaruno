@@ -3,7 +3,7 @@ import { NextRequest } from "next/server";
 import { authOptions, getUserID } from "@/lib/auth";
 import { GetTasksUseCase } from "../../../application/tasks/GetTasks";
 import { CreateTaskUseCase } from "../../../application/tasks/CreateTask";
-import { toDTO } from "../../../interfaces/http/tasks/mappers";
+import { TaskDataModelBuilder } from "@/application/tasks/TaskDataModelMapper";
 import { resolveTaskRepository } from "@/interfaces/http/tasks/repositoryProvider";
 import { AppError } from "@/lib/errors/AppError";
 import {
@@ -35,7 +35,12 @@ export async function GET(req: NextRequest) {
       userId: session_user_id,
       includeComplete: include_complete,
     });
-    return Response.json(entities.map(toDTO), { status: 200 });
+    const plainTasks = entities.map((task) => {
+      const builder = new TaskDataModelBuilder();
+      task.notify(builder);
+      return builder.build();
+    });
+    return Response.json(plainTasks, { status: 200 });
   } catch (error) {
     if (error instanceof AppError) {
       if (error.code === "BadRequest") {
@@ -78,7 +83,9 @@ export async function POST(req: Request) {
       currentSet,
       isComplete,
     });
-    return Response.json(toDTO(created), { status: 201 });
+    const builder = new TaskDataModelBuilder();
+    created.notify(builder);
+    return Response.json(builder.build(), { status: 201 });
   } catch (error) {
     if (error instanceof AppError) {
       if (error.code === "BadRequest") {

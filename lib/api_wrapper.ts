@@ -1,12 +1,12 @@
-import type { TagDTO as Tag } from "@/interfaces/http/tags/mappers";
-import type { TaskDTO as Task } from "@/interfaces/http/tasks/mappers";
-import type { IUserDataModel } from "@/application/users/UserDataModelMapper";
+import type { ITagDataModel as Tag } from "@/application/tags/TagDataModelMapper";
+import type { ITaskDataModel as Task } from "@/application/tasks/TaskDataModelMapper";
+import type { IUserDataModel as User } from "@/application/users/UserDataModelMapper";
 
 type OptionalKeys<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 
 export type TaskCreatePayload = OptionalKeys<Task, "id" | "user_id">;
 export type TaskUpdatePayload = OptionalKeys<Task, "user_id">;
-export type UserUpsertPayload = OptionalKeys<IUserDataModel, "id">;
+export type UserUpsertPayload = OptionalKeys<User, "id">;
 
 /**
  * タスクの一覧を取得します。
@@ -110,9 +110,9 @@ export async function deleteTask(taskId: number): Promise<void> {
  * ユーザー情報を取得します。
  * @returns ユーザーをPromiseとして返します。
  */
-export async function getUser(): Promise<IUserDataModel> {
+export async function getUser(): Promise<User> {
   const response = await fetch("/api/users");
-  return (await response.json()) as Promise<IUserDataModel>;
+  return (await response.json()) as Promise<User>;
 }
 
 /**
@@ -120,7 +120,7 @@ export async function getUser(): Promise<IUserDataModel> {
  * @param user 登録するユーザー
  * @returns 登録されたユーザーをPromiseとして返します。
  */
-export async function registerUser(user: UserUpsertPayload): Promise<IUserDataModel> {
+export async function registerUser(user: UserUpsertPayload): Promise<User> {
   const response = await fetch("/api/users", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -130,7 +130,7 @@ export async function registerUser(user: UserUpsertPayload): Promise<IUserDataMo
     const text = await response.text();
     throw new Error(`Register failed: ${response.status} ${text}`);
   }
-  return (await response.json()) as Promise<IUserDataModel>;
+  return (await response.json()) as Promise<User>;
 }
 
 /**
@@ -138,7 +138,7 @@ export async function registerUser(user: UserUpsertPayload): Promise<IUserDataMo
  * @param user 更新するユーザー
  * @returns 更新されたユーザーをPromiseとして返します。
  */
-export async function updateUser(user: UserUpsertPayload): Promise<IUserDataModel> {
+export async function updateUser(user: UserUpsertPayload): Promise<User> {
   if (!user.id) {
     const response = await fetch("/api/users", {
       method: "PUT",
@@ -149,7 +149,7 @@ export async function updateUser(user: UserUpsertPayload): Promise<IUserDataMode
       const text = await response.text();
       throw new Error(`Update failed: ${response.status} ${text}`);
     }
-    return (await response.json()) as Promise<IUserDataModel>;
+    return (await response.json()) as Promise<User>;
   }
 
   const response = await fetch(`/api/users/${user.id}`, {
@@ -161,7 +161,7 @@ export async function updateUser(user: UserUpsertPayload): Promise<IUserDataMode
     const text = await response.text();
     throw new Error(`Update failed: ${response.status} ${text}`);
   }
-  return (await response.json()) as Promise<IUserDataModel>;
+  return (await response.json()) as Promise<User>;
 }
 
 /**
