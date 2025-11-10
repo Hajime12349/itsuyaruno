@@ -1,21 +1,16 @@
-import type { UserRepository } from "../../domain/users/UserRepository";
-import { UserEntity } from "../../domain/users/User";
-import { UserId } from "../../domain/users/valueObjects/UserId";
-import { DisplayName } from "../../domain/users/valueObjects/DisplayName";
-import { IconPath } from "../../domain/users/valueObjects/IconPath";
-import { CurrentTaskId } from "../../domain/users/valueObjects/CurrentTaskId";
-import { CurrentTaskTime } from "../../domain/users/valueObjects/CurrentTaskTime";
+import type { IUserRepository } from "@/domain/users/IUserRepository";
+import { UserEntity } from "@/domain/users/User";
+import { UserId } from "@/domain/users/valueObjects/UserId";
+import { DisplayName } from "@/domain/users/valueObjects/DisplayName";
+import { IconPath } from "@/domain/users/valueObjects/IconPath";
+import { CurrentTaskId } from "@/domain/users/valueObjects/CurrentTaskId";
+import { CurrentTaskTime } from "@/domain/users/valueObjects/CurrentTaskTime";
+import { IUserDataModel } from "./UserDataModelMapper";
 
 export class CreateUserUseCase {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(private readonly userRepository: IUserRepository) {}
 
-  async execute(input: {
-    id: string;
-    displayName: string;
-    iconPath?: string;
-    currentTask?: number;
-    currentTaskTime?: string;
-  }): Promise<UserEntity> {
+  async execute(input: IUserDataModel): Promise<UserEntity> {
     const entity = UserEntity.create({
       id: UserId.create(input.id),
       displayName: DisplayName.create(input.displayName),

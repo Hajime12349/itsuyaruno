@@ -3,7 +3,7 @@ import { authOptions, getUserID } from "@/lib/auth";
 import { GetMeUseCase } from "@/application/users/GetMe";
 import { UpdateUserUseCase } from "@/application/users/UpdateUser";
 import { DeleteUserUseCase } from "@/application/users/DeleteUser";
-import { toDTO } from "@/interfaces/http/users/mappers";
+import { UserDataModelBuilder } from "@/application/users/UserDataModelMapper";
 import { resolveUserRepository } from "@/interfaces/http/users/repositoryProvider";
 import {
   normalizeOptionalDateTime,
@@ -21,7 +21,7 @@ async function requireSessionUserId() {
       JSON.stringify({
         error: "Unauthorized: session user does not have a valid id",
       }),
-      { status: 401 },
+      { status: 401 }
     );
   }
   return sessionUserId;
@@ -33,20 +33,20 @@ function ensureUserIdMatch(sessionId: string, requestedId: string) {
       JSON.stringify({
         error: "Forbidden: user id does not match session user id",
       }),
-      { status: 403 },
+      { status: 403 }
     );
   }
 }
 
 export async function GET(
   request: Request,
-  { params }: { params: { userId: string } },
+  { params }: { params: { userId: string } }
 ) {
   const requestedId = params?.userId;
   if (!requestedId) {
     return Response.json(
       { error: "Bad Request: invalid user id" },
-      { status: 400 },
+      { status: 400 }
     );
   }
 
@@ -60,7 +60,11 @@ export async function GET(
     if (!user) {
       return Response.json({ error: "User not found" }, { status: 404 });
     }
-    return Response.json(toDTO(user), { status: 200 });
+
+    const userBuilder = new UserDataModelBuilder();
+    user.notify(userBuilder);
+    return Response.json(userBuilder.build(), { status: 200 });
+    
   } catch (error) {
     if (error instanceof Response) {
       return error;
@@ -72,13 +76,13 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  { params }: { params: { userId: string } },
+  { params }: { params: { userId: string } }
 ) {
   const requestedId = params?.userId;
   if (!requestedId) {
     return Response.json(
       { error: "Bad Request: invalid user id" },
-      { status: 400 },
+      { status: 400 }
     );
   }
 
@@ -88,19 +92,19 @@ export async function PUT(
 
   const hasDisplayName = Object.prototype.hasOwnProperty.call(
     body ?? {},
-    "display_name",
+    "display_name"
   );
   const hasIconPath = Object.prototype.hasOwnProperty.call(
     body ?? {},
-    "icon_path",
+    "icon_path"
   );
   const hasCurrentTask = Object.prototype.hasOwnProperty.call(
     body ?? {},
-    "current_task",
+    "current_task"
   );
   const hasCurrentTaskTime = Object.prototype.hasOwnProperty.call(
     body ?? {},
-    "current_task_time",
+    "current_task_time"
   );
 
   try {
@@ -109,30 +113,34 @@ export async function PUT(
 
     const repo = resolveUserRepository();
     const getMe = new GetMeUseCase(repo);
-    const existing = await getMe.execute({ userId: sessionId });
-    if (!existing) {
+    const existingUser = await getMe.execute({ userId: sessionId });
+    if (!existingUser) {
       return Response.json({ error: "User not found" }, { status: 404 });
     }
-
+    const existingBuilder = new UserDataModelBuilder();
+    existingUser.notify(existingBuilder);
+    const rawExistingUser = existingBuilder.build();
+    
     const updateUseCase = new UpdateUserUseCase(repo);
-    const existingPlain = toDTO(existing);
-    const updated = await updateUseCase.execute({
+    const updatedUser = await updateUseCase.execute({
       id: sessionId,
       displayName: hasDisplayName
         ? normalizeRequiredText("display_name", display_name)
-        : existingPlain.displayName,
+        : rawExistingUser.displayName,
       iconPath: hasIconPath
         ? normalizeOptionalText("icon_path", icon_path)
-        : existingPlain.iconPath,
+        : rawExistingUser.iconPath,
       currentTask: hasCurrentTask
         ? normalizeOptionalTaskId("current_task", current_task)
-        : existingPlain.currentTask,
+        : rawExistingUser.currentTask,
       currentTaskTime: hasCurrentTaskTime
         ? normalizeOptionalDateTime("current_task_time", current_task_time)
-        : existingPlain.currentTaskTime,
+        : rawExistingUser.currentTaskTime,
     });
 
-    return Response.json(toDTO(updated), { status: 200 });
+    const updatedBuilder = new UserDataModelBuilder();
+    updatedUser.notify(updatedBuilder);
+    return Response.json(updatedBuilder.build(), { status: 200 });
   } catch (error) {
     if (error instanceof Response) {
       return error;
@@ -159,13 +167,13 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { userId: string } },
+  { params }: { params: { userId: string } }
 ) {
   const requestedId = params?.userId;
   if (!requestedId) {
     return Response.json(
       { error: "Bad Request: invalid user id" },
-      { status: 400 },
+      { status: 400 }
     );
   }
 

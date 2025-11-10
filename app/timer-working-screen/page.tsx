@@ -8,12 +8,12 @@ import Header from "@/components/Header";
 import ProgressBar from "@/components/ProgressBar";
 import { getTask, getUser, updateTask } from "@/lib/api_wrapper";
 import type { TaskDTO as Task } from "@/interfaces/http/tasks/mappers";
-import type { UserDTO as User } from "@/interfaces/http/users/mappers";
+import type { IUserDataModel } from "@/application/users/UserDataModelMapper";
 import styles from "./TimerWorkingScreen.module.css";
 
 export default function TimerWorkingScreen() {
   const router = useRouter();
-  const [user, setUser] = useState<User | undefined>();
+  const [user, setUser] = useState<IUserDataModel | undefined>();
   const [currentTask, setCurrentTask] = useState<Task | undefined>();
   const WORK_DURATION = process.env.NODE_ENV === "development" ? 3 : 1500;
 
@@ -25,7 +25,7 @@ export default function TimerWorkingScreen() {
 
     const nextSet = Math.min(
       currentTask.current_set + 1,
-      currentTask.total_set,
+      currentTask.total_set
     );
     const taskPayload: Task = { ...currentTask, current_set: nextSet };
 

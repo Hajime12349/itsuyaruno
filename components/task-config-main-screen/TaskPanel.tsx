@@ -2,10 +2,11 @@ import React from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { updateUser } from "@/lib/api_wrapper";
 import type { TaskDTO as Task } from "@/interfaces/http/tasks/mappers";
-import type { UserDTO as User } from "@/interfaces/http/users/mappers";
+import type { IUserDataModel } from "@/application/users/UserDataModelMapper";
 import EditTaskButton from "./EditTaskButton";
 import TaskStartButton from "./TaskStartButton";
 import styles from "./TaskPanel.module.css";
+
 
 interface TaskPanelProps {
   task: Task;
@@ -25,7 +26,7 @@ const TaskPanel: React.FC<TaskPanelProps> = ({
   // 〆切までの残り日数を計算
   const deadlineMs = task.deadline ? Date.parse(task.deadline) : NaN;
   const remainingDays = Math.ceil(
-    (deadlineMs - Date.now()) / (1000 * 60 * 60 * 24),
+    (deadlineMs - Date.now()) / (1000 * 60 * 60 * 24)
   );
 
   // 表示テキストを整える
@@ -47,7 +48,7 @@ const TaskPanel: React.FC<TaskPanelProps> = ({
 
   async function handleStart(selectedTask: Task) {
     try {
-      const payload: User = {
+      const payload: IUserDataModel = {
         id: selectedTask.user_id,
         displayName: "",
         currentTask: selectedTask.id,

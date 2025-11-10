@@ -1,4 +1,4 @@
-import type { UserRepository } from "../../domain/users/UserRepository";
+import type { IUserRepository } from "../../domain/users/IUserRepository";
 import { UserEntity } from "../../domain/users/User";
 import { UserId } from "../../domain/users/valueObjects/UserId";
 import { DisplayName } from "../../domain/users/valueObjects/DisplayName";
@@ -7,7 +7,7 @@ import { CurrentTaskId } from "../../domain/users/valueObjects/CurrentTaskId";
 import { CurrentTaskTime } from "../../domain/users/valueObjects/CurrentTaskTime";
 
 export class UpdateUserUseCase {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(private readonly userRepository: IUserRepository) {}
 
   async execute(input: {
     id: string;

@@ -4,6 +4,7 @@ import { CurrentTaskTime } from "./valueObjects/CurrentTaskTime";
 import { DisplayName } from "./valueObjects/DisplayName";
 import { IconPath } from "./valueObjects/IconPath";
 import { UserId } from "./valueObjects/UserId";
+import { IUserNotification } from "./IUserNotification";
 
 export interface UserValueProps {
   id: UserId;
@@ -14,18 +15,18 @@ export interface UserValueProps {
 }
 
 export class UserEntity {
-  readonly id: UserId;
-  readonly displayName: DisplayName;
-  readonly iconPath?: IconPath;
-  readonly currentTask?: CurrentTaskId;
-  readonly currentTaskTime?: CurrentTaskTime;
+  readonly _id: UserId;
+  readonly _displayName: DisplayName;
+  readonly _iconPath?: IconPath;
+  readonly _currentTask?: CurrentTaskId;
+  readonly _currentTaskTime?: CurrentTaskTime;
 
   private constructor(props: UserValueProps) {
-    this.id = props.id;
-    this.displayName = props.displayName;
-    this.iconPath = props.iconPath;
-    this.currentTask = props.currentTask;
-    this.currentTaskTime = props.currentTaskTime;
+    this._id = props.id;
+    this._displayName = props.displayName;
+    this._iconPath = props.iconPath;
+    this._currentTask = props.currentTask;
+    this._currentTaskTime = props.currentTaskTime;
   }
 
   static create(props: UserValueProps): UserEntity {
@@ -46,7 +47,7 @@ export class UserEntity {
       !(props.currentTask instanceof CurrentTaskId)
     ) {
       throw new BadRequestError(
-        "UserEntity currentTask must be a CurrentTaskId",
+        "UserEntity currentTask must be a CurrentTaskId"
       );
     }
     if (
@@ -54,7 +55,7 @@ export class UserEntity {
       !(props.currentTaskTime instanceof CurrentTaskTime)
     ) {
       throw new BadRequestError(
-        "UserEntity currentTaskTime must be a CurrentTaskTime",
+        "UserEntity currentTaskTime must be a CurrentTaskTime"
       );
     }
 
@@ -65,5 +66,13 @@ export class UserEntity {
       currentTask: props.currentTask,
       currentTaskTime: props.currentTaskTime,
     });
+  }
+
+  notify(notification: IUserNotification): void {
+    notification.Id(this._id);
+    notification.DisplayName(this._displayName);
+    notification.IconPath(this._iconPath);
+    notification.CurrentTask(this._currentTask);
+    notification.CurrentTaskTime(this._currentTaskTime);
   }
 }

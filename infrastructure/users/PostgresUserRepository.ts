@@ -3,13 +3,13 @@ import { query } from "@/infrastructure/db";
 import { AppError, NotFoundError } from "@/lib/errors/AppError";
 import { toOptionalTrimmedString } from "@/lib/utils/string";
 import { UserEntity } from "@/domain/users/User";
-import type { UserRepository } from "@/domain/users/UserRepository";
+import type { IUserRepository } from "@/domain/users/IUserRepository";
 import { UserId } from "@/domain/users/valueObjects/UserId";
 import { DisplayName } from "@/domain/users/valueObjects/DisplayName";
 import { IconPath } from "@/domain/users/valueObjects/IconPath";
 import { CurrentTaskId } from "@/domain/users/valueObjects/CurrentTaskId";
 import { CurrentTaskTime } from "@/domain/users/valueObjects/CurrentTaskTime";
-import { toDTO } from "@/interfaces/http/users/mappers";
+import { UserDataModelBuilder } from "@/application/users/UserDataModelMapper";
 
 function mapRowToEntity(row: any): UserEntity {
   const currentTaskValue = row.current_task;
@@ -65,7 +65,7 @@ function mapRowToEntity(row: any): UserEntity {
 
 function ensureRow<T>(
   result: { rows: T[]; rowCount?: number | null },
-  notFoundMessage: string,
+  notFoundMessage: string
 ): T {
   const row = result.rows[0];
   if (!row || result.rowCount === 0) {
@@ -74,7 +74,7 @@ function ensureRow<T>(
   return row;
 }
 
-export class PostgresUserRepository implements UserRepository {
+export class PostgresUserRepository implements IUserRepository {
   async findById(id: string): Promise<UserEntity | null> {
     if (process.env.NODE_ENV === "production") {
       const { rows } = await sql`SELECT * FROM users WHERE id = ${id}`;
@@ -85,7 +85,9 @@ export class PostgresUserRepository implements UserRepository {
   }
 
   async create(user: UserEntity): Promise<UserEntity> {
-    const persistence = toDTO(user);
+    const userBuilder = new UserDataModelBuilder();
+    user.notify(userBuilder);
+    const persistence = userBuilder.build();
     if (process.env.NODE_ENV === "production") {
       const result =
         await sql`INSERT INTO users (id, display_name, icon_path, current_task, current_task_time) VALUES (${persistence.id}, ${persistence.displayName}, ${persistence.iconPath}, ${persistence.currentTask}, ${persistence.currentTaskTime}) RETURNING *`;
@@ -99,13 +101,15 @@ export class PostgresUserRepository implements UserRepository {
         persistence.iconPath,
         persistence.currentTask,
         persistence.currentTaskTime,
-      ],
+      ]
     );
     return mapRowToEntity(ensureRow(result, "User not found"));
   }
 
   async update(user: UserEntity): Promise<UserEntity> {
-    const persistence = toDTO(user);
+    const userBuilder = new UserDataModelBuilder();
+    user.notify(userBuilder);
+    const persistence = userBuilder.build();
     if (process.env.NODE_ENV === "production") {
       const result =
         await sql`UPDATE users SET display_name = ${persistence.displayName}, icon_path = ${persistence.iconPath}, current_task = ${persistence.currentTask}, current_task_time = ${persistence.currentTaskTime} WHERE id = ${persistence.id} RETURNING *`;
@@ -119,7 +123,7 @@ export class PostgresUserRepository implements UserRepository {
         persistence.currentTask,
         persistence.currentTaskTime,
         persistence.id,
-      ],
+      ]
     );
     return mapRowToEntity(ensureRow(result, "User not found"));
   }

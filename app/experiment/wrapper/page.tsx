@@ -23,14 +23,14 @@ import {
 import type { TaskCreatePayload, UserUpsertPayload } from "@/lib/api_wrapper";
 import type { TagDTO as Tag } from "@/interfaces/http/tags/mappers";
 import type { TaskDTO as Task } from "@/interfaces/http/tasks/mappers";
-import type { UserDTO as User } from "@/interfaces/http/users/mappers";
+import type { IUserDataModel } from "@/application/users/UserDataModelMapper";
 
 const CRUDApiWrapperTestComponent = () => {
   const { data: session } = useSession();
-  const [tasks, setTasks] = useState<Task[]>();
-  const [user, setUser] = useState<User>();
   const [tags, setTags] = useState<Tag[]>();
-
+  const [tasks, setTasks] = useState<Task[]>();
+  const [user, setUser] = useState<IUserDataModel>();
+  
   // 最初にタスク一覧を取得する
   useEffect(() => {
     getTasks().then(setTasks);
@@ -56,7 +56,7 @@ const CRUDApiWrapperTestComponent = () => {
               // getTasksで発生したエラーをキャッチ
               console.error("Failed to get tasks:", error);
             });
-        },
+        }
       )
       .catch((error) => {
         // createTaskで発生したエラーをキャッチ
@@ -76,7 +76,7 @@ const CRUDApiWrapperTestComponent = () => {
               // getTasksで発生したエラーをキャッチ
               console.error("Failed to get tasks:", error);
             });
-        },
+        }
       )
       .catch((error) => {
         // updateTaskで発生したエラーをキャッチ
@@ -100,7 +100,7 @@ const CRUDApiWrapperTestComponent = () => {
               // getTasksで発生したエラーをキャッチ
               console.error("Failed to get tasks:", error);
             });
-        },
+        }
       )
       .catch((error) => {
         // deleteTaskで発生したエラーをキャッチ
@@ -120,7 +120,7 @@ const CRUDApiWrapperTestComponent = () => {
               // getUserで発生したエラーをキャッチ
               console.error("Failed to get user:", error);
             });
-        },
+        }
       )
       .catch((error) => {
         // updateUserで発生したエラーをキャッチ
@@ -140,7 +140,7 @@ const CRUDApiWrapperTestComponent = () => {
               // getUserで発生したエラーをキャッチ
               console.error("Failed to get user:", error);
             });
-        },
+        }
       )
       .catch((error) => {
         // registerUserで発生したエラーをキャッチ

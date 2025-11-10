@@ -4,7 +4,7 @@ import { getUserID } from "@/lib/auth";
 import { GetMeUseCase } from "../../../application/users/GetMe";
 import { CreateUserUseCase } from "../../../application/users/CreateUser";
 import { UpdateUserUseCase } from "../../../application/users/UpdateUser";
-import { toDTO } from "../../../interfaces/http/users/mappers";
+import { UserDataModelBuilder } from "../../../application/users/UserDataModelMapper";
 import { resolveUserRepository } from "@/interfaces/http/users/repositoryProvider";
 import {
   normalizeOptionalDateTime,
@@ -22,7 +22,7 @@ export async function GET(req: Request) {
       JSON.stringify({
         error: "Unauthorized: session user does not have a valid id",
       }),
-      { status: 401 },
+      { status: 401 }
     );
   }
 
@@ -35,7 +35,10 @@ export async function GET(req: Request) {
         status: 404,
       });
     }
-    return new Response(JSON.stringify(toDTO(user)), { status: 200 });
+    
+    const userBuilder = new UserDataModelBuilder();
+    user.notify(userBuilder);
+    return new Response(JSON.stringify(userBuilder.build()), { status: 200 });
   } catch (error) {
     console.error("Database query failed:", error);
     if (error instanceof AppError) {
@@ -53,7 +56,7 @@ export async function GET(req: Request) {
     const message = (error as Error)?.message ?? "Unknown error";
     return new Response(
       JSON.stringify({ error: "Failed to get user", detail: message }),
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
@@ -66,7 +69,7 @@ export async function POST(req: Request) {
       JSON.stringify({
         error: "Unauthorized: session user does not have a valid id",
       }),
-      { status: 401 },
+      { status: 401 }
     );
   }
 
@@ -86,7 +89,7 @@ export async function POST(req: Request) {
       JSON.stringify({
         error: "Forbidden: user id does not match session user id",
       }),
-      { status: 403 },
+      { status: 403 }
     );
   }
 
@@ -100,10 +103,10 @@ export async function POST(req: Request) {
       currentTask: normalizeOptionalTaskId("current_task", current_task),
       currentTaskTime: normalizeOptionalDateTime(
         "current_task_time",
-        current_task_time,
+        current_task_time
       ),
     });
-    return new Response(JSON.stringify(toDTO(created)), { status: 201 });
+    return new Response(JSON.stringify(created), { status: 201 });
   } catch (error) {
     console.error("Database query failed:", error);
     if (error instanceof AppError) {
@@ -121,7 +124,7 @@ export async function POST(req: Request) {
     const message = (error as Error)?.message ?? "Unknown error";
     return new Response(
       JSON.stringify({ error: "Failed to add user", detail: message }),
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
@@ -134,7 +137,7 @@ export async function PUT(req: Request) {
       JSON.stringify({
         error: "Unauthorized: session user does not have a valid id",
       }),
-      { status: 401 },
+      { status: 401 }
     );
   }
 
@@ -154,41 +157,42 @@ export async function PUT(req: Request) {
       JSON.stringify({
         error: "Forbidden: user id does not match session user id",
       }),
-      { status: 403 },
+      { status: 403 }
     );
   }
 
   const hasDisplayName = Object.prototype.hasOwnProperty.call(
     body ?? {},
-    "display_name",
+    "display_name"
   );
   const hasIconPath = Object.prototype.hasOwnProperty.call(
     body ?? {},
-    "icon_path",
+    "icon_path"
   );
   const hasCurrentTask = Object.prototype.hasOwnProperty.call(
     body ?? {},
-    "current_task",
+    "current_task"
   );
   const hasCurrentTaskTime = Object.prototype.hasOwnProperty.call(
     body ?? {},
-    "current_task_time",
+    "current_task_time"
   );
 
   try {
     const repo = resolveUserRepository();
     const getMe = new GetMeUseCase(repo);
-    const existing = await getMe.execute({ userId: id });
-    if (!existing) {
+    const existingUser = await getMe.execute({ userId: id });
+    if (!existingUser) {
       return new Response(JSON.stringify({ error: "User not found" }), {
         status: 404,
       });
     }
-
-    const existingPlain = toDTO(existing);
+    const existingUserBuilder = new UserDataModelBuilder();
+    existingUser.notify(existingUserBuilder);
+    const existingPlain = existingUserBuilder.build();
 
     const updateUseCase = new UpdateUserUseCase(repo);
-    const updated = await updateUseCase.execute({
+    const updatedUser = await updateUseCase.execute({
       id,
       displayName: hasDisplayName
         ? normalizeRequiredText("display_name", display_name)
@@ -203,7 +207,10 @@ export async function PUT(req: Request) {
         ? normalizeOptionalDateTime("current_task_time", current_task_time)
         : existingPlain.currentTaskTime,
     });
-    return new Response(JSON.stringify(toDTO(updated)), { status: 200 });
+
+    const updateUserBuilder = new UserDataModelBuilder();
+    updatedUser.notify(updateUserBuilder);
+    return new Response(JSON.stringify(updateUserBuilder.build()), { status: 200 });
   } catch (error) {
     console.error("Database query failed:", error);
     if (error instanceof AppError) {
@@ -230,7 +237,7 @@ export async function PUT(req: Request) {
     const message = legacyMessage ?? "Unknown error";
     return new Response(
       JSON.stringify({ error: "Failed to update user", detail: message }),
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

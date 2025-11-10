@@ -8,11 +8,11 @@ import NavigateTaskButton from "@/components/NavigateTaskButton";
 import ProgressBar from "@/components/ProgressBar";
 import { getTask, getUser } from "@/lib/api_wrapper";
 import type { TaskDTO as Task } from "@/interfaces/http/tasks/mappers";
-import type { UserDTO as User } from "@/interfaces/http/users/mappers";
+import type { IUserDataModel } from "@/application/users/UserDataModelMapper";
 import styles from "./TimerStartScreen.module.css";
 
 export default function TimerStartScreen() {
-  const [user, setUser] = useState<User | undefined>();
+  const [user, setUser] = useState<IUserDataModel | undefined>();
   const [currentTask, setCurrentTask] = useState<Task | undefined>();
   const router = useRouter();
 
