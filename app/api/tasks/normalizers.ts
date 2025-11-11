@@ -1,15 +1,9 @@
 import { BadRequestError } from "@/lib/errors/AppError";
 
 export function normalizeIncludeComplete(value: string | null): boolean {
-  if (value === null) {
-    return false;
-  }
-  if (value === "true") {
-    return true;
-  }
-  if (value === "false") {
-    return false;
-  }
+  if (value === null) return false;
+  if (value === "true") return true;
+  if (value === "false") return false;
   throw new BadRequestError('include_complete must be "true" or "false"');
 }
 

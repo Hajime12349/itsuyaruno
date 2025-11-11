@@ -1,4 +1,3 @@
-import type { TagEntity } from "@/domain/tags/Tag";
 import { ITagNotification } from "@/domain/tags/ITagNotification";
 import { TagName } from "@/domain/tags/valueObjects/TagName";
 

@@ -16,58 +16,56 @@ import { AppError } from "@/lib/errors/AppError";
 
 export async function GET(req: Request) {
   const session = await getServerSession(authOptions);
-  const session_user_id = await getUserID(session);
-  if (!session_user_id) {
+  const sessionUserId = await getUserID(session);
+  if (!sessionUserId) {
     return new Response(
       JSON.stringify({
-        error: "Unauthorized: session user does not have a valid id",
+        error: { code: "Unauthorized", message: "Session user does not have a valid id" },
       }),
       { status: 401 }
     );
   }
 
   try {
-    const repo = resolveUserRepository();
-    const getUsecase = new GetMeUseCase(repo);
-    const user = await getUsecase.execute({ userId: session_user_id });
+    const userRepository = resolveUserRepository();
+    const getUsecase = new GetMeUseCase(userRepository);
+    const user = await getUsecase.execute({ userId: sessionUserId });
     if (!user) {
-      return new Response(JSON.stringify({ error: "User not found" }), {
+      return new Response(JSON.stringify({ error: { code: "NotFound", message: "User not found" } }), {
         status: 404,
       });
     }
-    
+
     const userBuilder = new UserDataModelBuilder();
     user.notify(userBuilder);
     return new Response(JSON.stringify(userBuilder.build()), { status: 200 });
   } catch (error) {
-    console.error("Database query failed:", error);
+    console.error("Unhandled error in GetMe API:", error);
+
     if (error instanceof AppError) {
-      if (error.code === "BadRequest") {
-        return new Response(JSON.stringify({ error: error.message }), {
-          status: 400,
-        });
-      }
-      if (error.code === "NotFound") {
-        return new Response(JSON.stringify({ error: error.message }), {
-          status: 404,
-        });
-      }
+      const statusMap: Record<string, number> = {
+        BadRequest: 400,
+        NotFound: 404,
+      };
+      const status = statusMap[error.code] ?? 500;
+      return new Response(JSON.stringify({ error: { code: error.code, message: error.message } }), {
+        status,
+      });
     }
+
     const message = (error as Error)?.message ?? "Unknown error";
-    return new Response(
-      JSON.stringify({ error: "Failed to get user", detail: message }),
-      { status: 500 }
-    );
+    return new Response(JSON.stringify({ error: { code: "InternalError", message } }), { status: 500 });
   }
+
 }
 
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
-  const session_user_id = await getUserID(session);
-  if (!session_user_id) {
+  const sessionUserId = await getUserID(session);
+  if (!sessionUserId) {
     return new Response(
       JSON.stringify({
-        error: "Unauthorized: session user does not have a valid id",
+        error: { code: "Unauthorized", message: "Session user does not have a valid id" },
       }),
       { status: 401 }
     );
@@ -76,34 +74,34 @@ export async function POST(req: Request) {
   const body = await req.json().catch(() => ({}));
   const {
     id: requestedId,
-    display_name,
-    icon_path,
-    current_task,
-    current_task_time,
+    displayName,
+    iconPath,
+    currentTask,
+    currentTaskTime,
   } = body ?? {};
 
-  const id = requestedId ?? session_user_id;
+  const id = requestedId ?? sessionUserId;
 
-  if (id !== session_user_id) {
+  if (id !== sessionUserId) {
     return new Response(
       JSON.stringify({
-        error: "Forbidden: user id does not match session user id",
+        error: { code: "Forbidden", message: "User id does not match session user id" },
       }),
       { status: 403 }
     );
   }
 
   try {
-    const repo = resolveUserRepository();
-    const createUsecase = new CreateUserUseCase(repo);
+    const userRepository = resolveUserRepository();
+    const createUsecase = new CreateUserUseCase(userRepository);
     const created = await createUsecase.execute({
       id,
-      displayName: normalizeRequiredText("display_name", display_name),
-      iconPath: normalizeOptionalText("icon_path", icon_path),
-      currentTask: normalizeOptionalTaskId("current_task", current_task),
+      displayName: normalizeRequiredText("displayName", displayName),
+      iconPath: normalizeOptionalText("iconPath", iconPath),
+      currentTask: normalizeOptionalTaskId("currentTask", currentTask),
       currentTaskTime: normalizeOptionalDateTime(
-        "current_task_time",
-        current_task_time
+        "currentTaskTime",
+        currentTaskTime
       ),
     });
     return new Response(JSON.stringify(created), { status: 201 });
@@ -111,19 +109,19 @@ export async function POST(req: Request) {
     console.error("Database query failed:", error);
     if (error instanceof AppError) {
       if (error.code === "BadRequest") {
-        return new Response(JSON.stringify({ error: error.message }), {
+        return new Response(JSON.stringify({ error: { code: error.code, message: error.message } }), {
           status: 400,
         });
       }
       if (error.code === "NotFound") {
-        return new Response(JSON.stringify({ error: error.message }), {
+        return new Response(JSON.stringify({ error: { code: error.code, message: error.message } }), {
           status: 404,
         });
       }
     }
     const message = (error as Error)?.message ?? "Unknown error";
     return new Response(
-      JSON.stringify({ error: "Failed to add user", detail: message }),
+      JSON.stringify({ error: { code: "InternalError", message } }),
       { status: 500 }
     );
   }
@@ -131,8 +129,8 @@ export async function POST(req: Request) {
 
 export async function PUT(req: Request) {
   const session = await getServerSession(authOptions);
-  const session_user_id = await getUserID(session);
-  if (!session_user_id) {
+  const sessionUserId = await getUserID(session);
+  if (!sessionUserId) {
     return new Response(
       JSON.stringify({
         error: "Unauthorized: session user does not have a valid id",
@@ -150,12 +148,12 @@ export async function PUT(req: Request) {
     current_task_time,
   } = body ?? {};
 
-  const id = requestedId ?? session_user_id;
+  const id = requestedId ?? sessionUserId;
 
-  if (id !== session_user_id) {
+  if (id !== sessionUserId) {
     return new Response(
       JSON.stringify({
-        error: "Forbidden: user id does not match session user id",
+        error: { code: "Forbidden", message: "user id does not match session user id" },
       }),
       { status: 403 }
     );
@@ -163,49 +161,49 @@ export async function PUT(req: Request) {
 
   const hasDisplayName = Object.prototype.hasOwnProperty.call(
     body ?? {},
-    "display_name"
+    "displayName"
   );
   const hasIconPath = Object.prototype.hasOwnProperty.call(
     body ?? {},
-    "icon_path"
+    "iconPath"
   );
   const hasCurrentTask = Object.prototype.hasOwnProperty.call(
     body ?? {},
-    "current_task"
+    "currentTask"
   );
   const hasCurrentTaskTime = Object.prototype.hasOwnProperty.call(
     body ?? {},
-    "current_task_time"
+    "currentTaskTime"
   );
 
   try {
-    const repo = resolveUserRepository();
-    const getMe = new GetMeUseCase(repo);
+    const userRepository = resolveUserRepository();
+    const getMe = new GetMeUseCase(userRepository);
     const existingUser = await getMe.execute({ userId: id });
     if (!existingUser) {
-      return new Response(JSON.stringify({ error: "User not found" }), {
+      return new Response(JSON.stringify({ error: { code: "NotFound", message: "User not found" } }), {
         status: 404,
       });
     }
     const existingUserBuilder = new UserDataModelBuilder();
     existingUser.notify(existingUserBuilder);
-    const existingPlain = existingUserBuilder.build();
+    const existingUserPlain = existingUserBuilder.build();
 
-    const updateUseCase = new UpdateUserUseCase(repo);
+    const updateUseCase = new UpdateUserUseCase(userRepository);
     const updatedUser = await updateUseCase.execute({
       id,
       displayName: hasDisplayName
         ? normalizeRequiredText("display_name", display_name)
-        : existingPlain.displayName,
+        : existingUserPlain.displayName,
       iconPath: hasIconPath
         ? normalizeOptionalText("icon_path", icon_path)
-        : existingPlain.iconPath,
+        : existingUserPlain.iconPath,
       currentTask: hasCurrentTask
         ? normalizeOptionalTaskId("current_task", current_task)
-        : existingPlain.currentTask,
+        : existingUserPlain.currentTask,
       currentTaskTime: hasCurrentTaskTime
         ? normalizeOptionalDateTime("current_task_time", current_task_time)
-        : existingPlain.currentTaskTime,
+        : existingUserPlain.currentTaskTime,
     });
 
     const updateUserBuilder = new UserDataModelBuilder();
@@ -215,12 +213,12 @@ export async function PUT(req: Request) {
     console.error("Database query failed:", error);
     if (error instanceof AppError) {
       if (error.code === "BadRequest") {
-        return new Response(JSON.stringify({ error: error.message }), {
+        return new Response(JSON.stringify({ error: { code: "BadRequest", message: error.message } }), {
           status: 400,
         });
       }
       if (error.code === "NotFound") {
-        return new Response(JSON.stringify({ error: error.message }), {
+        return new Response(JSON.stringify({ error: { code: "NotFound", message: error.message } }), {
           status: 404,
         });
       }
@@ -230,13 +228,13 @@ export async function PUT(req: Request) {
       legacyMessage === "UserNotFound" ||
       legacyMessage === "User not found"
     ) {
-      return new Response(JSON.stringify({ error: "User not found" }), {
+      return new Response(JSON.stringify({ error: { code: "NotFound", message: "User not found" } }), {
         status: 404,
       });
     }
     const message = legacyMessage ?? "Unknown error";
     return new Response(
-      JSON.stringify({ error: "Failed to update user", detail: message }),
+      JSON.stringify({ error: { code: "InternalError", message: "Failed to update user", detail: message } }),
       { status: 500 }
     );
   }

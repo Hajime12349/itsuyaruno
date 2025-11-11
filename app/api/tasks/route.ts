@@ -17,47 +17,47 @@ import {
 
 export async function GET(req: NextRequest) {
   const session = await getServerSession(authOptions);
-  const session_user_id = await getUserID(session);
-  if (!session_user_id) {
+  const sessionUserId = await getUserID(session);
+  if (!sessionUserId) {
     return Response.json(
-      { error: "Unauthorized: session user does not have a valid id" },
+      { error: { code: "Unauthorized", message: "session user does not have a valid id" } },
       { status: 401 },
     );
   }
 
   try {
-    const include_complete = normalizeIncludeComplete(
+    const includeComplete = normalizeIncludeComplete(
       req.nextUrl.searchParams.get("include_complete"),
     );
-    const repo = resolveTaskRepository();
-    const usecase = new GetTasksUseCase(repo);
+    const taskRepository = resolveTaskRepository();
+    const usecase = new GetTasksUseCase(taskRepository);
     const entities = await usecase.execute({
-      userId: session_user_id,
-      includeComplete: include_complete,
+      userId: sessionUserId,
+      includeComplete: includeComplete,
     });
     const plainTasks = entities.map((task) => {
-      const builder = new TaskDataModelBuilder();
-      task.notify(builder);
-      return builder.build();
+      const taskBuilder = new TaskDataModelBuilder();
+      task.notify(taskBuilder);
+      return taskBuilder.build();
     });
     return Response.json(plainTasks, { status: 200 });
   } catch (error) {
     if (error instanceof AppError) {
       if (error.code === "BadRequest") {
-        return Response.json({ error: error.message }, { status: 400 });
+        return Response.json({ error: { code: error.code, message: error.message } }, { status: 400 });
       }
     }
     console.error("Failed to fetch tasks:", error);
-    return Response.json({ error: "Failed to fetch tasks" }, { status: 500 });
+    return Response.json({ error: { code: "InternalError", message: "Failed to fetch tasks" } }, { status: 500 });
   }
 }
 
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
-  const session_user_id = await getUserID(session);
-  if (!session_user_id) {
+  const sessionUserId = await getUserID(session);
+  if (!sessionUserId) {
     return Response.json(
-      { error: "Unauthorized: session user does not have a valid id" },
+      { error: { code: "Unauthorized", message: "session user does not have a valid id" } },
       { status: 401 },
     );
   }
@@ -73,26 +73,26 @@ export async function POST(req: Request) {
     const currentSet = normalizeNonNegativeInteger("current_set", current_set);
     const isComplete = normalizeBoolean("is_complete", is_complete);
 
-    const repo = resolveTaskRepository();
-    const usecase = new CreateTaskUseCase(repo);
-    const created = await usecase.execute({
-      userId: session_user_id,
+    const taskRepository = resolveTaskRepository();
+    const taskCreateUseCase = new CreateTaskUseCase(taskRepository);
+    const created = await taskCreateUseCase.execute({
+      userId: sessionUserId,
       name,
       deadline: normalizedDeadline,
       totalSet,
       currentSet,
       isComplete,
     });
-    const builder = new TaskDataModelBuilder();
-    created.notify(builder);
-    return Response.json(builder.build(), { status: 201 });
+    const taskBuilder = new TaskDataModelBuilder();
+    created.notify(taskBuilder);
+    return Response.json(taskBuilder.build(), { status: 201 });
   } catch (error) {
     if (error instanceof AppError) {
       if (error.code === "BadRequest") {
-        return Response.json({ error: error.message }, { status: 400 });
+        return Response.json({ error: { code: error.code, message: error.message } }, { status: 400 });
       }
     }
     console.error("Failed to add task:", error);
-    return Response.json({ error: "Failed to add task" }, { status: 500 });
+    return Response.json({ error: { code: "InternalError", message: "Failed to add task" } }, { status: 500 });
   }
 }
