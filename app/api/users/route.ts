@@ -31,7 +31,7 @@ export async function GET(req: Request) {
     const getUsecase = new GetMeUseCase(userRepository);
     const user = await getUsecase.execute({ userId: sessionUserId });
     if (!user) {
-      return new Response(JSON.stringify({ error: { code: "NotFound", message: "User not found" } }), {
+      return new Response(JSON.stringify({ detail: "User not found"  }), {
         status: 404,
       });
     }

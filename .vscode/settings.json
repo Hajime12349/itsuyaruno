@@ -1,9 +1,12 @@
 {
- "editor.formatOnSave": true,
-  "editor.codeActionsOnSave": [
-    "source.fixAll.eslint"
-  ],
-  "eslint.validate": ["javascript", "typescript", "typescriptreact"],
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "eslint.validate": ["javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"],
   "prettier.requireConfig": true,
   "typescript.tsserver.experimental.enableProjectDiagnostics": true
 }
