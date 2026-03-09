@@ -1,8 +1,8 @@
-'use client'
-import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import type { TaskDTO as Task } from '@/interfaces/http/tasks/mappers';
-import styles from './TaskWindow.module.css';
+"use client";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import type { ITaskDataModel as Task } from "@/application/tasks/TaskDataModelMapper";
+import styles from "./TaskWindow.module.css";
 
 interface EditTaskWindowProps {
   task: Task;
@@ -11,12 +11,17 @@ interface EditTaskWindowProps {
   onClose: () => void;
 }
 
-const EditTaskWindow = ({ task, onSubmitTask, onDeleteTask, onClose }: EditTaskWindowProps) => {
+const EditTaskWindow = ({
+  task,
+  onSubmitTask,
+  onDeleteTask,
+  onClose,
+}: EditTaskWindowProps) => {
   const { register, handleSubmit, setValue } = useForm({
     defaultValues: {
       task_name: task.task_name,
       total_set: task.total_set,
-      deadline: task.deadline ? task.deadline.slice(0, 10) : '',
+      deadline: task.deadline ? task.deadline.slice(0, 10) : "",
     },
   });
   const [showDetails, setShowDetails] = useState(true);
@@ -26,23 +31,30 @@ const EditTaskWindow = ({ task, onSubmitTask, onDeleteTask, onClose }: EditTaskW
   const is_complete = task.is_complete;
 
   useEffect(() => {
-    setValue('task_name', task.task_name);
-    setValue('total_set', task.total_set);
-    setValue('deadline', task.deadline ? task.deadline.slice(0, 10) : '');
+    setValue("task_name", task.task_name);
+    setValue("total_set", task.total_set);
+    setValue("deadline", task.deadline ? task.deadline.slice(0, 10) : "");
   }, [task, setValue]);
 
   const onSubmit = async (data: any) => {
     const { task_name, total_set, deadline } = data ?? {};
-    const trimmedName = typeof task_name === 'string' ? task_name.trim() : '';
-    const parsedTotalSet = typeof total_set === 'number' ? total_set : Number(total_set);
+    const trimmedName = typeof task_name === "string" ? task_name.trim() : "";
+    const parsedTotalSet =
+      typeof total_set === "number" ? total_set : Number(total_set);
 
-    if (trimmedName.length === 0 || Number.isNaN(parsedTotalSet) || parsedTotalSet < 1) {
+    if (
+      trimmedName.length === 0 ||
+      Number.isNaN(parsedTotalSet) ||
+      parsedTotalSet < 1
+    ) {
       alert("タイトルとセット数を入力してください");
       return;
     }
 
     const normalizedDeadline =
-      typeof deadline === 'string' && deadline.trim().length > 0 ? deadline : undefined;
+      typeof deadline === "string" && deadline.trim().length > 0
+        ? deadline
+        : undefined;
 
     const taskData: Task = {
       ...task,
@@ -58,7 +70,7 @@ const EditTaskWindow = ({ task, onSubmitTask, onDeleteTask, onClose }: EditTaskW
 
   const handleTaskData = async (taskData: Task) => {
     if (taskData.id === undefined) {
-      console.error('タスクIDが未設定です');
+      console.error("タスクIDが未設定です");
       return;
     }
 
@@ -67,15 +79,15 @@ const EditTaskWindow = ({ task, onSubmitTask, onDeleteTask, onClose }: EditTaskW
       await onSubmitTask(taskData);
       onClose();
     } catch (error) {
-      console.error('タスクの編集に失敗しました', error);
-      alert('タスクの編集に失敗しました');
+      console.error("タスクの編集に失敗しました", error);
+      alert("タスクの編集に失敗しました");
       setIsProcessing(false);
     }
   };
 
   const handleDelete = async () => {
     if (task.id === undefined) {
-      console.error('タスクIDが未設定です');
+      console.error("タスクIDが未設定です");
       return;
     }
 
@@ -84,49 +96,64 @@ const EditTaskWindow = ({ task, onSubmitTask, onDeleteTask, onClose }: EditTaskW
       await onDeleteTask(task.id);
       onClose();
     } catch (error) {
-      console.error('タスクの削除に失敗しました', error);
-      alert('タスクの削除に失敗しました');
+      console.error("タスクの削除に失敗しました", error);
+      alert("タスクの削除に失敗しました");
       setIsProcessing(false);
     }
   };
 
   const setRandomTotalSet = () => {
     const randomValue = Math.floor(Math.random() * 3) + 1;
-    setValue('total_set', randomValue);
+    setValue("total_set", randomValue);
   };
 
   return (
     <div className="App" onClick={(event) => event.stopPropagation()}>
       <div className={styles.header}>
         <h1>タスクを編集</h1>
-        <button className={styles.trashButton} onClick={handleDelete} disabled={isProcessing}>削除</button>
-        <button className={styles.closeButton} onClick={onClose}>×</button>
+        <button
+          className={styles.trashButton}
+          onClick={handleDelete}
+          disabled={isProcessing}
+        >
+          削除
+        </button>
+        <button className={styles.closeButton} onClick={onClose}>
+          ×
+        </button>
       </div>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>
           <p>タイトル</p>
-          <input id="task_name" {...register('task_name')} />
+          <input id="task_name" {...register("task_name")} />
         </div>
         <div>
           <p>セット数</p>
-          <button type="button" onClick={setRandomTotalSet}>自動</button>
-          <input id="total_set" type="number" min="1" step="1" {...register('total_set')} />
+          <button type="button" onClick={setRandomTotalSet}>
+            自動
+          </button>
+          <input
+            id="total_set"
+            type="number"
+            min="1"
+            step="1"
+            {...register("total_set")}
+          />
         </div>
 
         <div>
-          <button type="button" onClick={() => setShowDetails(!showDetails)}>詳細設定</button>
+          <button type="button" onClick={() => setShowDetails(!showDetails)}>
+            詳細設定
+          </button>
           {showDetails && (
             <div>
               <p>期限</p>
-              <input type="date" {...register('deadline')} />
+              <input type="date" {...register("deadline")} />
             </div>
           )}
         </div>
 
-        <button
-          disabled={isProcessing}
-          type="submit"
-        >
+        <button disabled={isProcessing} type="submit">
           編集
         </button>
       </form>

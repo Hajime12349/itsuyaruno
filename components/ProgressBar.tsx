@@ -1,10 +1,10 @@
 "use client";
-import React, { useEffect, useRef, useState } from 'react';
-import Image from 'next/image';
-import type { TaskDTO as Task } from '@/interfaces/http/tasks/mappers';
-import TaskImage from '@/public/icon_3.png';
-import StartButton from './StartButton';
-import StopButton from './StopButton';
+import React, { useEffect, useRef, useState } from "react";
+import Image from "next/image";
+import type { ITaskDataModel as Task } from "@/application/tasks/TaskDataModelMapper";
+import TaskImage from "@/public/icon_3.png";
+import StartButton from "./StartButton";
+import StopButton from "./StopButton";
 import styles from "./ProgressBar.module.css";
 let timer: NodeJS.Timeout | null = null;
 
@@ -13,13 +13,21 @@ interface ProgressBarProps {
   task: Task | undefined;
   isTask: boolean;
   progress: number;
-  onTickComplete?: (context: { currentPathname: string, task?: Task }) => Promise<void> | void
-  onStartFromStartScreen?: () => void
+  onTickComplete?: (context: {
+    currentPathname: string;
+    task?: Task;
+  }) => Promise<void> | void;
+  onStartFromStartScreen?: () => void;
 }
 
 //定義した形の引数を受け取る関数
-const ProgressBar: React.FC<ProgressBarProps> = ({ task, isTask, progress, onTickComplete, onStartFromStartScreen }) => {
-
+const ProgressBar: React.FC<ProgressBarProps> = ({
+  task,
+  isTask,
+  progress,
+  onTickComplete,
+  onStartFromStartScreen,
+}) => {
   // const router = useRouter();
 
   //---------------------------------------------------------------------------------------
@@ -39,7 +47,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ task, isTask, progress, onTic
       if (prevCount <= 1) {
         if (!redirected) {
           if (onTickComplete) {
-            onTickComplete({ currentPathname: window.location.pathname, task })
+            onTickComplete({ currentPathname: window.location.pathname, task });
           }
           setRedirected(true);
         }
@@ -62,7 +70,6 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ task, isTask, progress, onTic
 
   //カウントを止める関数。
   const countStop = () => {
-
     // 関数clearIntervalでタイマーを停止する
     if (timer !== null) {
       clearInterval(timer);
@@ -77,16 +84,15 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ task, isTask, progress, onTic
 
   //カウントを再開する関数。
   const countStart = () => {
-
     timer = setInterval(countIncrement, 1000);
     setStartFlg(false);
   };
 
   //もしtimer-start-screenにいたら、スタートボタンを押した時にtimer-working-screenに移動する。
   const handleStartButtonClick = () => {
-    if (window.location.pathname === '/timer-start-screen') {
+    if (window.location.pathname === "/timer-start-screen") {
       if (onStartFromStartScreen) {
-        onStartFromStartScreen()
+        onStartFromStartScreen();
       }
     } else {
       countStart();
@@ -119,22 +125,26 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ task, isTask, progress, onTic
       ctx.lineWidth = 3;
       ctx.strokeRect(x, y, rectWidth, rectHeight);
 
-      if (window.location.pathname === '/timer-break-screen') {
-        ctx.fillStyle = "rgb(251, 253, 161)";/*黄色*/
+      if (window.location.pathname === "/timer-break-screen") {
+        ctx.fillStyle = "rgb(251, 253, 161)"; /*黄色*/
+      } else {
+        ctx.fillStyle = "rgb(178, 223, 242)"; /*水色*/
       }
-      else {
-        ctx.fillStyle = "rgb(178, 223, 242)";/*水色*/
-      }
-      ctx.fillRect(x + 2, y + 2, (rectWidth - 4) * (count / progress), rectHeight - 4);
+      ctx.fillRect(
+        x + 2,
+        y + 2,
+        (rectWidth - 4) * (count / progress),
+        rectHeight - 4,
+      );
     }
   };
 
   // 初期描画とウィンドウサイズ変更時の再描画
   useEffect(() => {
     updateCanvasSize();
-    window.addEventListener('resize', updateCanvasSize);
+    window.addEventListener("resize", updateCanvasSize);
     return () => {
-      window.removeEventListener('resize', updateCanvasSize);
+      window.removeEventListener("resize", updateCanvasSize);
     };
   }, []);
 
@@ -145,7 +155,10 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ task, isTask, progress, onTic
 
   // 特定のURLにいるときにカウントを自動的にスタートする
   useEffect(() => {
-    if (window.location.pathname === '/timer-working-screen' || window.location.pathname === '/timer-break-screen') {
+    if (
+      window.location.pathname === "/timer-working-screen" ||
+      window.location.pathname === "/timer-break-screen"
+    ) {
       countStart();
     }
     return () => {
@@ -163,14 +176,33 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ task, isTask, progress, onTic
         <div className={styles.TaskImage}>
           <Image src={TaskImage} alt="Task Image" width={100} height={100} />
         </div>
-      <div className={styles.TaskTextComponents}>
-        <h2 className={styles.TaskText}> {isTask ? (task?.task_name || "loading...") : "休憩"}</h2>
-        <h2 className={styles.TaskLogo}>ロゴマーク</h2>
-      </div>
-      <canvas ref={canvasRef} id="canvas-in" width="100" height="150"></canvas>
-      <div style={{ display: "flex", justifyContent: "center", marginTop: "40px" }}>
-        {task && (startFlg ? <StartButton onClick={handleStartButtonClick} /> : <StopButton onClick={countStop} />)}
-      </div>
+        <div className={styles.TaskTextComponents}>
+          <h2 className={styles.TaskText}>
+            {" "}
+            {isTask ? task?.task_name || "loading..." : "休憩"}
+          </h2>
+          <h2 className={styles.TaskLogo}>ロゴマーク</h2>
+        </div>
+        <canvas
+          ref={canvasRef}
+          id="canvas-in"
+          width="100"
+          height="150"
+        ></canvas>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: "40px",
+          }}
+        >
+          {task &&
+            (startFlg ? (
+              <StartButton onClick={handleStartButtonClick} />
+            ) : (
+              <StopButton onClick={countStop} />
+            ))}
+        </div>
       </div>
     </div>
   );

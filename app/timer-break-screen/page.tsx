@@ -1,13 +1,12 @@
 "use client";
 
 import styles from "./TimerBreakScreen.module.css";
-import Header from '@/components/Header';
-import ProgressBar from '@/components/ProgressBar';
-import { NextAuthProvider, WithLoggedIn } from '@/app/provider';
-import { useRouter } from 'next/navigation';
+import Header from "@/components/Header";
+import ProgressBar from "@/components/ProgressBar";
+import { NextAuthProvider, WithLoggedIn } from "@/app/provider";
+import { useRouter } from "next/navigation";
 
-const BREAK_DURATION = process.env.NODE_ENV === 'development' ? 3 : 300
-
+const BREAK_DURATION = process.env.NODE_ENV === "development" ? 3 : 300;
 
 export default function TimerBreakScreen() {
   const router = useRouter();
@@ -21,7 +20,7 @@ export default function TimerBreakScreen() {
             isTask={false}
             progress={BREAK_DURATION}
             onTickComplete={() => {
-              router.replace('/timer-finish-screen');
+              router.replace("/timer-finish-screen");
             }}
           />
         </main>

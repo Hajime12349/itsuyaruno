@@ -1,6 +1,6 @@
-import type { TagRepository } from '@/domain/tags/TagRepository';
-import { PostgresTagRepository } from '@/infrastructure/tags/PostgresTagRepository';
+import type { TagRepository } from "@/domain/tags/TagRepository";
+import { PostgresTagRepository } from "@/infrastructure/tags/PostgresTagRepository";
 
 export function resolveTagRepository(): TagRepository {
-    return new PostgresTagRepository();
+  return new PostgresTagRepository();
 }

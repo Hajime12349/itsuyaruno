@@ -1,8 +1,8 @@
-'use client'
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import styles from './TaskWindow.module.css';
-import type { TaskDraft } from './types';
+"use client";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import styles from "./TaskWindow.module.css";
+import type { TaskDraft } from "./types";
 
 interface AddTaskWindowProps {
   onSubmitTask: (task: TaskDraft) => Promise<void>;
@@ -16,16 +16,23 @@ const AddTaskWindow = ({ onSubmitTask, onClose }: AddTaskWindowProps) => {
 
   const onSubmit = async (data: any) => {
     const { task_name, total_set, deadline } = data ?? {};
-    const trimmedName = typeof task_name === 'string' ? task_name.trim() : '';
-    const parsedTotalSet = typeof total_set === 'number' ? total_set : Number(total_set);
+    const trimmedName = typeof task_name === "string" ? task_name.trim() : "";
+    const parsedTotalSet =
+      typeof total_set === "number" ? total_set : Number(total_set);
 
-    if (trimmedName.length === 0 || Number.isNaN(parsedTotalSet) || parsedTotalSet < 1) {
+    if (
+      trimmedName.length === 0 ||
+      Number.isNaN(parsedTotalSet) ||
+      parsedTotalSet < 1
+    ) {
       alert("タイトルとセット数を入力してください");
       return;
     }
 
     const normalizedDeadline =
-      typeof deadline === 'string' && deadline.trim().length > 0 ? deadline : undefined;
+      typeof deadline === "string" && deadline.trim().length > 0
+        ? deadline
+        : undefined;
 
     const taskData: TaskDraft = {
       task_name: trimmedName,
@@ -45,7 +52,7 @@ const AddTaskWindow = ({ onSubmitTask, onClose }: AddTaskWindowProps) => {
       onClose();
     } catch (error) {
       console.error("タスクの追加に失敗しました", error);
-      alert('タスクの追加に失敗しました');
+      alert("タスクの追加に失敗しました");
       setDisableAddButton(false);
     }
   };
@@ -56,37 +63,52 @@ const AddTaskWindow = ({ onSubmitTask, onClose }: AddTaskWindowProps) => {
 
   const setRandomTotalSet = () => {
     const randomValue = Math.floor(Math.random() * 3) + 1;
-    setValue('total_set', randomValue);
+    setValue("total_set", randomValue);
   };
 
   return (
     <div className="App">
       <div className={styles.header}>
         <h1>タスクを追加</h1>
-        <button className={styles.closeButton} onClick={closeModal}>×</button>
+        <button className={styles.closeButton} onClick={closeModal}>
+          ×
+        </button>
       </div>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>
           <p>タイトル</p>
-          <input id="task_name" {...register('task_name')} />
+          <input id="task_name" {...register("task_name")} />
         </div>
         <div>
           <p>セット数</p>
-          <button type="button" onClick={setRandomTotalSet}>自動</button>
-          <input id="total_set" type="number" min="1" step="1" defaultValue={1} {...register('total_set')} />
+          <button type="button" onClick={setRandomTotalSet}>
+            自動
+          </button>
+          <input
+            id="total_set"
+            type="number"
+            min="1"
+            step="1"
+            defaultValue={1}
+            {...register("total_set")}
+          />
         </div>
 
         <div>
-          <button type="button" onClick={() => setShowDetails(!showDetails)}>詳細設定</button>
+          <button type="button" onClick={() => setShowDetails(!showDetails)}>
+            詳細設定
+          </button>
           {showDetails && (
             <div>
               <p>期限</p>
-              <input type="date" {...register('deadline')} />
+              <input type="date" {...register("deadline")} />
             </div>
           )}
         </div>
 
-        <button disabled={disableAddButton} type="submit">追加</button>
+        <button disabled={disableAddButton} type="submit">
+          追加
+        </button>
       </form>
     </div>
   );

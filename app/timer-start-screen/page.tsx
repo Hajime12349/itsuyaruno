@@ -1,14 +1,14 @@
 "use client";
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { NextAuthProvider, WithLoggedIn } from "@/app/provider";
-import Header from '@/components/Header';
+import Header from "@/components/Header";
 import NavigateTaskButton from "@/components/NavigateTaskButton";
-import ProgressBar from '@/components/ProgressBar';
-import { getTask, getUser } from '@/lib/api_wrapper';
-import type { TaskDTO as Task } from '@/interfaces/http/tasks/mappers';
-import type { UserDTO as User } from '@/interfaces/http/users/mappers';
+import ProgressBar from "@/components/ProgressBar";
+import { getTask, getUser } from "@/lib/api_wrapper";
+import type { ITaskDataModel as Task } from "@/application/tasks/TaskDataModelMapper";
+import type { IUserDataModel as User} from "@/application/users/UserDataModelMapper";
 import styles from "./TimerStartScreen.module.css";
 
 export default function TimerStartScreen() {
@@ -17,16 +17,14 @@ export default function TimerStartScreen() {
   const router = useRouter();
 
   useEffect(() => {
-    getUser()
-      .then((user) => {
-        setUser(user);
-        if (user.current_task) {
-          getTask(user.current_task)
-            .then((task) => {
-              setCurrentTask(task);
-            })
-        }
-      });
+    getUser().then((user) => {
+      setUser(user);
+      if (user.currentTask) {
+        getTask(user.currentTask).then((task) => {
+          setCurrentTask(task);
+        });
+      }
+    });
   }, []);
 
   return (
@@ -40,7 +38,7 @@ export default function TimerStartScreen() {
               isTask={true}
               progress={10}
               onStartFromStartScreen={() => {
-                router.push('/timer-working-screen');
+                router.push("/timer-working-screen");
               }}
             />
           </div>
