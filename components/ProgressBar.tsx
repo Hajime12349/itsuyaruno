@@ -6,99 +6,129 @@ import TaskImage from "@/public/icon_3.png";
 import StartButton from "./StartButton";
 import StopButton from "./StopButton";
 import styles from "./ProgressBar.module.css";
-let timer: NodeJS.Timeout | null = null;
 
 //形を定義するのがここ
 interface ProgressBarProps {
   task: Task | undefined;
   isTask: boolean;
-  progress: number;
   onTickComplete?: (context: {
     currentPathname: string;
     task?: Task;
   }) => Promise<void> | void;
-  onStartFromStartScreen?: () => void;
+}
 }
 
 //定義した形の引数を受け取る関数
 const ProgressBar: React.FC<ProgressBarProps> = ({
   task,
   isTask,
-  progress,
   onTickComplete,
-  onStartFromStartScreen,
 }) => {
+
   // const router = useRouter();
+
+  const TIMER_DURATION = process.env.NODE_ENV === "development" ? 5 : 1500;
+  const BREAK_DURATION = process.env.NODE_ENV === "development" ? 3 : 300;
+
+  const CURRENT_DURATION = isTask ? TIMER_DURATION : BREAK_DURATION;
 
   //---------------------------------------------------------------------------------------
   //ここからタイマーのカウント
   //---------------------------------------------------------------------------------------
 
   //タイマーのカウントを保持
-  const [count, setCount] = useState(progress);
+  const [count, setCount] = useState(CURRENT_DURATION);
   //停止か再開かを判別
   const [startFlg, setStartFlg] = useState(true);
   // リダイレクトを一度だけ行うためのフラグ
   const [redirected, setRedirected] = useState(false);
 
-  //タイマーのカウントを減らす関数。インクリメント関数というらしい。
-  const countIncrement = () => {
-    setCount((prevCount) => {
-      if (prevCount <= 1) {
-        if (!redirected) {
-          if (onTickComplete) {
-            onTickComplete({ currentPathname: window.location.pathname, task });
-          }
-          setRedirected(true);
-        }
-        return 0;
+  // タイマー情報の維持用Ref（React Lifecycle外での管理）
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const targetTimeRef = useRef<number | null>(null);
+  const countRef = useRef(CURRENT_DURATION);
+  
+  // コールバック内で最新のprops/stateを参照するためのRef
+  const onTickCompleteRef = useRef(onTickComplete);
+  const taskRef = useRef(task);
+
+  // propsやstateの変更を反映する
+  useEffect(() => {
+    countRef.current = count;
+    onTickCompleteRef.current = onTickComplete;
+    taskRef.current = task;
+  }, [count, onTickComplete, task]);
+
+  // タイマーの更新処理
+  const handleTick = () => {
+    if (targetTimeRef.current === null) return;
+
+    // 現在の「目標終了時刻 - 現在時刻」から残り時間（秒）を割り出し、画面状態を更新
+    const remainingTime = Math.max(
+      0,
+      Math.ceil((targetTimeRef.current - Date.now()) / 1000)
+    );
+
+    setCount(remainingTime);
+
+    if (remainingTime <= 0) {
+      if (timerRef.current !== null) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
       }
-      return prevCount - 1;
-    });
-  };
+      targetTimeRef.current = null;
 
-  //最初に実行される関数。カウント開始。クリーンアップ関数も定義している。
-  const startFunc = () => {
-    //1秒ごとにcountIncrement関数を実行する。
-    timer = setInterval(countIncrement, 1000);
-
-    //Progressbarコンポーネント関数がアンマウントされたら、実行されるクリーンアップ関数。
-    return () => {
-      console.log("タイマーストップ");
-    };
+      // コールバック重複実行を防ぐため、state の関数形式を使って更新可能か確認
+      setRedirected((prev) => {
+        if (!prev) {
+          if (onTickCompleteRef.current) {
+            // onTickComplete は Promise<void> | void を返す可能性があるため、
+            // Promise.resolve(...).catch(...) でエラー／rejection を握ってログ出力する
+            void Promise.resolve(
+              onTickCompleteRef.current({
+                currentPathname: window.location.pathname,
+                task: taskRef.current,
+              })
+            ).catch((error) => {
+              // 必要に応じて集中ログ基盤などへ置き換え可能
+              console.error("onTickComplete callback failed:", error);
+            });
+          }
+          return true;
+        }
+        return prev;
+      });
+    }
   };
 
   //カウントを止める関数。
   const countStop = () => {
-    // 関数clearIntervalでタイマーを停止する
-    if (timer !== null) {
-      clearInterval(timer);
+    if (timerRef.current !== null) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
     }
-
-    // タイマーを止めた時のカウントを保持する
-    setCount(count);
-    console.log(count);
-
+    // 残り時間に誤差が出ないようターゲットをリセット
+    targetTimeRef.current = null;
     setStartFlg(true);
   };
 
   //カウントを再開する関数。
   const countStart = () => {
-    timer = setInterval(countIncrement, 1000);
+    if (timerRef.current !== null) return;
+    // 開始時に「現在時刻 ＋ 残り時間」を目標終了時刻として記録する
+    targetTimeRef.current = Date.now() + countRef.current * 1000;
+    // ブラウザのバックグラウンド待機の影響を最小限にするため100msごとに高頻度チェック
+    timerRef.current = setInterval(handleTick, 100);
     setStartFlg(false);
   };
 
-  //もしtimer-start-screenにいたら、スタートボタンを押した時にtimer-working-screenに移動する。
+  // StartButton が押されたときは、ルートに依存せず常にカウントを開始／再開する。
   const handleStartButtonClick = () => {
-    if (window.location.pathname === "/timer-start-screen") {
-      if (onStartFromStartScreen) {
-        onStartFromStartScreen();
-      }
-    } else {
-      countStart();
-    }
+    countStart();
   };
 
+  //---------------------------------------------------------------------------------------
+  //ここからキャンバスの描画
   //---------------------------------------------------------------------------------------
   //ここからキャンバスの描画
   //---------------------------------------------------------------------------------------
@@ -125,15 +155,16 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
       ctx.lineWidth = 3;
       ctx.strokeRect(x, y, rectWidth, rectHeight);
 
-      if (window.location.pathname === "/timer-break-screen") {
-        ctx.fillStyle = "rgb(251, 253, 161)"; /*黄色*/
+      // 休憩中かどうかで色を分岐（URL ではなく isTask に依存）
+      if (isTask === false) {
+        ctx.fillStyle = "rgb(251, 253, 161)"; /*黄色（休憩）*/
       } else {
-        ctx.fillStyle = "rgb(178, 223, 242)"; /*水色*/
+        ctx.fillStyle = "rgb(178, 223, 242)"; /*水色（作業）*/
       }
       ctx.fillRect(
         x + 2,
         y + 2,
-        (rectWidth - 4) * (count / progress),
+        (rectWidth - 4) * (count / CURRENT_DURATION),
         rectHeight - 4,
       );
     }
@@ -146,12 +177,12 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
     return () => {
       window.removeEventListener("resize", updateCanvasSize);
     };
-  }, []);
+  }, [isTask]);
 
-  // countが変わるたびに再描画
+  // count や isTask が変わるたびに再描画
   useEffect(() => {
     updateCanvasSize();
-  }, [count]);
+  }, [count, isTask]);
 
   // 特定のURLにいるときにカウントを自動的にスタートする
   useEffect(() => {
@@ -162,8 +193,9 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
       countStart();
     }
     return () => {
-      if (timer !== null) {
-        clearInterval(timer);
+      if (timerRef.current !== null) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
       }
     };
   }, []);

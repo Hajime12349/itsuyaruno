@@ -5,7 +5,7 @@ export default function ProgressBarUnitTest() {
   return (
     <main>
       <div>
-        <ProgressBar isTask={false} progress={10} task={undefined} />
+        <ProgressBar isTask={false} task={undefined} />
       </div>
     </main>
   );
