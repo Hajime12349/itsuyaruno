@@ -115,13 +115,13 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
     setStartFlg(false);
   };
 
-  //もしtimer-start-screenにいたら、スタートボタンを押した時にtimer-working-screenに移動する。
+  // StartButton が押されたときは、ルートに依存せず常にカウントを開始／再開する。
   const handleStartButtonClick = () => {
-    if (window.location.pathname === "/timer-start-screen") {
-      countStart();
-    }
+    countStart();
   };
 
+  //---------------------------------------------------------------------------------------
+  //ここからキャンバスの描画
   //---------------------------------------------------------------------------------------
   //ここからキャンバスの描画
   //---------------------------------------------------------------------------------------
