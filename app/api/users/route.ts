@@ -142,10 +142,10 @@ export async function PUT(req: Request) {
   const body = await req.json().catch(() => ({}));
   const {
     id: requestedId,
-    display_name,
-    icon_path,
-    current_task,
-    current_task_time,
+    displayName,
+    iconPath,
+    currentTask,
+    currentTaskTime,
   } = body ?? {};
 
   const id = requestedId ?? sessionUserId;
@@ -193,16 +193,16 @@ export async function PUT(req: Request) {
     const updatedUser = await updateUseCase.execute({
       id,
       displayName: hasDisplayName
-        ? normalizeRequiredText("display_name", display_name)
+        ? normalizeRequiredText("displayName", displayName)
         : existingUserPlain.displayName,
       iconPath: hasIconPath
-        ? normalizeOptionalText("icon_path", icon_path)
+        ? normalizeOptionalText("iconPath", iconPath)
         : existingUserPlain.iconPath,
       currentTask: hasCurrentTask
-        ? normalizeOptionalTaskId("current_task", current_task)
+        ? normalizeOptionalTaskId("currentTask", currentTask)
         : existingUserPlain.currentTask,
       currentTaskTime: hasCurrentTaskTime
-        ? normalizeOptionalDateTime("current_task_time", current_task_time)
+        ? normalizeOptionalDateTime("currentTaskTime", currentTaskTime)
         : existingUserPlain.currentTaskTime,
     });
 

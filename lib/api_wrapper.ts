@@ -8,6 +8,8 @@ export type TaskCreatePayload = OptionalKeys<Task, "id" | "user_id">;
 export type TaskUpdatePayload = OptionalKeys<Task, "user_id">;
 export type UserUpsertPayload = OptionalKeys<User, "id">;
 
+export type UserUpdatePayload = Partial<User> & { id: string };
+
 /**
  * タスクの一覧を取得します。
  * @returns タスクの配列をPromiseとして返します。
@@ -149,6 +151,7 @@ export async function updateUser(user: UserUpsertPayload): Promise<User> {
       const text = await response.text();
       throw new Error(`Update failed: ${response.status} ${text}`);
     }
+    console.log("ユーザー情報を作成しました。", user);
     return (await response.json()) as Promise<User>;
   }
 
@@ -161,6 +164,26 @@ export async function updateUser(user: UserUpsertPayload): Promise<User> {
     const text = await response.text();
     throw new Error(`Update failed: ${response.status} ${text}`);
   }
+  console.log("ユーザー情報を更新しました。", user);
+  return (await response.json()) as Promise<User>;
+}
+
+/**
+ * ユーザー情報を部分更新(PATCH)します。
+ * @param user 更新するユーザー情報（idは必須）
+ * @returns 更新されたユーザーをPromiseとして返します。
+ */
+export async function patchUser(user: UserUpdatePayload): Promise<User> {
+  const response = await fetch(`/api/users/${user.id}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(user),
+  });
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`Patch failed: ${response.status} ${text}`);
+  }
+  console.log("ユーザー情報を部分更新しました。", user);
   return (await response.json()) as Promise<User>;
 }
 

@@ -19,10 +19,15 @@ export default function TimerStartScreen() {
   useEffect(() => {
     getUser().then((user) => {
       setUser(user);
+      console.log("ユーザー情報を取得しました:", user); 
       if (user.currentTask) {
         getTask(user.currentTask).then((task) => {
           setCurrentTask(task);
+          console.log("task", task);
         });
+      }
+      else {
+        console.log("currentTaskが設定されていません", user.currentTask);
       }
     });
   }, []);

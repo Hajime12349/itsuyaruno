@@ -1,6 +1,6 @@
 import React from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { updateUser } from "@/lib/api_wrapper";
+import { patchUser } from "@/lib/api_wrapper";
 import type { ITaskDataModel as Task } from "@/application/tasks/TaskDataModelMapper";
 import type { IUserDataModel as User} from "@/application/users/UserDataModelMapper";
 import EditTaskButton from "./EditTaskButton";
@@ -48,13 +48,12 @@ const TaskPanel: React.FC<TaskPanelProps> = ({
 
   async function handleStart(selectedTask: Task) {
     try {
-      const payload: User = {
+      const payload = {
         id: selectedTask.user_id,
-        displayName: "",
         currentTask: selectedTask.id,
         currentTaskTime: new Date().toISOString(),
       };
-      await updateUser(payload);
+      await patchUser(payload);
       router.replace("/timer-start-screen");
     } catch (e) {
       console.error(e);
