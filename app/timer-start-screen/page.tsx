@@ -14,9 +14,10 @@ import styles from "./TimerStartScreen.module.css";
 export default function TimerStartScreen() {
   const [user, setUser] = useState<User | undefined>();
   const [currentTask, setCurrentTask] = useState<Task | undefined>();
+  const [isTask, setIsTask] = useState(true);
   const router = useRouter();
-  const WORK_DURATION = process.env.NODE_ENV === "development" ? 3 : 1500;
-
+  
+  
   useEffect(() => {
     getUser().then((user) => {
       setUser(user);
@@ -33,10 +34,11 @@ export default function TimerStartScreen() {
     });
   }, []);
 
-  const handleWorkTimerComplete = async () => {
+  const handleTimerComplete = async () => {
+
+    if (isTask) {
       if (!currentTask || typeof currentTask.id !== "number") {
-        router.replace("/timer-break-screen");
-        return;
+        throw new Error("currentTask is not defined");
       }
   
       const nextSet = Math.min(
@@ -51,9 +53,12 @@ export default function TimerStartScreen() {
       } catch (error) {
         console.error("タスクのセット数更新に失敗しました", error);
       } finally {
-        router.replace("/timer-break-screen");
+        setIsTask(false);
       }
-    };
+    } else {
+      router.replace("/timer-finish-screen");
+    }
+  };
 
   return (
     <NextAuthProvider>
@@ -62,10 +67,10 @@ export default function TimerStartScreen() {
           <Header />
           <div className={styles.TaskTextComponets}>
             <ProgressBar
+              key={isTask ? "task" : "break"}
               task={currentTask}
-              isTask={true}
-              progress={WORK_DURATION}
-              onTickComplete={handleWorkTimerComplete}
+              isTask={isTask}
+              onTickComplete={handleTimerComplete}
             />
           </div>
           <div className={styles.NavigateTaskButton}>

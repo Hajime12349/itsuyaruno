@@ -11,7 +11,6 @@ import styles from "./ProgressBar.module.css";
 interface ProgressBarProps {
   task: Task | undefined;
   isTask: boolean;
-  progress: number;
   onTickComplete?: (context: {
     currentPathname: string;
     task?: Task;
@@ -23,18 +22,22 @@ interface ProgressBarProps {
 const ProgressBar: React.FC<ProgressBarProps> = ({
   task,
   isTask,
-  progress,
   onTickComplete,
   onStartFromStartScreen,
 }) => {
   // const router = useRouter();
+
+  const TIMER_DURATION = process.env.NODE_ENV === "development" ? 5 : 1500;
+  const BREAK_DURATION = process.env.NODE_ENV === "development" ? 3 : 300;
+
+  const CURRENT_DURATION = isTask ? TIMER_DURATION : BREAK_DURATION;
 
   //---------------------------------------------------------------------------------------
   //ここからタイマーのカウント
   //---------------------------------------------------------------------------------------
 
   //タイマーのカウントを保持
-  const [count, setCount] = useState(progress);
+  const [count, setCount] = useState(CURRENT_DURATION);
   //停止か再開かを判別
   const [startFlg, setStartFlg] = useState(true);
   // リダイレクトを一度だけ行うためのフラグ
@@ -43,7 +46,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
   // タイマー情報の維持用Ref（React Lifecycle外での管理）
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const targetTimeRef = useRef<number | null>(null);
-  const countRef = useRef(progress);
+  const countRef = useRef(CURRENT_DURATION);
   
   // コールバック内で最新のprops/stateを参照するためのRef
   const onTickCompleteRef = useRef(onTickComplete);
@@ -153,7 +156,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
       ctx.fillRect(
         x + 2,
         y + 2,
-        (rectWidth - 4) * (count / progress),
+        (rectWidth - 4) * (count / CURRENT_DURATION),
         rectHeight - 4,
       );
     }
