@@ -12,7 +12,7 @@ import type { IUserDataModel as User} from "@/application/users/UserDataModelMap
 import styles from "./TimerStartScreen.module.css";
 
 export default function TimerStartScreen() {
-  const [user, setUser] = useState<User | undefined>();
+  const [, setUser] = useState<User | undefined>(); // user はこのコンポーネント内で未使用のため、値部分を破棄する
   const [currentTask, setCurrentTask] = useState<Task | undefined>();
   const [isTask, setIsTask] = useState(true);
   const router = useRouter();
