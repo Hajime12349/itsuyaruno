@@ -16,7 +16,6 @@ interface ProgressBarProps {
     task?: Task;
   }) => Promise<void> | void;
 }
-}
 
 //定義した形の引数を受け取る関数
 const ProgressBar: React.FC<ProgressBarProps> = ({
