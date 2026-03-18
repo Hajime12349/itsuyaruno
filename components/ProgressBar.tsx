@@ -148,10 +148,11 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
       ctx.lineWidth = 3;
       ctx.strokeRect(x, y, rectWidth, rectHeight);
 
-      if (window.location.pathname === "/timer-break-screen") {
-        ctx.fillStyle = "rgb(251, 253, 161)"; /*黄色*/
+      // 休憩中かどうかで色を分岐（URL ではなく isTask に依存）
+      if (isTask === false) {
+        ctx.fillStyle = "rgb(251, 253, 161)"; /*黄色（休憩）*/
       } else {
-        ctx.fillStyle = "rgb(178, 223, 242)"; /*水色*/
+        ctx.fillStyle = "rgb(178, 223, 242)"; /*水色（作業）*/
       }
       ctx.fillRect(
         x + 2,
@@ -169,12 +170,12 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
     return () => {
       window.removeEventListener("resize", updateCanvasSize);
     };
-  }, []);
+  }, [isTask]);
 
-  // countが変わるたびに再描画
+  // count や isTask が変わるたびに再描画
   useEffect(() => {
     updateCanvasSize();
-  }, [count]);
+  }, [count, isTask]);
 
   // 特定のURLにいるときにカウントを自動的にスタートする
   useEffect(() => {
