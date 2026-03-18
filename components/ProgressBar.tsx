@@ -91,10 +91,6 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
   //もしtimer-start-screenにいたら、スタートボタンを押した時にtimer-working-screenに移動する。
   const handleStartButtonClick = () => {
     if (window.location.pathname === "/timer-start-screen") {
-      if (onStartFromStartScreen) {
-        onStartFromStartScreen();
-      }
-    } else {
       countStart();
     }
   };
