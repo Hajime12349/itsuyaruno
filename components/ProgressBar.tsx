@@ -82,9 +82,16 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
       setRedirected((prev) => {
         if (!prev) {
           if (onTickCompleteRef.current) {
-            onTickCompleteRef.current({ 
-              currentPathname: window.location.pathname, 
-              task: taskRef.current 
+            // onTickComplete は Promise<void> | void を返す可能性があるため、
+            // Promise.resolve(...).catch(...) でエラー／rejection を握ってログ出力する
+            void Promise.resolve(
+              onTickCompleteRef.current({
+                currentPathname: window.location.pathname,
+                task: taskRef.current,
+              })
+            ).catch((error) => {
+              // 必要に応じて集中ログ基盤などへ置き換え可能
+              console.error("onTickComplete callback failed:", error);
             });
           }
           return true;
