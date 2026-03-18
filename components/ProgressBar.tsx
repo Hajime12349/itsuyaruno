@@ -15,7 +15,7 @@ interface ProgressBarProps {
     currentPathname: string;
     task?: Task;
   }) => Promise<void> | void;
-  onStartFromStartScreen?: () => void;
+}
 }
 
 //定義した形の引数を受け取る関数
@@ -23,8 +23,8 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
   task,
   isTask,
   onTickComplete,
-  onStartFromStartScreen,
 }) => {
+
   // const router = useRouter();
 
   const TIMER_DURATION = process.env.NODE_ENV === "development" ? 5 : 1500;
