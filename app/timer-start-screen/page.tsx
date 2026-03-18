@@ -38,7 +38,10 @@ export default function TimerStartScreen() {
 
     if (isTask) {
       if (!currentTask || typeof currentTask.id !== "number") {
-        throw new Error("currentTask is not defined");
+        // currentTask が取得できていない場合は未処理例外を投げず、安全なフォールバックとして完了画面へ遷移する
+        console.error("currentTask is not defined. Redirecting to /timer-finish-screen as a safe fallback.");
+        router.replace("/timer-finish-screen");
+        return;
       }
   
       const nextSet = Math.min(
