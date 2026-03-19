@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { NextAuthProvider } from "@/app/provider";
 import { getUser } from "@/lib/api_wrapper";
+import LoadingScreen from "@/components/common/LoadingScreen";
 
 const LoggedIn = () => {
   const router = useRouter();
@@ -31,7 +32,7 @@ const LoggedIn = () => {
 
   return (
     <NextAuthProvider>
-      <div>{<div>loading...</div>}</div>
+      <LoadingScreen />
     </NextAuthProvider>
   );
 };
