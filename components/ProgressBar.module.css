@@ -26,6 +26,12 @@
   margin: 0;
 }
 
+@media (max-width: 768px) {
+  .TaskText {
+    font-size: 40px;
+  }
+}
+
 .TaskLogo {
   font-size: 20px;
   text-align: center;
@@ -33,3 +39,8 @@
   border: 2px solid black;
   padding: 5px 10px;
 }
+/* 
+#progress-bar {
+  width: 120px;
+  height: 150px;
+} */

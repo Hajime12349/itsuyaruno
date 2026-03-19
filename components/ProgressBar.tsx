@@ -138,12 +138,13 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
   // キャンバスサイズ更新関数を定義
   const updateCanvasSize = () => {
     const canvas = canvasRef.current;
+    const isMobile = window.innerWidth < 768;
     if (canvas) {
       canvas.width = window.innerWidth;
       canvas.height = 100;
       const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 
-      const rectWidth = window.innerWidth * 0.4;
+      const rectWidth = isMobile ? window.innerWidth * 0.8 : window.innerWidth * 0.4;
       const rectHeight = 100;
       const x = (canvas.width - rectWidth) / 2;
       const y = (canvas.height - rectHeight) / 2;
@@ -216,9 +217,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
         </div>
         <canvas
           ref={canvasRef}
-          id="canvas-in"
-          width="100"
-          height="150"
+          id="progress-bar"
         ></canvas>
         <div
           style={{
