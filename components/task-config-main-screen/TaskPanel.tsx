@@ -4,7 +4,7 @@ import { patchUser } from "@/lib/api_wrapper";
 import type { ITaskDataModel as Task } from "@/application/tasks/TaskDataModelMapper";
 import type { IUserDataModel as User} from "@/application/users/UserDataModelMapper";
 import EditTaskButton from "./EditTaskButton";
-import TaskStartButton from "./TaskStartButton";
+import StartTaskButton from "./StartTaskButton";
 import styles from "./TaskPanel.module.css";
 
 
@@ -74,7 +74,7 @@ const TaskPanel: React.FC<TaskPanelProps> = ({
           isSelected ? styles.buttonContainer : styles.buttonContainerHidden
         }
       >
-        <TaskStartButton task={task} onStart={handleStart} />
+        <StartTaskButton task={task} onStart={handleStart} />
         {pathname === "/task-config-main-screen" && (
           <EditTaskButton onClick={openEditTaskWindow} />
         )}

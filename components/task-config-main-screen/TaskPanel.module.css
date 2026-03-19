@@ -1,34 +1,50 @@
 .content {
-  border-radius: 10px;
-  background-color: skyblue;
-  padding: 20px;
-  width: 300px;
-  height: auto;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #eef4fb 0%, #ddeaf8 100%);
+  padding: 16px 18px;
+  width: 100%;
   box-sizing: border-box;
+  box-shadow: 0 2px 8px rgba(74, 144, 226, 0.1);
+  cursor: pointer;
+  transition: box-shadow 0.18s, transform 0.18s;
+}
+
+.content:hover {
+  box-shadow: 0 6px 18px rgba(74, 144, 226, 0.22);
+  transform: translateY(-2px);
 }
 
 .title {
-  font-family: '游ゴシック', sans-serif;
+  font-family: 'Noto Sans JP', 'M PLUS Rounded 1c', sans-serif;
   margin: 0 0 10px 0;
-  font-size: 20px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a2d4e;
+  word-break: break-word;
 }
 
 .text {
-  font-family: '游ゴシック', sans-serif;
-  margin: 0 0 10px 0;
+  font-family: 'Noto Sans JP', 'M PLUS Rounded 1c', sans-serif;
+  margin: 0 0 6px 0;
+  font-size: 14px;
+  color: #445;
 }
 
 .flexContainer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+  gap: 6px;
 }
 
 .buttonContainer {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
+  gap: 10px;
+  margin-top: 10px;
 }
 
 .buttonContainerHidden {

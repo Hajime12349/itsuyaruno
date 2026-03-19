@@ -1,23 +1,206 @@
+/* ========== オーバーレイ ========== */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+/* ========== モーダルカード ========== */
+.modal {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+  width: min(90vw, 480px);
+  max-height: 90vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.2s ease;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(24px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+/* ========== ヘッダー ========== */
 .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    background-color: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid #eee;
 }
 
-.close-button {
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    margin-left: auto; /* ボタンを右端に配置 */
+.header h1 {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+  color: #1a1a2e;
 }
 
+/* ========== 閉じるボタン ========== */
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  color: #888;
+  padding: 4px 8px;
+  border-radius: 8px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.closeButton:hover {
+  background: #f0f0f0;
+  color: #333;
+}
+
+/* ========== フォーム本体 ========== */
+.body {
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ========== フォームグループ（ラベル＋インプット） ========== */
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #444;
+  letter-spacing: 0.03em;
+}
+
+/* ========== 入力欄 ========== */
+.input {
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 16px;
+  border: 1.5px solid #d0d5dd;
+  border-radius: 8px;
+  box-sizing: border-box;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  outline: none;
+  background: #fafafa;
+  font-family: inherit;
+}
+
+.input:focus {
+  border-color: #4a90e2;
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.18);
+  background: #fff;
+}
+
+/* ========== ボタン行 ========== */
+.buttonRow {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  padding: 0 24px 24px;
+}
+
+/* ========== プライマリボタン（追加・編集） ========== */
+.primaryButton {
+  background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 28px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.12s, box-shadow 0.12s, filter 0.12s;
+  box-shadow: 0 3px 10px rgba(74, 144, 226, 0.35);
+  letter-spacing: 0.04em;
+}
+
+.primaryButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(74, 144, 226, 0.45);
+  filter: brightness(1.05);
+}
+
+.primaryButton:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(74, 144, 226, 0.3);
+}
+
+.primaryButton:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* ========== 危険操作ボタン（削除） ========== */
+.dangerButton {
+  background: none;
+  color: #d9534f;
+  border: 1.5px solid #d9534f;
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.dangerButton:hover:not(:disabled) {
+  background: #d9534f;
+  color: #fff;
+}
+
+.dangerButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ========== セカンダリボタン（詳細設定トグルなど） ========== */
+.secondaryButton {
+  background: none;
+  color: #4a90e2;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: opacity 0.15s;
+}
+
+.secondaryButton:hover {
+  opacity: 0.75;
+}
+
+/* ========== 削除ボタン（旧・互換用、不要なら削除可） ========== */
 .trashButton {
-    background: none;
-    border: black;
-    font-size: 24px;
-    cursor: pointer;
-    margin-left: auto; /* ボタンを右端に配置 */
+  background: none;
+  border: 1.5px solid #d9534f;
+  color: #d9534f;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.trashButton:hover {
+  background: #d9534f;
+  color: #fff;
 }

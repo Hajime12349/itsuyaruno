@@ -1,12 +1,18 @@
-.editButton {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    background-color: #dad6d6;
-    border: none;
-    cursor: pointer;
+.EditButton {
+  min-width: 90px;
+  height: 36px;
+  border-radius: 8px;
+  background: #f0f4f8;
+  color: #4a90e2;
+  border: 1.5px solid #4a90e2;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0 14px;
+  transition: background 0.15s, color 0.15s;
 }
 
-.editButton:hover {
-    background-color: #dad6d6;
+.EditButton:hover {
+  background: #4a90e2;
+  color: #fff;
 }
