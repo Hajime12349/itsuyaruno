@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import Image from "next/image";
 import type { ITaskDataModel as Task } from "@/application/tasks/TaskDataModelMapper";
 import TaskImage from "@/public/icon_3.png";
@@ -10,7 +10,6 @@ import styles from "./ProgressBar.module.css";
 //形を定義するのがここ
 interface ProgressBarProps {
   task: Task | undefined;
-  isTask: boolean;
   onTickComplete?: (context: {
     currentPathname: string;
     task?: Task;
@@ -20,16 +19,17 @@ interface ProgressBarProps {
 //定義した形の引数を受け取る関数
 const ProgressBar: React.FC<ProgressBarProps> = ({
   task,
-  isTask,
   onTickComplete,
 }) => {
+  // taskが渡されているかで作業か休憩かを判定
+  const isTaskMode = task !== undefined;
 
   // const router = useRouter();
 
   const TIMER_DURATION = process.env.NODE_ENV === "development" ? 5 : 1500;
   const BREAK_DURATION = process.env.NODE_ENV === "development" ? 3 : 300;
 
-  const CURRENT_DURATION = isTask ? TIMER_DURATION : BREAK_DURATION;
+  const CURRENT_DURATION = isTaskMode ? TIMER_DURATION : BREAK_DURATION;
 
   //---------------------------------------------------------------------------------------
   //ここからタイマーのカウント
@@ -136,7 +136,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   // キャンバスサイズ更新関数を定義
-  const updateCanvasSize = () => {
+  const updateCanvasSize = useCallback(() => {
     const canvas = canvasRef.current;
     const isMobile = window.innerWidth < 768;
     if (canvas) {
@@ -155,8 +155,8 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
       ctx.lineWidth = 3;
       ctx.strokeRect(x, y, rectWidth, rectHeight);
 
-      // 休憩中かどうかで色を分岐（URL ではなく isTask に依存）
-      if (isTask === false) {
+      // 休憩中かどうかで色を分岐（URL ではなく isTaskMode に依存）
+      if (isTaskMode === false) {
         ctx.fillStyle = "rgb(251, 253, 161)"; /*黄色（休憩）*/
       } else {
         ctx.fillStyle = "rgb(178, 223, 242)"; /*水色（作業）*/
@@ -168,21 +168,20 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
         rectHeight - 4,
       );
     }
-  };
+  }, [count, isTaskMode, CURRENT_DURATION]);
 
-  // 初期描画とウィンドウサイズ変更時の再描画
+  // ウィンドウサイズ変更時の再描画イベント登録（リサイズ監視の責務）
   useEffect(() => {
-    updateCanvasSize();
     window.addEventListener("resize", updateCanvasSize);
     return () => {
       window.removeEventListener("resize", updateCanvasSize);
     };
-  }, [isTask]);
+  }, [updateCanvasSize]);
 
-  // count や isTask が変わるたびに再描画
+  // 値変更時の再描画（UI更新の責務）
   useEffect(() => {
     updateCanvasSize();
-  }, [count, isTask]);
+  }, [updateCanvasSize]);
 
   // 特定のURLにいるときにカウントを自動的にスタートする
   useEffect(() => {
@@ -211,7 +210,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
         <div className={styles.TaskTextComponents}>
           <h2 className={styles.TaskText}>
             {" "}
-            {isTask ? task?.task_name || "loading..." : "休憩"}
+            {isTaskMode && task ? task.task_name : "休憩"}
           </h2>
           <h2 className={styles.TaskLogo}>ロゴマーク</h2>
         </div>
@@ -226,12 +225,11 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
             marginTop: "40px",
           }}
         >
-          {task &&
-            (startFlg ? (
-              <StartButton onClick={handleStartButtonClick} />
-            ) : (
-              <StopButton onClick={countStop} />
-            ))}
+          {startFlg ? (
+            <StartButton onClick={handleStartButtonClick} />
+          ) : (
+            <StopButton onClick={countStop} />
+          )}
         </div>
       </div>
     </div>

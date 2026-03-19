@@ -69,16 +69,21 @@ export default function TimerStartScreen() {
         <main className={styles.main}>
           <Header />
           <div className={styles.TaskTextComponets}>
-            <ProgressBar
-              key={isTask ? "task" : "break"}
-              task={currentTask}
-              isTask={isTask}
-              onTickComplete={handleTimerComplete}
-            />
+            {isTask && !currentTask ? (
+              <h2 className={styles.TaskText}>loading...</h2>
+            ) : (
+              <ProgressBar
+                key={isTask ? "task" : "break"}
+                task={isTask ? currentTask : undefined}
+                onTickComplete={handleTimerComplete}
+              />
+            )}
           </div>
-          <div className={styles.NavigateTaskButton}>
-            <NavigateTaskButton />
-          </div>
+          {isTask && (
+            <div className={styles.NavigateTaskButton}>
+              <NavigateTaskButton />
+            </div>
+          )}
         </main>
       </WithLoggedIn>
     </NextAuthProvider>
