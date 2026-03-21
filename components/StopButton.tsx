@@ -11,8 +11,10 @@ interface ButtonProps {
 const StopButton: React.FC<ButtonProps> = ({ onClick }) => {
   return (
     <button
+      type="button"
       className={`${styles.startStopButton} ${styles.stopButton}`}
       onClick={onClick}
+      aria-label="タイマーを停止"
     >
       <div className={styles.startStopIcon}>
         <MdStop className={styles.muiIcon} />

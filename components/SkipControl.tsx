@@ -39,12 +39,14 @@ const SkipControl: React.FC<SkipControlProps> = ({ isTaskMode, onConfirm }) => {
             <p className={styles.skipDialogMessage}>{message}</p>
             <div className={styles.skipDialogButtons}>
               <button
+                type="button"
                 className={styles.skipConfirmButton}
                 onClick={handleConfirm}
               >
                 はい
               </button>
               <button
+                type="button"
                 className={styles.skipCancelButton}
                 onClick={() => setShowDialog(false)}
               >

@@ -63,7 +63,7 @@ const AddTaskWindow = ({ onSubmitTask, onClose }: AddTaskWindowProps) => {
         {/* ヘッダー */}
         <div className={styles.header}>
           <h1>タスクを追加</h1>
-          <button className={styles.closeButton} onClick={onClose}>
+          <button type="button" className={styles.closeButton} onClick={onClose} aria-label="閉じる">
             ×
           </button>
         </div>

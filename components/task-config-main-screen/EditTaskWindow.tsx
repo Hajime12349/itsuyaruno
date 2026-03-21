@@ -113,7 +113,7 @@ const EditTaskWindow = ({
         {/* ヘッダー */}
         <div className={styles.header}>
           <h1>タスクを編集</h1>
-          <button className={styles.closeButton} onClick={onClose}>
+          <button type="button" className={styles.closeButton} onClick={onClose} aria-label="閉じる">
             ×
           </button>
         </div>

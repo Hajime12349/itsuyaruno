@@ -6,6 +6,7 @@ import styles from "./SignOutButton.module.css";
 export default function SignOutButton() {
   return (
     <button
+      type="button"
       className={styles.outButton}
       onClick={() =>
         signOut({

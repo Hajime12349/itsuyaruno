@@ -28,7 +28,7 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({ onClose }) => {
           </label>
         </div>
         <SignOutButton />
-        <button className={styles.closeButton} onClick={onClose}>
+        <button type="button" className={styles.closeButton} onClick={onClose}>
           サイドバーを閉じる
         </button>
       </div>

@@ -13,7 +13,7 @@ const SettingsButton: React.FC<SettingsButtonProps> = ({
   onClick = () => {},
 }) => {
   return (
-    <button className={styles.settingsButton} onClick={onClick}>
+    <button type="button" className={styles.settingsButton} onClick={onClick} aria-label="設定を開く">
       <Image src={settingsIcon} alt="Settings" width={64} height={64} />
     </button>
   );
