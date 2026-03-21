@@ -2,8 +2,7 @@
 
 import SettingsButton from "@/components/SettingsButton";
 import styles from "./Header.module.css";
-import { useReducer, useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
+import { useState } from "react"; // 未使用の useReducer, useEffect を削除
 import ConfigSidebar from "./ConfigSidebar";
 
 interface HeaderProps {}
