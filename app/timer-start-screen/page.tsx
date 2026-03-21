@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { NextAuthProvider, WithLoggedIn } from "@/app/provider";
 import Header from "@/components/Header";
