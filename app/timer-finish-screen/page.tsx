@@ -106,8 +106,8 @@ export default function TimerFinishScreen() {
             <div className={styles.AskFinish}>
               <h2>現在のタスクは終わりましたか？</h2>
               <div className={styles.AskButtonDiv}>
-                <button onClick={decideChange}>はい</button>
-                <button onClick={decideContinue}>いいえ</button>
+                <button type="button" onClick={decideChange}>はい</button>
+                <button type="button" onClick={decideContinue}>いいえ</button>
               </div>
             </div>
           ) : (
@@ -124,6 +124,7 @@ export default function TimerFinishScreen() {
                 ) : (
                   <div>
                     <button
+                      type="button"
                       className={styles.TaskContinue}
                       onClick={pageTransition}
                     >

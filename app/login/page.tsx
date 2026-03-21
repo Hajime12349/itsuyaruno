@@ -27,6 +27,7 @@ const GoogleSignInButton: React.FC = () => {
         いつやるの？ | When will you do it?
       </h1>
       <button
+        type="button"
         className={styles.gsiMaterialButton}
         onClick={() => {
           if (session.status === "authenticated") {

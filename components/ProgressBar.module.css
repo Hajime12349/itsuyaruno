@@ -39,3 +39,12 @@
   border: 2px solid black;
   padding: 5px 10px;
 }
+
+/* Start/Stop + Skip ボタン横並びコンテナ */
+.controlButtons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 40px;
+}

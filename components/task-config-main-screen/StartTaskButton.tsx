@@ -18,7 +18,7 @@ const StartTaskButton: React.FC<StartTaskButtonProps> = ({ task, onStart }) => {
 
   // TSXを返す
   // TODO: ボタンのスタイルを設定する
-  return <button className={styles.StartButton} onClick={handleClick}>開始</button>;
+  return <button type="button" className={styles.StartButton} onClick={handleClick}>開始</button>;
 };
 
 export default StartTaskButton;

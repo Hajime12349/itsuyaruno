@@ -10,7 +10,7 @@ interface ButtonProps {
 
 const StartButton: React.FC<ButtonProps> = ({ onClick }) => {
   return (
-    <button className={styles.startStopButton} onClick={onClick}>
+    <button type="button" className={styles.startStopButton} onClick={onClick} aria-label="タイマーを開始">
       <div className={styles.startStopIcon}>
         <MdPlayArrow className={styles.muiIcon} />
       </div>

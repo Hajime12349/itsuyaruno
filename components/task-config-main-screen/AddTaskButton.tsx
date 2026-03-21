@@ -13,7 +13,7 @@ const AddTaskButton: React.FC<AddTaskButtonProps> = ({
     setIsAddModalActive(true);
   };
   return (
-    <button className={styles.addButton} onClick={handleClick}>
+    <button type="button" className={styles.addButton} onClick={handleClick}>
       ＋ タスクを追加
     </button>
   );

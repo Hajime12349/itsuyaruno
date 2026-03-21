@@ -5,6 +5,7 @@ import type { ITaskDataModel as Task } from "@/application/tasks/TaskDataModelMa
 import TaskImage from "@/public/icon_3.png";
 import StartButton from "./StartButton";
 import StopButton from "./StopButton";
+import SkipControl from "./SkipControl";
 import styles from "./ProgressBar.module.css";
 
 //形を定義するのがここ
@@ -58,6 +59,30 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
     taskRef.current = task;
   }, [count, onTickComplete, task]);
 
+  // タイマー完了時の共通処理: onTickComplete を一度だけ呼び出す
+  const triggerComplete = () => {
+    // コールバック重複実行を防ぐため、state の関数形式を使って更新可能か確認
+    setRedirected((prev) => {
+      if (!prev) {
+        if (onTickCompleteRef.current) {
+          // onTickComplete は Promise<void> | void を返す可能性があるため、
+          // Promise.resolve(...).catch(...) でエラー／rejection を握ってログ出力する
+          void Promise.resolve(
+            onTickCompleteRef.current({
+              currentPathname: window.location.pathname,
+              task: taskRef.current,
+            })
+          ).catch((error) => {
+            // 必要に応じて集中ログ基盤などへ置き換え可能
+            console.error("onTickComplete callback failed:", error);
+          });
+        }
+        return true;
+      }
+      return prev;
+    });
+  };
+
   // タイマーの更新処理
   const handleTick = () => {
     if (targetTimeRef.current === null) return;
@@ -77,26 +102,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
       }
       targetTimeRef.current = null;
 
-      // コールバック重複実行を防ぐため、state の関数形式を使って更新可能か確認
-      setRedirected((prev) => {
-        if (!prev) {
-          if (onTickCompleteRef.current) {
-            // onTickComplete は Promise<void> | void を返す可能性があるため、
-            // Promise.resolve(...).catch(...) でエラー／rejection を握ってログ出力する
-            void Promise.resolve(
-              onTickCompleteRef.current({
-                currentPathname: window.location.pathname,
-                task: taskRef.current,
-              })
-            ).catch((error) => {
-              // 必要に応じて集中ログ基盤などへ置き換え可能
-              console.error("onTickComplete callback failed:", error);
-            });
-          }
-          return true;
-        }
-        return prev;
-      });
+      triggerComplete();
     }
   };
 
@@ -124,6 +130,21 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
   // StartButton が押されたときは、ルートに依存せず常にカウントを開始／再開する。
   const handleStartButtonClick = () => {
     countStart();
+  };
+
+  // スキップを確定: タイマーを止めてカウントを0にし、onTickComplete を呼び出す
+  const handleSkipConfirm = () => {
+    // タイマー停止
+    if (timerRef.current !== null) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+    targetTimeRef.current = null;
+    setStartFlg(true);
+    // カウントを0にして遷移を発火
+    setCount(0);
+    countRef.current = 0;
+    triggerComplete();
   };
 
   //---------------------------------------------------------------------------------------
@@ -240,18 +261,13 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
           ref={canvasRef}
           id="progress-bar"
         ></canvas>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            marginTop: "40px",
-          }}
-        >
+        <div className={styles.controlButtons}>
           {startFlg ? (
             <StartButton onClick={handleStartButtonClick} />
           ) : (
             <StopButton onClick={countStop} />
           )}
+          <SkipControl isTaskMode={isTaskMode} onConfirm={handleSkipConfirm} />
         </div>
       </div>
     </div>

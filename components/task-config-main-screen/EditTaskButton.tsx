@@ -8,7 +8,7 @@ interface EditTaskButtonProps {
 
 const EditTaskButton: React.FC<EditTaskButtonProps> = ({ onClick }) => {
   return (
-    <button className={styles.EditButton} onClick={onClick}>
+    <button type="button" className={styles.EditButton} onClick={onClick}>
       タスクを編集
     </button>
   );

@@ -5,7 +5,7 @@ import Link from "next/link";
 const NavigateTaskButton = () => {
   return (
     <Link href="/task-config-main-screen">
-      <button className={styles.navigateTaskButton}>
+      <button type="button" className={styles.navigateTaskButton}>
         <div className={styles.text}>タスク選択</div>
       </button>
     </Link>
