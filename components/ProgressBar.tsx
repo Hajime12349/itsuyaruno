@@ -135,40 +135,67 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
   //canvasを定義する
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // キャンバスサイズ更新関数を定義
-  const updateCanvasSize = useCallback(() => {
+  // 最新の描画関数を保持するための ref
+  const drawRef = useRef<() => void>(() => {});
+
+  // 進捗バー描画ロジック（値変更に応じて変化する）
+  const drawProgress = useCallback(() => {
     const canvas = canvasRef.current;
     const isMobile = window.innerWidth < 768;
-    if (canvas) {
-      canvas.width = window.innerWidth;
-      canvas.height = 100;
-      const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+    if (!canvas) return;
 
-      const rectWidth = isMobile ? window.innerWidth * 0.8 : window.innerWidth * 0.4;
-      const rectHeight = 100;
-      const x = (canvas.width - rectWidth) / 2;
-      const y = (canvas.height - rectHeight) / 2;
+    // キャンバスサイズはここでも安全のため合わせておく
+    canvas.width = window.innerWidth;
+    canvas.height = 100;
+    const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const rectWidth = isMobile ? window.innerWidth * 0.8 : window.innerWidth * 0.4;
+    const rectHeight = 100;
+    const x = (canvas.width - rectWidth) / 2;
+    const y = (canvas.height - rectHeight) / 2;
 
-      ctx.strokeStyle = "black";
-      ctx.lineWidth = 3;
-      ctx.strokeRect(x, y, rectWidth, rectHeight);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // 休憩中かどうかで色を分岐（URL ではなく isTaskMode に依存）
-      if (isTaskMode === false) {
-        ctx.fillStyle = "rgb(251, 253, 161)"; /*黄色（休憩）*/
-      } else {
-        ctx.fillStyle = "rgb(178, 223, 242)"; /*水色（作業）*/
-      }
-      ctx.fillRect(
-        x + 2,
-        y + 2,
-        (rectWidth - 4) * (count / CURRENT_DURATION),
-        rectHeight - 4,
-      );
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 3;
+    ctx.strokeRect(x, y, rectWidth, rectHeight);
+
+    // 休憩中かどうかで色を分岐（URL ではなく isTaskMode に依存）
+    if (isTaskMode === false) {
+      ctx.fillStyle = "rgb(251, 253, 161)"; /*黄色（休憩）*/
+    } else {
+      ctx.fillStyle = "rgb(178, 223, 242)"; /*水色（作業）*/
     }
+    ctx.fillRect(
+      x + 2,
+      y + 2,
+      (rectWidth - 4) * (count / CURRENT_DURATION),
+      rectHeight - 4,
+    );
   }, [count, isTaskMode, CURRENT_DURATION]);
+
+  // drawProgress の最新参照を ref に保持し、値変更時に描画する
+  useEffect(() => {
+    // 常に最新の描画ロジックを保持
+    drawRef.current = drawProgress;
+    // マウント直後や依存値変更時にも描画を行う
+    drawProgress();
+  }, [drawProgress]);
+
+  // キャンバスサイズ更新関数（リサイズ時に呼ばれる安定したハンドラ）
+  const updateCanvasSize = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const isMobile = window.innerWidth < 768;
+    canvas.width = window.innerWidth;
+    canvas.height = 100;
+
+    // サイズ変更後に最新の描画ロジックを適用
+    if (drawRef.current) {
+      drawRef.current();
+    }
+  }, []);
 
   // ウィンドウサイズ変更時の再描画イベント登録（リサイズ監視の責務）
   useEffect(() => {
@@ -176,11 +203,6 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
     return () => {
       window.removeEventListener("resize", updateCanvasSize);
     };
-  }, [updateCanvasSize]);
-
-  // 値変更時の再描画（UI更新の責務）
-  useEffect(() => {
-    updateCanvasSize();
   }, [updateCanvasSize]);
 
   // 特定のURLにいるときにカウントを自動的にスタートする
