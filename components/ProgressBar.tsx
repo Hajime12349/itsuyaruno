@@ -59,6 +59,30 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
     taskRef.current = task;
   }, [count, onTickComplete, task]);
 
+  // タイマー完了時の共通処理: onTickComplete を一度だけ呼び出す
+  const triggerComplete = () => {
+    // コールバック重複実行を防ぐため、state の関数形式を使って更新可能か確認
+    setRedirected((prev) => {
+      if (!prev) {
+        if (onTickCompleteRef.current) {
+          // onTickComplete は Promise<void> | void を返す可能性があるため、
+          // Promise.resolve(...).catch(...) でエラー／rejection を握ってログ出力する
+          void Promise.resolve(
+            onTickCompleteRef.current({
+              currentPathname: window.location.pathname,
+              task: taskRef.current,
+            })
+          ).catch((error) => {
+            // 必要に応じて集中ログ基盤などへ置き換え可能
+            console.error("onTickComplete callback failed:", error);
+          });
+        }
+        return true;
+      }
+      return prev;
+    });
+  };
+
   // タイマーの更新処理
   const handleTick = () => {
     if (targetTimeRef.current === null) return;
@@ -78,26 +102,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
       }
       targetTimeRef.current = null;
 
-      // コールバック重複実行を防ぐため、state の関数形式を使って更新可能か確認
-      setRedirected((prev) => {
-        if (!prev) {
-          if (onTickCompleteRef.current) {
-            // onTickComplete は Promise<void> | void を返す可能性があるため、
-            // Promise.resolve(...).catch(...) でエラー／rejection を握ってログ出力する
-            void Promise.resolve(
-              onTickCompleteRef.current({
-                currentPathname: window.location.pathname,
-                task: taskRef.current,
-              })
-            ).catch((error) => {
-              // 必要に応じて集中ログ基盤などへ置き換え可能
-              console.error("onTickComplete callback failed:", error);
-            });
-          }
-          return true;
-        }
-        return prev;
-      });
+      triggerComplete();
     }
   };
 
@@ -139,22 +144,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
     // カウントを0にして遷移を発火
     setCount(0);
     countRef.current = 0;
-    setRedirected((prev) => {
-      if (!prev) {
-        if (onTickCompleteRef.current) {
-          void Promise.resolve(
-            onTickCompleteRef.current({
-              currentPathname: window.location.pathname,
-              task: taskRef.current,
-            })
-          ).catch((error) => {
-            console.error("onTickComplete callback failed (skip):", error);
-          });
-        }
-        return true;
-      }
-      return prev;
-    });
+    triggerComplete();
   };
 
   //---------------------------------------------------------------------------------------
