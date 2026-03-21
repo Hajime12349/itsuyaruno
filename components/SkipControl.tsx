@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { MdSkipNext } from "react-icons/md";
-import styles from "./ProgressBar.module.css";
+import styles from "./SkipControl.module.css";
 
 interface SkipControlProps {
   isTaskMode: boolean;
