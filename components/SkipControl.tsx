@@ -25,6 +25,8 @@ const SkipControl: React.FC<SkipControlProps> = ({ isTaskMode, onConfirm }) => {
     <>
       <button
         className={styles.skipButton}
+        type="button" // form 内での誤 submit を防ぐ
+        aria-label="スキップ" // スクリーンリーダー向けのアクセシブルネーム
         onClick={() => setShowDialog(true)}
         title="スキップ"
       >
