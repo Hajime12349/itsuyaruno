@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import styles from "./AddTaskButton.module.css";
 
 interface AddTaskButtonProps {
@@ -14,7 +14,7 @@ const AddTaskButton: React.FC<AddTaskButtonProps> = ({
   };
   return (
     <button className={styles.addButton} onClick={handleClick}>
-      +
+      ＋ タスクを追加
     </button>
   );
 };

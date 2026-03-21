@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { NextAuthProvider, WithLoggedIn } from "@/app/provider";
 import Header from "@/components/Header";
@@ -9,6 +8,7 @@ import ProgressBar from "@/components/ProgressBar";
 import { getTask, getUser, updateTask } from "@/lib/api_wrapper";
 import type { ITaskDataModel as Task } from "@/application/tasks/TaskDataModelMapper";
 import type { IUserDataModel as User} from "@/application/users/UserDataModelMapper";
+import LoadingScreen from "@/components/common/LoadingScreen";
 import styles from "./TimerStartScreen.module.css";
 
 export default function TimerStartScreen() {
@@ -68,17 +68,22 @@ export default function TimerStartScreen() {
       <WithLoggedIn>
         <main className={styles.main}>
           <Header />
-          <div className={styles.TaskTextComponets}>
-            <ProgressBar
-              key={isTask ? "task" : "break"}
-              task={currentTask}
-              isTask={isTask}
-              onTickComplete={handleTimerComplete}
-            />
+          <div className={styles.TaskTextComponents}>
+            {isTask && !currentTask ? (
+              <LoadingScreen />
+            ) : (
+              <ProgressBar
+                key={isTask ? "task" : "break"}
+                task={isTask ? currentTask : undefined}
+                onTickComplete={handleTimerComplete}
+              />
+            )}
           </div>
-          <div className={styles.NavigateTaskButton}>
-            <NavigateTaskButton />
-          </div>
+          {isTask && (
+            <div className={styles.NavigateTaskButton}>
+              <NavigateTaskButton />
+            </div>
+          )}
         </main>
       </WithLoggedIn>
     </NextAuthProvider>

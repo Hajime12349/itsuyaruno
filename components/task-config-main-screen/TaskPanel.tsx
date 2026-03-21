@@ -1,10 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { patchUser } from "@/lib/api_wrapper";
 import type { ITaskDataModel as Task } from "@/application/tasks/TaskDataModelMapper";
-import type { IUserDataModel as User} from "@/application/users/UserDataModelMapper";
 import EditTaskButton from "./EditTaskButton";
-import TaskStartButton from "./TaskStartButton";
+import StartTaskButton from "./StartTaskButton";
 import styles from "./TaskPanel.module.css";
 
 
@@ -46,7 +45,10 @@ const TaskPanel: React.FC<TaskPanelProps> = ({
     setEditTask(task);
   };
 
+  const [isLoading, setIsLoading] = useState(false);
+
   async function handleStart(selectedTask: Task) {
+    setIsLoading(true);
     try {
       const payload = {
         id: selectedTask.user_id,
@@ -57,29 +59,38 @@ const TaskPanel: React.FC<TaskPanelProps> = ({
       router.replace("/timer-start-screen");
     } catch (e) {
       console.error(e);
+      setIsLoading(false);
     }
   }
 
   return (
-    <div className={styles.content} onClick={onClick}>
-      <h2 className={styles.title}>{task.task_name}</h2>
-      <div className={styles.flexContainer}>
-        <div className={styles.text}>
-          {task.current_set} / {task.total_set} セット
+    <>
+      {isLoading && (
+        <div className={styles.overlay}>
+          <div className={styles.spinner} />
+          <span className={styles.overlayText}>タスクを開始しています...</span>
         </div>
-        <div className={styles.text}>{remainingDaysText}</div>
+      )}
+      <div className={styles.content} onClick={onClick}>
+        <h2 className={styles.title}>{task.task_name}</h2>
+        <div className={styles.flexContainer}>
+          <div className={styles.text}>
+            {task.current_set} / {task.total_set} セット
+          </div>
+          <div className={styles.text}>{remainingDaysText}</div>
+        </div>
+        <div
+          className={
+            isSelected ? styles.buttonContainer : styles.buttonContainerHidden
+          }
+        >
+          <StartTaskButton task={task} onStart={handleStart} />
+          {pathname === "/task-config-main-screen" && (
+            <EditTaskButton onClick={openEditTaskWindow} />
+          )}
+        </div>
       </div>
-      <div
-        className={
-          isSelected ? styles.buttonContainer : styles.buttonContainerHidden
-        }
-      >
-        <TaskStartButton task={task} onStart={handleStart} />
-        {pathname === "/task-config-main-screen" && (
-          <EditTaskButton onClick={openEditTaskWindow} />
-        )}
-      </div>
-    </div>
+    </>
   );
 };
 

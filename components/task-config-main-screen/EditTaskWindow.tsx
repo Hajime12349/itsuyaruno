@@ -91,6 +91,11 @@ const EditTaskWindow = ({
       return;
     }
 
+    const confirmed = window.confirm(
+      `「${task.task_name}」を削除しますか？この操作は元に戻せません。`
+    );
+    if (!confirmed) return;
+
     setIsProcessing(true);
     try {
       await onDeleteTask(task.id);
@@ -102,61 +107,93 @@ const EditTaskWindow = ({
     }
   };
 
-  const setRandomTotalSet = () => {
-    const randomValue = Math.floor(Math.random() * 3) + 1;
-    setValue("total_set", randomValue);
-  };
-
   return (
-    <div className="App" onClick={(event) => event.stopPropagation()}>
-      <div className={styles.header}>
-        <h1>タスクを編集</h1>
-        <button
-          className={styles.trashButton}
-          onClick={handleDelete}
-          disabled={isProcessing}
-        >
-          削除
-        </button>
-        <button className={styles.closeButton} onClick={onClose}>
-          ×
-        </button>
-      </div>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div>
-          <p>タイトル</p>
-          <input id="task_name" {...register("task_name")} />
-        </div>
-        <div>
-          <p>セット数</p>
-          <button type="button" onClick={setRandomTotalSet}>
-            自動
+    <div className={styles.overlay} onClick={(e) => e.stopPropagation()}>
+      <div className={styles.modal}>
+        {/* ヘッダー */}
+        <div className={styles.header}>
+          <h1>タスクを編集</h1>
+          <button className={styles.closeButton} onClick={onClose}>
+            ×
           </button>
-          <input
-            id="total_set"
-            type="number"
-            min="1"
-            step="1"
-            {...register("total_set")}
-          />
         </div>
 
-        <div>
-          <button type="button" onClick={() => setShowDetails(!showDetails)}>
-            詳細設定
-          </button>
-          {showDetails && (
-            <div>
-              <p>期限</p>
-              <input type="date" {...register("deadline")} />
+        {/* フォーム */}
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className={styles.body}>
+            {/* タイトル */}
+            <div className={styles.formGroup}>
+              <label className={styles.label} htmlFor="task_name">
+                タイトル
+              </label>
+              <input
+                id="task_name"
+                className={styles.input}
+                placeholder="タスク名を入力"
+                {...register("task_name")}
+              />
             </div>
-          )}
-        </div>
 
-        <button disabled={isProcessing} type="submit">
-          編集
-        </button>
-      </form>
+            {/* セット数 */}
+            <div className={styles.formGroup}>
+              <label className={styles.label} htmlFor="total_set">
+                セット数
+              </label>
+              <input
+                id="total_set"
+                type="number"
+                min="1"
+                step="1"
+                className={styles.input}
+                {...register("total_set")}
+              />
+            </div>
+
+            {/* 詳細設定（期限） */}
+            <div className={styles.formGroup}>
+              <button
+                type="button"
+                className={styles.secondaryButton}
+                onClick={() => setShowDetails(!showDetails)}
+              >
+                {showDetails ? "▼" : "▶"} 詳細設定
+              </button>
+              {showDetails && (
+                <div className={styles.formGroup}>
+                  <label className={styles.label} htmlFor="deadline">
+                    期限
+                  </label>
+                  <input
+                    id="deadline"
+                    type="date"
+                    className={styles.input}
+                    {...register("deadline")}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* ボタン行 */}
+          <div className={styles.buttonRow}>
+            <button
+              type="button"
+              className={styles.dangerButton}
+              onClick={handleDelete}
+              disabled={isProcessing}
+            >
+              削除
+            </button>
+            <button
+              disabled={isProcessing}
+              type="submit"
+              className={styles.primaryButton}
+            >
+              編集を保存
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

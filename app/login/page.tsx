@@ -23,7 +23,9 @@ const GoogleSignInButton: React.FC = () => {
       <div className={styles.IconImage}>
         <Image src={settingsIcon} alt="Icon Image" width={100} height={100} />
       </div>
-      <h1 className={styles.TitleText}>いつやるの？ | When will you do it?</h1>
+      <h1 className={styles.TitleText}>
+        いつやるの？ | When will you do it?
+      </h1>
       <button
         className={styles.gsiMaterialButton}
         onClick={() => {
