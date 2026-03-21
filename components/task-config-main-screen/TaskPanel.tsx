@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { patchUser } from "@/lib/api_wrapper";
 import type { ITaskDataModel as Task } from "@/application/tasks/TaskDataModelMapper";
-import type { IUserDataModel as User} from "@/application/users/UserDataModelMapper";
 import EditTaskButton from "./EditTaskButton";
 import StartTaskButton from "./StartTaskButton";
 import styles from "./TaskPanel.module.css";
