@@ -5,6 +5,7 @@ import type { ITaskDataModel as Task } from "@/application/tasks/TaskDataModelMa
 import TaskImage from "@/public/icon_3.png";
 import StartButton from "./StartButton";
 import StopButton from "./StopButton";
+import SkipControl from "./SkipControl";
 import styles from "./ProgressBar.module.css";
 
 //形を定義するのがここ
@@ -126,6 +127,36 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
     countStart();
   };
 
+  // スキップを確定: タイマーを止めてカウントを0にし、onTickComplete を呼び出す
+  const handleSkipConfirm = () => {
+    // タイマー停止
+    if (timerRef.current !== null) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+    targetTimeRef.current = null;
+    setStartFlg(true);
+    // カウントを0にして遷移を発火
+    setCount(0);
+    countRef.current = 0;
+    setRedirected((prev) => {
+      if (!prev) {
+        if (onTickCompleteRef.current) {
+          void Promise.resolve(
+            onTickCompleteRef.current({
+              currentPathname: window.location.pathname,
+              task: taskRef.current,
+            })
+          ).catch((error) => {
+            console.error("onTickComplete callback failed (skip):", error);
+          });
+        }
+        return true;
+      }
+      return prev;
+    });
+  };
+
   //---------------------------------------------------------------------------------------
   //ここからキャンバスの描画
   //---------------------------------------------------------------------------------------
@@ -240,18 +271,13 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
           ref={canvasRef}
           id="progress-bar"
         ></canvas>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            marginTop: "40px",
-          }}
-        >
+        <div className={styles.controlButtons}>
           {startFlg ? (
             <StartButton onClick={handleStartButtonClick} />
           ) : (
             <StopButton onClick={countStop} />
           )}
+          <SkipControl isTaskMode={isTaskMode} onConfirm={handleSkipConfirm} />
         </div>
       </div>
     </div>
