@@ -1,15 +1,26 @@
 /* login.module.css */
-.square {
+.IconImage {
     width: 100px;
     height: 100px;
-    background-color: rgb(178,223,242);
     opacity: 0.5;
-    border: 2px solid black;
-    border-radius: 10px;
+    border-radius: 15px;
     margin: 0 auto; /* 中央に配置 */
     position: relative; /* 位置を相対的に */
     top: 250px; /* 文字の少し上に配置 */
-  }
+    z-index: 1; /* 最前面に配置 */
+}
+
+.IconImage::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 2px solid black; /* 黒の線を追加 */
+    border-radius: 15px; /* 枠線を角丸にする */
+    z-index: 2; /* 枠線を最前面に配置 */
+}
 
 @keyframes typing {
     from { width: 0; }
@@ -37,6 +48,7 @@
 
 /* login.module.css */
 .gsiMaterialButton {
+    display: flex;
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
@@ -68,7 +80,7 @@
     width: auto;
     max-width: 400px;
     min-width: min-content;
-    margin-left: 620px;
+    margin: 0 auto;
   }
   
   .gsiMaterialButtonIcon {

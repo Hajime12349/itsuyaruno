@@ -2,7 +2,7 @@
 import { NextAuthProvider } from "../provider";
 import { useSession } from "next-auth/react";
 import SignoutButton from "@/components/SignOutButton";
-import SigninButton from "@/components/SignInButton";
+import SigninButton from "@/components/profile/SignInButton";
 
 export default function Profile() {
   const { data: session } = useSession();

@@ -1,6 +1,6 @@
 .startStopButton {
-    /* background-color: white; */
-    border: 2px solod black;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: 2px solid transparent;
     border-radius: 50%;
     width: 50px;
     height: 50px;
@@ -9,29 +9,66 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    /* outline: none; */
+    outline: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
 }
 
 .startStopButton:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15);
+    background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
 }
 
 .startStopIcon {
     display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.muiIcon {
+    font-size: 24px;
+    color: white;
+    width: 24px;
+    height: 24px;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ストップボタン用のスタイル */
+.stopButton {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+}
+
+.stopButton:hover {
+    background: linear-gradient(135deg, #ff5252 0%, #e53e3e 100%);
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+}
+
+/* アクティブ状態 */
+.startStopButton:active {
+    transform: translateY(0) scale(0.95);
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+}
+
+.stopButton:active {
+    transform: translateY(0) scale(0.95);
+    box-shadow: 0 2px 8px rgba(255, 107, 107, 0.2);
 }
 
 .stopIconInner {
     width: 6px;
     height: 22px;
-    background-color: white;
+    background-color: rgb(48, 48, 48);
     margin: 2px 5px;
 }
 
 .startIconInner {
     width: 100%;
     height: 100%;
-    border-left: 20px solid white;
+    border-left: 20px solid rgb(48, 48, 48);
     border-top: 12px solid transparent;
     border-bottom: 12px solid transparent;
     margin-left: 3px;

@@ -1,14 +1,13 @@
-'use client'
-import Image from "next/image";
-import styles from "./TimerFinishScreen.module.css";
-import NavigateTaskButton from "@/components/NavigateTaskButton";
-import Header from '@/components/Header';
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { getUser, getTask, getTasks, updateTask } from '@/lib/db_api_wrapper';
-import { User, Task } from '@/lib/entity';
-import TaskSuggestionButton from '@/components/TaskSuggestionButton';
+"use client";
+import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { NextAuthProvider, WithLoggedIn } from "@/app/provider";
+import Header from "@/components/Header";
+import NavigateTaskButton from "@/components/NavigateTaskButton";
+import TaskSuggestionButton from "@/components/timer-finish-screen/TaskSuggestionButton";
+import { getTask, getTasks, getUser, updateTask } from "@/lib/api_wrapper";
+import type { ITaskDataModel as Task } from "@/application/tasks/TaskDataModelMapper";
+import styles from "./TimerFinishScreen.module.css";
 
 export default function TimerFinishScreen() {
   // ルーターを取得
@@ -19,20 +18,26 @@ export default function TimerFinishScreen() {
   const [isDecided, setIsDecided] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
 
+  const taskSuggestions = useMemo(() => {
+    return tasks.filter((task) => !task.is_complete);
+  }, [tasks]);
+
   useEffect(() => {
     getUser() // ユーザー情報をDBから取得
-      .then((user) => { // ユーザー情報をDBから取得できたら
-        if (!user.current_task) return; // 現在のタスクが無ければ即リターン
-        getTask(user.current_task) // current_task(現在のタスクの「ID」)をもとに、タスクをDBから取得
-          .then((currentTask) => { // タスクをDBから取得できたら
+      .then((user) => {
+        // ユーザー情報をDBから取得できたら
+        if (!user.currentTask) return; // 現在のタスクが無ければ即リターン
+        getTask(user.currentTask) // currentTask(現在のタスクの「ID」)をもとに、タスクをDBから取得
+          .then((currentTask) => {
+            // タスクをDBから取得できたら
             setCurrentTask(currentTask); // taskというコンポーネントの状態に取得したタスクをセット
-          })
+          });
       })
-      .catch((error) => { // エラーが生じたら
+      .catch((error) => {
+        // エラーが生じたら
         console.error(error);
-      })
-
-  }, [])
+      });
+  }, []);
 
   useEffect(() => {
     getTasks()
@@ -41,33 +46,56 @@ export default function TimerFinishScreen() {
       })
       .catch((error) => {
         console.error(error);
-      })
-  }, [])
+      });
+  }, []);
 
   const decideContinue = () => {
-    setIsFinished(false);
-    setIsDecided(true);
-  }
+    if (!currentTask || typeof currentTask.id !== "number") {
+      setIsFinished(false);
+      setIsDecided(true);
+      return;
+    }
+
+    const nextSet = currentTask.current_set + 1;
+    const taskPayload: Task = { ...currentTask, current_set: nextSet };
+
+    updateTask(taskPayload)
+      .then((updatedTask) => {
+        setCurrentTask(updatedTask);
+        setTasks((prevTasks) =>
+          prevTasks.map((task) => {
+            if (typeof task.id !== "number" || task.id !== updatedTask.id) {
+              return task;
+            }
+            return updatedTask;
+          })
+        );
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+      .finally(() => {
+        setIsFinished(false);
+        setIsDecided(true);
+      });
+  };
   const decideChange = () => {
     if (!currentTask) return;
     currentTask.is_complete = true;
     updateTask(currentTask)
-      .then(() => {
-        console.log("task updated");
-      })
       .catch((error) => {
         console.error(error);
       })
       .finally(() => {
         setIsFinished(true);
         setIsDecided(true);
-      })
-  }
+      });
+  };
 
   //ページ遷移用関数
   const pageTransition = () => {
-    router.push('/timer-start-screen')
-  }
+    router.push("/timer-start-screen");
+  };
 
   return (
     <NextAuthProvider>
@@ -78,28 +106,36 @@ export default function TimerFinishScreen() {
             <div className={styles.AskFinish}>
               <h2>現在のタスクは終わりましたか？</h2>
               <div className={styles.AskButtonDiv}>
-                <button onClick={decideChange}>はい</button>
-                <button onClick={decideContinue}>いいえ</button>
+                <button type="button" onClick={decideChange}>はい</button>
+                <button type="button" onClick={decideContinue}>いいえ</button>
               </div>
             </div>
           ) : (
             <div>
               <div className={styles.FinishTexts}>
                 <h2 className={styles.TaskFinishText}>休憩が終了しました！</h2>
-                <h2 className={styles.TaskChangeText}>タスクを変更しますか？</h2>
+                <h2 className={styles.TaskChangeText}>
+                  タスクを変更しますか？
+                </h2>
               </div>
               <div className={styles.ControlNextTaskFrame}>
                 {isFinished ? (
                   <></>
                 ) : (
                   <div>
-                    <button className={styles.TaskContinue} onClick={pageTransition}>Continue</button>
+                    <button
+                      type="button"
+                      className={styles.TaskContinue}
+                      onClick={pageTransition}
+                    >
+                      Continue
+                    </button>
                     <p className={styles.TextOR}>or</p>
                   </div>
                 )}
 
                 <div className={styles.NextTasks}>
-                  <TaskSuggestionButton />
+                  <TaskSuggestionButton tasks={taskSuggestions} />
                 </div>
               </div>
 
@@ -108,10 +144,8 @@ export default function TimerFinishScreen() {
               </div>
             </div>
           )}
-
         </main>
       </WithLoggedIn>
     </NextAuthProvider>
   );
 }
-

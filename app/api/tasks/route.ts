@@ -1,59 +1,98 @@
-import { getServerSession } from 'next-auth';
-import { authOptions, getUserID } from '@/lib/auth';
-import { query } from '@/lib/db';
-import { sql } from '@vercel/postgres';
-import { NextRequest } from 'next/server';
+import { getServerSession } from "next-auth";
+import { NextRequest } from "next/server";
+import { authOptions, getUserID } from "@/lib/auth";
+import { GetTasksUseCase } from "../../../application/tasks/GetTasks";
+import { CreateTaskUseCase } from "../../../application/tasks/CreateTask";
+import { TaskDataModelBuilder } from "@/application/tasks/TaskDataModelMapper";
+import { resolveTaskRepository } from "@/interfaces/http/tasks/repositoryProvider";
+import { AppError } from "@/lib/errors/AppError";
+import {
+  normalizeBoolean,
+  normalizeIncludeComplete,
+  normalizeNonNegativeInteger,
+  normalizeOptionalDeadline,
+  normalizePositiveInteger,
+  normalizeTaskName,
+} from "./normalizers";
 
 export async function GET(req: NextRequest) {
-    const session = await getServerSession(authOptions);
-    const session_user_id = await getUserID(session);
-    if (!session_user_id) {
-        return new Response(JSON.stringify({ error: 'Unauthorized: session user does not have a valid id' }), { status: 401 });
-    }
+  const session = await getServerSession(authOptions);
+  const sessionUserId = await getUserID(session);
+  if (!sessionUserId) {
+    return Response.json(
+      { error: { code: "Unauthorized", message: "session user does not have a valid id" } },
+      { status: 401 },
+    );
+  }
 
-    const searchParams = req.nextUrl.searchParams;
-    const include_complete = searchParams.get('include_complete') === 'true';
-
-    try {
-        if (process.env.NODE_ENV === 'production') {
-            if (include_complete) {
-                const { rows } = await sql`SELECT * FROM tasks WHERE user_id = ${session_user_id} ORDER BY id ASC`;
-                return new Response(JSON.stringify(rows), { status: 200 });
-            }
-            const { rows } = await sql`SELECT * FROM tasks WHERE user_id = ${session_user_id} AND is_complete = false ORDER BY id ASC`;
-            return new Response(JSON.stringify(rows), { status: 200 });
-        } else {
-            const { rows } = await query('SELECT * FROM tasks WHERE user_id = $1 ' + (include_complete ? '' : 'AND is_complete = false ') + 'ORDER BY id ASC', [session_user_id]);
-            return new Response(JSON.stringify(rows), { status: 200 });
-        }
-    } catch (error) {
-        console.error('Database query failed:', error);
-        return new Response(JSON.stringify({ error: 'Failed to fetch tasks' }), { status: 500 });
+  try {
+    const includeComplete = normalizeIncludeComplete(
+      req.nextUrl.searchParams.get("include_complete"),
+    );
+    const taskRepository = resolveTaskRepository();
+    const usecase = new GetTasksUseCase(taskRepository);
+    const entities = await usecase.execute({
+      userId: sessionUserId,
+      includeComplete: includeComplete,
+    });
+    const plainTasks = entities.map((task) => {
+      const taskBuilder = new TaskDataModelBuilder();
+      task.notify(taskBuilder);
+      return taskBuilder.build();
+    });
+    return Response.json(plainTasks, { status: 200 });
+  } catch (error) {
+    if (error instanceof AppError) {
+      if (error.code === "BadRequest") {
+        return Response.json({ error: { code: error.code, message: error.message } }, { status: 400 });
+      }
     }
+    console.error("Failed to fetch tasks:", error);
+    return Response.json({ error: { code: "InternalError", message: "Failed to fetch tasks" } }, { status: 500 });
+  }
 }
 
 export async function POST(req: Request) {
-    const session = await getServerSession(authOptions);
-    const session_user_id = await getUserID(session);
-    if (!session_user_id) {
-        return new Response(JSON.stringify({ error: 'Unauthorized: session user does not have a valid id' }), { status: 401 });
-    }
-    var { task_name, deadline, total_set, current_set, is_complete } = await req.json();
-    // when deadline is empty, set it to undefined
-    if (!deadline) {
-        deadline = undefined;
-    }
+  const session = await getServerSession(authOptions);
+  const sessionUserId = await getUserID(session);
+  if (!sessionUserId) {
+    return Response.json(
+      { error: { code: "Unauthorized", message: "session user does not have a valid id" } },
+      { status: 401 },
+    );
+  }
 
-    try {
-        if (process.env.NODE_ENV === 'production') {
-            const { rows } = await sql`INSERT INTO tasks (user_id, task_name, deadline, total_set, current_set, is_complete) VALUES(${session_user_id}, ${task_name}, ${deadline}, ${total_set}, ${current_set}, ${is_complete}) RETURNING * `;
-            return new Response(JSON.stringify(rows[0]), { status: 201 });
-        } else {
-            const { rows } = await query('INSERT INTO tasks (user_id, task_name, deadline, total_set, current_set, is_complete) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *', [session_user_id, task_name, deadline, total_set, current_set, is_complete]);
-            return new Response(JSON.stringify(rows[0]), { status: 201 });
-        }
-    } catch (error) {
-        console.error('Database query failed:', error);
-        return new Response(JSON.stringify({ error: 'Failed to add task' }), { status: 500 });
+  const body = await req.json().catch(() => ({}));
+  const { task_name, deadline, total_set, current_set, is_complete } =
+    body ?? {};
+
+  try {
+    const name = normalizeTaskName("task_name", task_name);
+    const normalizedDeadline = normalizeOptionalDeadline("deadline", deadline);
+    const totalSet = normalizePositiveInteger("total_set", total_set);
+    const currentSet = normalizeNonNegativeInteger("current_set", current_set);
+    const isComplete = normalizeBoolean("is_complete", is_complete);
+
+    const taskRepository = resolveTaskRepository();
+    const taskCreateUseCase = new CreateTaskUseCase(taskRepository);
+    const created = await taskCreateUseCase.execute({
+      userId: sessionUserId,
+      name,
+      deadline: normalizedDeadline,
+      totalSet,
+      currentSet,
+      isComplete,
+    });
+    const taskBuilder = new TaskDataModelBuilder();
+    created.notify(taskBuilder);
+    return Response.json(taskBuilder.build(), { status: 201 });
+  } catch (error) {
+    if (error instanceof AppError) {
+      if (error.code === "BadRequest") {
+        return Response.json({ error: { code: error.code, message: error.message } }, { status: 400 });
+      }
     }
+    console.error("Failed to add task:", error);
+    return Response.json({ error: { code: "InternalError", message: "Failed to add task" } }, { status: 500 });
+  }
 }

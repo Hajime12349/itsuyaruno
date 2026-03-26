@@ -21,3 +21,20 @@
 .titleText {
     font-size: 28px;
 }
+
+.pcHeaderText {
+    display: block;
+}
+
+.spHeaderText {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .pcHeaderText {
+        display: none;
+    }
+    .spHeaderText {
+        display: block;
+    }
+}

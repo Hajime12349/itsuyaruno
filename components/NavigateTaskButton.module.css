@@ -1,11 +1,9 @@
 .navigateTaskButton {
     font-size: 10px;
-    background-color: rgb(226, 226, 226);
+    background-color: rgba(255, 255, 255, 0.5);
     height: 50px;
     width: 200px;
-    position: absolute;
-    left: -225px;
-    border: 2px solid black;
+    border: 2px solid rgb(113, 116, 165);
     border-radius: 10px;
 }
 
@@ -17,5 +15,5 @@
 .text {
     font-size: 22px;
     font-weight: 600;
-    color: white;
+    color: rgb(100, 100, 140);
 }

@@ -1,328 +1,471 @@
-'use client';
+"use client";
 
-import { NextAuthProvider } from "@/app/provider";
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
+import { Autocomplete, Chip, TextField } from "@mui/material";
 import { useSession } from "next-auth/react";
+import { NextAuthProvider } from "@/app/provider";
+import TaskPanel from "@/components/task-config-main-screen/TaskPanel";
 import { getUserID } from "@/lib/auth";
 import {
-    getUser,
-    getTask,
-    getTasks,
-    createTask,
-    updateTask,
-    deleteTask,
-    updateUser,
-    registerUser,
-    getTags,
-    createTag,
-    updateTag,
-    deleteTag
-} from "@/lib/db_api_wrapper";
-import { Task, User, Tag } from "@/lib/entity";
-import TaskPanel from "@/components/TaskPanel";
-import { MultiSelect } from "react-multi-select-component";
-
-
+  createTag,
+  createTask,
+  deleteTag,
+  deleteTask,
+  getTags,
+  getTask,
+  getTasks,
+  getUser,
+  registerUser,
+  updateTag,
+  updateTask,
+  updateUser,
+} from "@/lib/api_wrapper";
+import type { TaskCreatePayload, UserUpsertPayload } from "@/lib/api_wrapper";
+import type { ITagDataModel as Tag } from "@/application/tags/TagDataModelMapper";
+import type { ITaskDataModel as Task } from "@/application/tasks/TaskDataModelMapper";
+import type { IUserDataModel as User} from "@/application/users/UserDataModelMapper";
 
 const CRUDApiWrapperTestComponent = () => {
-    const { data: session } = useSession();
-    const [tasks, setTasks] = useState<Task[]>();
-    const [user, setUser] = useState<User>();
-    const [tags, setTags] = useState<Tag[]>();
+  const { data: session } = useSession();
+  const [tags, setTags] = useState<Tag[]>();
+  const [tasks, setTasks] = useState<Task[]>();
+  const [user, setUser] = useState<User>();
+  
+  // 最初にタスク一覧を取得する
+  useEffect(() => {
+    getTasks().then(setTasks);
+  }, []);
 
-    // 最初にタスク一覧を取得する
-    useEffect(() => {
-        getTasks().then(setTasks);
-    }, []);
+  useEffect(() => {
+    getUser().then(setUser);
+  }, []);
 
-    useEffect(() => {
-        getUser().then(setUser);
-    }, []);
+  useEffect(() => {
+    getTags().then(setTags);
+  }, []);
 
-    useEffect(() => {
-        getTags().then(setTags);
-    }, []);
-
-    // タスクを作成する関数を定義
-    function onCreateTask(task: Task) {
-        createTask(task).then( // タスクを作成する
-            () => {
-                getTasks() // タスク追加後のタスク一覧を取得
-                    .then(setTasks) // タスク一覧の状態を更新
-                    .catch((error) => { // getTasksで発生したエラーをキャッチ
-                        console.error('Failed to get tasks:', error);
-                    });
-            }
-        )
-            .catch((error) => { // createTaskで発生したエラーをキャッチ
-                console.error('Failed to create task:', error);
+  // タスクを作成する関数を定義
+  function onCreateTask(task: TaskCreatePayload) {
+    createTask(task)
+      .then(
+        // タスクを作成する
+        () => {
+          getTasks() // タスク追加後のタスク一覧を取得
+            .then(setTasks) // タスク一覧の状態を更新
+            .catch((error) => {
+              // getTasksで発生したエラーをキャッチ
+              console.error("Failed to get tasks:", error);
             });
-    }
-
-    // タスクを更新する関数を定義
-    function onUpdateTask(task: Task) {
-        updateTask(task).then( // タスクを更新する
-            () => {
-                getTasks() // タスク更新後のタスク一覧を取得
-                    .then(setTasks) // タスク一覧の状態を更新
-                    .catch((error) => { // getTasksで発生したエラーをキャッチ
-                        console.error('Failed to get tasks:', error);
-                    });
-            }
-        )
-            .catch((error) => { // updateTaskで発生したエラーをキャッチ
-                console.error('Failed to update task:', error);
-            });
-    }
-
-    // タスクを削除する関数を定義
-    function onDeleteTask(id?: number) {
-        if (!id) {
-            console.error('Failed to delete task');
-            return;
         }
-        deleteTask(id).then( // タスクを削除する
-            () => {
-                getTasks() // タスク削除後のタスク一覧を取得
-                    .then(setTasks) // タスク一覧の状態を更新
-                    .catch((error) => { // getTasksで発生したエラーをキャッチ
-                        console.error('Failed to get tasks:', error);
-                    });
-            }
-        )
-            .catch((error) => { // deleteTaskで発生したエラーをキャッチ
-                console.error('Failed to delete task:', error);
-            });
-    }
+      )
+      .catch((error) => {
+        // createTaskで発生したエラーをキャッチ
+        console.error("Failed to create task:", error);
+      });
+  }
 
-    // ユーザーを更新する関数を定義
-    function onUpdateUser(user: User) {
-        updateUser(user).then( // ユーザーを更新する
-            () => {
-                getUser()
-                    .then(setUser) // ユーザーの状態を更新
-                    .catch((error) => { // getUserで発生したエラーをキャッチ
-                        console.error('Failed to get user:', error);
-                    });
-            }
-        )
-            .catch((error) => { // updateUserで発生したエラーをキャッチ
-                console.error('Failed to update user:', error);
+  // タスクを更新する関数を定義
+  function onUpdateTask(task: Task) {
+    updateTask(task)
+      .then(
+        // タスクを更新する
+        () => {
+          getTasks() // タスク更新後のタスク一覧を取得
+            .then(setTasks) // タスク一覧の状態を更新
+            .catch((error) => {
+              // getTasksで発生したエラーをキャッチ
+              console.error("Failed to get tasks:", error);
             });
-    }
-
-    // ユーザーを登録する関数を定義
-    function onRegisterUser(user: User) {
-        registerUser(user).then( // ユーザーを登録する
-            () => {
-                getUser()
-                    .then(setUser) // ユーザーの状態を更新
-                    .catch((error) => { // getUserで発生したエラーをキャッチ
-                        console.error('Failed to get user:', error);
-                    });
-            }
-        )
-            .catch((error) => { // registerUserで発生したエラーをキャッチ
-                console.error('Failed to register user:', error);
-            });
-    }
-
-    function onStartTask(id?: number) {
-        if (!id) {
-            console.error('Failed to start task');
-            return;
         }
-        updateUser({ current_task: id, current_task_time: new Date().toISOString() }).then(() => {
-            getUser()
-                .then(setUser)
-                .catch((error) => {
-                    console.error('Failed to get user:', error);
-                });
-        })
-            .catch((error) => {
-                console.error('Failed to start task:', error);
-            });
-    }
+      )
+      .catch((error) => {
+        // updateTaskで発生したエラーをキャッチ
+        console.error("Failed to update task:", error);
+      });
+  }
 
-    // タグを作成する関数を定義
-    function onCreateTag(tag: Tag) {
-        createTag(tag).then(
-            () => {
-                getTags()
-                    .then(setTags)
-                    .catch((error) => {
-                        console.error('Failed to get tags:', error);
-                    });
-            }
-        )
-            .catch((error) => {
-                console.error('Failed to create tag:', error);
-            });
+  // タスクを削除する関数を定義
+  function onDeleteTask(id?: number) {
+    if (!id) {
+      console.error("Failed to delete task");
+      return;
     }
-
-    function onDeleteTag(tag_name?: string) {
-        if (!tag_name) {
-            console.error('Failed to delete tag');
-            return;
+    deleteTask(id)
+      .then(
+        // タスクを削除する
+        () => {
+          getTasks() // タスク削除後のタスク一覧を取得
+            .then(setTasks) // タスク一覧の状態を更新
+            .catch((error) => {
+              // getTasksで発生したエラーをキャッチ
+              console.error("Failed to get tasks:", error);
+            });
         }
-        deleteTag(tag_name).then(
-            () => {
-                getTags()
-                    .then(setTags)
-                    .catch((error) => {
-                        console.error('Failed to get tags:', error);
-                    });
-            }
-        )
-            .catch((error) => {
-                console.error('Failed to delete tag:', error);
-            });
-    }
+      )
+      .catch((error) => {
+        // deleteTaskで発生したエラーをキャッチ
+        console.error("Failed to delete task:", error);
+      });
+  }
 
-    function onUpdateTag(targetTag: Tag, newTag: Tag) {
-        alert('onUpdateTag' + targetTag.tag_name + 'to' + newTag.tag_name);
-        updateTag(targetTag, newTag).then(
-            () => {
-                getTags()
-                    .then(setTags)
-                    .catch((error) => {
-                        console.error('Failed to get tags:', error);
-                    });
-            }
-        )
+  // ユーザーを更新する関数を定義
+  function onUpdateUser(user: UserUpsertPayload) {
+    updateUser(user)
+      .then(
+        // ユーザーを更新する
+        () => {
+          getUser()
+            .then(setUser) // ユーザーの状態を更新
             .catch((error) => {
-                console.error('Failed to update tag:', error);
+              // getUserで発生したエラーをキャッチ
+              console.error("Failed to get user:", error);
             });
-    }
+        }
+      )
+      .catch((error) => {
+        // updateUserで発生したエラーをキャッチ
+        console.error("Failed to update user:", error);
+      });
+  }
 
-    // ユーザー情報を表示するTSX要素
-    var user_info_tsx = (
-        <div>
-            <h1>ユーザー情報</h1>
-            <p>{session?.user?.name}</p>
-            <p>{session?.user?.email}</p>
-            <p>{session?.user?.image}</p>
-            <p>{getUserID(session)}</p>
-        </div>
+  // ユーザーを登録する関数を定義
+  function onRegisterUser(user: UserUpsertPayload) {
+    registerUser(user)
+      .then(
+        // ユーザーを登録する
+        () => {
+          getUser()
+            .then(setUser) // ユーザーの状態を更新
+            .catch((error) => {
+              // getUserで発生したエラーをキャッチ
+              console.error("Failed to get user:", error);
+            });
+        }
+      )
+      .catch((error) => {
+        // registerUserで発生したエラーをキャッチ
+        console.error("Failed to register user:", error);
+      });
+  }
+
+  function onStartTask(id?: number) {
+    if (!id) {
+      console.error("Failed to start task");
+      return;
+    }
+    const payload: UserUpsertPayload = {
+      displayName: user?.displayName || "",
+      currentTask: id,
+      currentTaskTime: new Date().toISOString(),
+    };
+    updateUser(payload)
+      .then(() => {
+        getUser()
+          .then(setUser)
+          .catch((error) => {
+            console.error("Failed to get user:", error);
+          });
+      })
+      .catch((error) => {
+        console.error("Failed to start task:", error);
+      });
+  }
+
+  // タグを作成する関数を定義
+  function onCreateTag(tag: Tag) {
+    createTag(tag)
+      .then(() => {
+        getTags()
+          .then(setTags)
+          .catch((error) => {
+            console.error("Failed to get tags:", error);
+          });
+      })
+      .catch((error) => {
+        console.error("Failed to create tag:", error);
+      });
+  }
+
+  function onDeleteTag(tag_name?: string) {
+    if (!tag_name) {
+      console.error("Failed to delete tag");
+      return;
+    }
+    deleteTag(tag_name)
+      .then(() => {
+        getTags()
+          .then(setTags)
+          .catch((error) => {
+            console.error("Failed to get tags:", error);
+          });
+      })
+      .catch((error) => {
+        console.error("Failed to delete tag:", error);
+      });
+  }
+
+  function onUpdateTag(targetTag: Tag, newTag: Tag) {
+    alert("onUpdateTag" + targetTag.tag_name + "to" + newTag.tag_name);
+    updateTag(targetTag, newTag)
+      .then(() => {
+        getTags()
+          .then(setTags)
+          .catch((error) => {
+            console.error("Failed to get tags:", error);
+          });
+      })
+      .catch((error) => {
+        console.error("Failed to update tag:", error);
+      });
+  }
+
+  // ユーザー情報を表示するTSX要素
+  var user_info_tsx = (
+    <div>
+      <h1>ユーザー情報</h1>
+      <p>{session?.user?.name}</p>
+      <p>{session?.user?.email}</p>
+      <p>{session?.user?.image}</p>
+      <p>{getUserID(session)}</p>
+    </div>
+  );
+
+  // DBに登録されているユーザー情報を表示するTSX要素
+  var user_info_in_db_tsx = (
+    <div>
+      <h1>ユーザー情報 in DB</h1>
+      <p>{user?.displayName}</p>
+      <p>{user?.iconPath}</p>
+      <p>{user?.id}</p>
+      <p>{user?.currentTask}</p>
+      <p>{user?.currentTaskTime}</p>
+    </div>
+  );
+
+  // DBにユーザーが存在しない場合は、ユーザーを登録するボタンを表示する
+  if (!user?.id) {
+    user_info_in_db_tsx = (
+      <div>
+        <h1>ユーザー情報 in DB</h1>
+        <p>ユーザーが存在しません</p>
+        <button
+          onClick={() => {
+            onRegisterUser({ displayName: session?.user?.name || "" });
+          }}
+        >
+          ユーザーを登録
+        </button>
+      </div>
     );
+  }
 
-    // DBに登録されているユーザー情報を表示するTSX要素
-    var user_info_in_db_tsx = (
-        <div>
-            <h1>ユーザー情報 in DB</h1>
-            <p>{user?.display_name}</p>
-            <p>{user?.icon_path}</p>
-            <p>{user?.id}</p>
-            <p>{user?.current_task}</p>
-            <p>{user?.current_task_time}</p>
-        </div>
-    );
+  // タスク一覧のヘッダーを表示するTSX要素
+  var tasks_header_tsx = (
+    <div>
+      <h1>タスク一覧</h1>
+      <button
+        onClick={() => {
+          onCreateTask({
+            task_name: "新しいタスク",
+            total_set: 1,
+            current_set: 0,
+            deadline: "2024-08-05 12:00:00",
+            is_complete: false,
+          });
+        }}
+      >
+        タスクを作成
+      </button>
+    </div>
+  );
 
-    // DBにユーザーが存在しない場合は、ユーザーを登録するボタンを表示する
-    if (!(user?.id)) {
-        user_info_in_db_tsx = (
-            <div>
-                <h1>ユーザー情報 in DB</h1>
-                <p>ユーザーが存在しません</p>
-                <button onClick={() => {
-                    onRegisterUser({ display_name: session?.user?.name || "" })
-                }}>ユーザーを登録</button>
+  // タグ一覧のヘッダーを表示するTSX要素
+  var tags_header_tsx = (
+    <div>
+      <TagInput onCreateTag={onCreateTag} />
+    </div>
+  );
+
+  return (
+    <div>
+      {user_info_tsx}
+      {user_info_in_db_tsx}
+      {tasks_header_tsx}
+      <ul>
+        {Array.isArray(tasks) &&
+          tasks.map((task) => {
+            return (
+              <div key={task.id}>
+                <TaskPanel
+                  task={task}
+                  isSelected={false}
+                  onClick={() => {}}
+                  setEditTask={() => {}}
+                />
+                <button
+                  onClick={() => {
+                    onDeleteTask(task.id);
+                  }}
+                >
+                  タスクを削除
+                </button>
+                <button
+                  onClick={() => {
+                    onUpdateTask({ ...task, is_complete: true });
+                  }}
+                >
+                  タスクを完了
+                </button>
+                <button
+                  onClick={() => {
+                    onUpdateTask({ ...task, is_complete: false });
+                  }}
+                >
+                  タスクを未完了
+                </button>
+                <button
+                  onClick={() => {
+                    onUpdateTask({
+                      ...task,
+                      current_set: task.current_set + 1,
+                    });
+                  }}
+                >
+                  タスクを進める
+                </button>
+                <button
+                  onClick={() => {
+                    onUpdateTask({
+                      ...task,
+                      current_set: task.current_set - 1,
+                    });
+                  }}
+                >
+                  タスクを戻す
+                </button>
+                <button
+                  onClick={() => {
+                    onUpdateTask({ ...task, task_name: "更新されたタスク" });
+                  }}
+                >
+                  タスクの名前を更新
+                </button>
+                <button
+                  onClick={() => {
+                    onStartTask(task.id);
+                  }}
+                >
+                  このタスクを開始
+                </button>
+              </div>
+            );
+          })}
+      </ul>
+      {tags_header_tsx}
+      <ul>
+        {tags?.map((tag) => {
+          return (
+            <div key={tag.tag_name}>
+              {tag.tag_name}
+              <button
+                onClick={() => {
+                  onDeleteTag(tag.tag_name);
+                }}
+              >
+                タグを削除
+              </button>
+              <button
+                onClick={() => {
+                  onUpdateTag(tag, { tag_name: tag.tag_name + "更新" });
+                }}
+              >
+                タグの名前を更新
+              </button>
             </div>
-        );
-    }
+          );
+        })}
+      </ul>
 
-    // タスク一覧のヘッダーを表示するTSX要素
-    var tasks_header_tsx = (
-        <div>
-            <h1>タスク一覧</h1>
-            <button onClick={() => {
-                onCreateTask({ task_name: '新しいタスク', total_set: 1, current_set: 0, deadline: "2024-08-05 12:00:00", is_complete: false });
-            }}>タスクを作成</button>
-        </div>
-    );
-
-    // タグ一覧のヘッダーを表示するTSX要素
-    var tags_header_tsx = (
-        <div>
-            <TagInput onCreateTag={onCreateTag} />
-        </div>
-    );
-
-    return (
-        <div>
-            {user_info_tsx}
-            {user_info_in_db_tsx}
-            {tasks_header_tsx}
-            <ul>
-                {tasks?.map((task) => {
-                    return (
-                        <div key={task.id}>
-                            <TaskPanel task={task} isSelected={false} onClick={() => { }} setEditTask={() => { }} />
-                            <button onClick={() => {
-                                onDeleteTask(task.id);
-                            }}>タスクを削除</button>
-                            <button onClick={() => {
-                                onUpdateTask({ ...task, is_complete: true });
-                            }}>タスクを完了</button>
-                            <button onClick={() => {
-                                onUpdateTask({ ...task, is_complete: false });
-                            }}>タスクを未完了</button>
-                            <button onClick={() => {
-                                onUpdateTask({ ...task, current_set: task.current_set + 1 });
-                            }}>タスクを進める</button>
-                            <button onClick={() => {
-                                onUpdateTask({ ...task, current_set: task.current_set - 1 });
-                            }}>タスクを戻す</button>
-                            <button onClick={() => {
-                                onUpdateTask({ ...task, task_name: '更新されたタスク' });
-                            }}>タスクの名前を更新</button>
-                            <button onClick={() => {
-                                onStartTask(task.id);
-                            }}>このタスクを開始</button>
-                        </div>
-                    );
-                })}
-            </ul>
-            {tags_header_tsx}
-            <ul>
-                {tags?.map((tag) => {
-                    return (
-                        <div key={tag.tag_name}>
-                            {tag.tag_name}
-                            <button onClick={() => {
-                                onDeleteTag(tag.tag_name);
-                            }}>タグを削除</button>
-                            <button onClick={() => {
-                                onUpdateTag(tag, { tag_name: tag.tag_name + '更新' });
-                            }}>タグの名前を更新</button>
-                        </div>
-                    );
-                })}
-            </ul>
-        </div>
-    );
-}
+      <TagEdit
+        tagOptions={tags?.map((tag) => tag.tag_name) || []}
+        selectedTags={[]}
+        onChangeTags={(tags) => {
+          console.log(tags);
+        }}
+      />
+    </div>
+  );
+};
 
 // NextAuthProviderで囲むと、useSessionを利用できる
 // useSessionにより、ログインしているユーザーの情報を取得できる
 const CRUDApiWrapperTest = () => {
-    return (
-        <NextAuthProvider>
-            <CRUDApiWrapperTestComponent />
-        </NextAuthProvider>
-    );
-}
+  return (
+    <NextAuthProvider>
+      <CRUDApiWrapperTestComponent />
+    </NextAuthProvider>
+  );
+};
 
 export default CRUDApiWrapperTest;
 
 const TagInput = ({ onCreateTag }: { onCreateTag: (tag: Tag) => void }) => {
-    const [tagName, setTagName] = useState('');
-    return (
-        <div>
-            <input type="text" value={tagName} onChange={(e) => setTagName(e.target.value)} />
-            <button onClick={() => {
-                onCreateTag({ tag_name: tagName });
-            }}>タグを作成</button>
-        </div>
-    );
-}
+  const [tagName, setTagName] = useState("");
+  return (
+    <div>
+      <input
+        type="text"
+        value={tagName}
+        onChange={(e) => setTagName(e.target.value)}
+      />
+      <button
+        onClick={() => {
+          onCreateTag({ tag_name: tagName });
+        }}
+      >
+        タグを作成
+      </button>
+    </div>
+  );
+};
+
+const TagEdit = ({
+  tagOptions,
+  selectedTags,
+  onChangeTags,
+}: {
+  tagOptions: string[];
+  selectedTags: string[];
+  onChangeTags: (tags: string[]) => void;
+}) => {
+  return (
+    <div>
+      <Autocomplete
+        multiple
+        id="tags-filled"
+        options={tagOptions}
+        defaultValue={[]}
+        freeSolo
+        onChange={(event, newValue) => {
+          onChangeTags(newValue);
+        }}
+        renderTags={(value: readonly string[], getTagProps) =>
+          value.map((option: string, index: number) => {
+            const { key, ...tagProps } = getTagProps({ index });
+            return (
+              <Chip variant="outlined" label={option} key={key} {...tagProps} />
+            );
+          })
+        }
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            variant="filled"
+            label="freeSolo"
+            placeholder="Favorites"
+          />
+        )}
+      />
+    </div>
+  );
+};

@@ -1,15 +1,14 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import styles from './ConfigSidebar.module.css'; // CSSモジュールをインポート
-import SignOutButton from './SignOutButton';
+import React, { useState } from "react";
+import styles from "./ConfigSidebar.module.css"; // CSSモジュールをインポート
+import SignOutButton from "./SignOutButton";
 
 interface ConfigSidebarProps {
   onClose: () => void;
 }
 
 const ConfigSidebar: React.FC<ConfigSidebarProps> = ({ onClose }) => {
-
   const [isPaused, setIsPaused] = useState(false);
 
   const handleToggle = () => {
@@ -29,7 +28,9 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({ onClose }) => {
           </label>
         </div>
         <SignOutButton />
-        <button className={styles.closeButton} onClick={onClose}>サイドバーを閉じる</button>
+        <button type="button" className={styles.closeButton} onClick={onClose}>
+          サイドバーを閉じる
+        </button>
       </div>
     </div>
   );
